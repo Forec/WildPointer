@@ -1,0 +1,70 @@
+<ul class="posts">
+    {% for task in tasks %}
+    <li class="post">
+        <div class="post-thumbnail">
+            <a href="{{ url_for('main.user', username=task.publisher.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ task.publisher.gravatar(size=40) }}">
+            </a>
+        </div>
+        <div class="post-content">
+            <div class="post-date">发布时间：{{ moment(task.timestamp).fromNow() }}</div>
+            <div class="post-author">发布者：<a href="{{ url_for('main.user', username=task.publisher.username) }}">{{task.publisher.username}}</a> &nbsp;&nbsp;&nbsp; 任务标题：<a href="{{ url_for('prob.task', id=task.id) }}">{{ task.title }}</a></div>
+            <div class="post-body">
+                {% if not task.confirmed %}
+                <p><i>此任务可能尚未通过公众检测，或有未修复的bug，欢迎您提出Issue和PR帮助修复。</i></p>
+                {% endif %}
+                {{ task.body }}
+            </div>
+            <div class="post-footer">
+                {% if current_user.is_authenticated and current_user.is_spaner(task) %}
+                <a href="{{ url_for('prob.edit_task', id=task.id) }}">
+                    <span class="label label-primary">编辑</span>
+                </a>
+                {% endif %}
+                {% if current_user.is_authenticated and not current_user.is_spaner(task) and not current_user.is_administrator() %}
+                <a href="{{ url_for('prob.apply', id=task.id) }}">
+                    <span class="label label-success">提交建议</span>
+                </a>
+                {% endif %}
+                {% if current_user.is_administrator() and current_user != task.publisher %}
+                <a href="{{ url_for('prob.edit_task', id=task.id) }}">
+                    <span class="label label-danger">编辑 [管理员]</span>
+                </a>
+                {% endif %}
+	            {% if current_user.is_administrator() %}
+	            <a href="{{ url_for('prob.delete_task',id=task.id) }}">
+		            <span class="label label-danger">删除 [管理员]</span>
+		        </a>
+	            {% endif %}
+
+                {% if current_user.is_administrator() %}
+                {% if task.confirmed %}
+                <a href="{{ url_for('prob.moderate_tasks_bug', id=task.id, page=page) }}">
+                    <span class="label label-primary">将此任务设置为有BUG [管理员]</span>
+                </a>
+                {% else %}
+                <a href="{{ url_for('prob.moderate_tasks_nobug', id=task.id, page=page) }}">
+                    <span class="label label-danger">将此任务设置为无BUG [管理员]</span>
+                </a>
+                {% endif %}
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                    {% if current_user.is_submitter(task) %}
+                    <a href="{{ url_for('prob.my_code_for_task', id=task.id) }}">
+                        <span class="label label-info">我提交的代码</span>
+                    </a>
+                    {% endif %}
+                {% endif %}
+                <a href="{{ url_for('prob.task', id=task.id) }}">
+                    <span class="label label-default">任务外链</span>
+                </a>
+                {% if task.codes.filter_by(passed=True).count() == 0 %}
+                    <span class="label label-default"> 尚无人通过</span>
+                {% else %}
+                    <span class="label label-info"> 已通过 {{ task.codes.filter_by(passed=True).count() }} 人</span>
+                {% endif %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "main/_macros.html" as macros %}
+
+{% block title %}CodeBattles - 查看代码{% endblock %}
+
+{% block page_content %}
+{% if tasks %}
+{% include 'prob/_tasks.html' %}
+{% endif %}
+<br class="comment-form">
+
+    <b><h4>我的代码</h4></b>
+    <div class="post-tabs">
+    {% include 'prob/_codes.html' %}
+    </div>
+    {% if pagination %}
+    <div class="pagination">
+        {% if tasks %}
+            {{ macros.pagination_widget(pagination, 'prob.my_codes_for_task', id=id) }}
+        {% else %}
+            {{ macros.pagination_widget(pagination, 'prob.all_codes') }}
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}
