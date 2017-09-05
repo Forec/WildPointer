@@ -1,6 +1,8 @@
 .idea
 venv
 __pycache__
+migrations
+pre_app_backup
 tmp
 *.pyc
 *.db

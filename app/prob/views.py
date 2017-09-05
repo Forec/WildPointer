@@ -2,7 +2,7 @@
 # @Time    : 2017/9/5 16:42
 # @Author  : Forec
 # @File    : prob/views.py
-# @Software: Wild-Pointer
+# @Project : WildPointer
 # @license : Copyright(C), Forec
 # @Contact : forec@bupt.edu.cn
 
@@ -21,7 +21,7 @@ from ..decorators import admin_required, permission_required
 def all_probs():
     page = request.args.get('page', 1, type=int)
     pagination = Task.query.order_by(Task.timestamp.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_TASKS_PER_PAGE'],
+        page, per_page=current_app.config['WP_TASKS_PER_PAGE'],
         error_out=False
     )
     tasks = pagination.items
@@ -34,7 +34,7 @@ def task(id):
     form = SubmitCodeForm()
     page = request.args.get('page', 1, type=int)
     pagination = task.advices.order_by(Advice.timestamp.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_ADVICES_PER_PAGE'],
+        page, per_page=current_app.config['WP_ADVICES_PER_PAGE'],
         error_out=False
     )
     advices = pagination.items
@@ -111,7 +111,7 @@ def moderate_tasks():
     else:
         task = Task.query.filter(or_(Task.title.like('%'+key+'%'),Task.body.like('%'+key+'%')))
     pagination = task.order_by(Task.timestamp.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_TASKS_PER_PAGE'],
+        page, per_page=current_app.config['WP_TASKS_PER_PAGE'],
         error_out=False)
     tasks = pagination.items
     form.key.data = key
@@ -172,7 +172,7 @@ def task_code(id):
     if (not current_user.can(Permission.ADMINISTER)):
         code = code.filter_by(passed=True)
     pagination = code.order_by(Code.likes.desc()).order_by(Code.timestamp.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_CODES_PER_PAGE'],
+        page, per_page=current_app.config['WP_CODES_PER_PAGE'],
         error_out=False)
     codes = pagination.items
     return render_template('prob/codes_for_task.html', tasks=[task], id = id,
@@ -259,7 +259,7 @@ def my_code_for_task(id):
     code = current_user.codes.filter_by(task=task)
     page = request.args.get('page', 1, type=int)
     pagination = code.order_by(Code.likes.desc()).order_by(Code.timestamp.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_CODES_PER_PAGE'],
+        page, per_page=current_app.config['WP_CODES_PER_PAGE'],
         error_out=False)
     codes = pagination.items
     return render_template('prob/my_code_for_task.html', tasks = [task], codes=codes,
@@ -271,7 +271,7 @@ def all_codes():
     code = current_user.codes
     page = request.args.get('page', 1, type=int)
     pagination = code.order_by(Code.timestamp.desc()).order_by(Code.likes.desc()).paginate(
-        page, per_page=current_app.config['CODEBATTLES_CODES_PER_PAGE'],
+        page, per_page=current_app.config['WP_CODES_PER_PAGE'],
         error_out=False)
     codes = pagination.items
     return render_template('prob/my_codes.html', codes=codes,

@@ -1,88 +1,146 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}CodeBattles{% endblock %}
+{% block title %}Wild Pointer{% endblock %}
 
 {% block head %}
-{{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+<!-- META TAGS -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', _external=True) }}" />
+
+<!-- Style Sheet-->
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css', _external=True) }}"/>
+<link rel='stylesheet' id='bootstrap-css-css'  href="{{ url_for('static', filename='css/bootstrap5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+<link rel='stylesheet' id='responsive-css-css'  href="{{ url_for('static', filename='css/responsive5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+<link rel='stylesheet' id='pretty-photo-css-css'  href="{{ url_for('static', filename='js/prettyphoto/prettyPhotoaeb9.css', _external=True) }}?ver=3.1.4" type='text/css' media='all' />
+<link rel='stylesheet' id='main-css-css'  href="{{ url_for('static', filename='css/main5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+<link rel='stylesheet' id='custom-css-css'  href="{{ url_for('static', filename='css/custom5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
 {% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only"><a href="{{ url_for('static', filename='mamama.png') }}">广告位出租</a></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">CodeBattles</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="/">主页</a></li>
-                <li><a href="{{ url_for('prob.all_probs', page = 1) }}">任务</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('main.message') }}">新的消息 <span class="badge">{{ current_user.messages.filter_by(viewed=False).count() }}</span></a>
-                </li>
-                {% endif %}
-                {% if current_user.can(Permission.MODERATE_COMMENTS) or current_user.can(Permission.MODERATE_TASKS) %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        管理<b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% if current_user.can(Permission.MODERATE_TASKS) %}
-                        <li><a href="{{ url_for('prob.moderate_tasks') }}">管理任务</a></li>
-                        {% endif %}
-                        <li><a href="{{ url_for('main.moderate_posts') }}">管理文章</a></li>
-                        <li><a href="{{ url_for('main.moderate_comments') }}">管理评论</a></li>
-                    </ul>
-                </li>
-                {% endif %}
-                {% if current_user.is_authenticated %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="{{ current_user.gravatar(size=18) }}">
-                        账户 <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url_for('main.user', username=current_user.username) }}">用户资料</a></li>
-                        <li><a href="{{ url_for('prob.all_codes') }}">我的代码</a></li>
-                        <li><a href="{{ url_for('auth.secure_center') }}">安全中心</a></li>
-                        <li><a href="{{ url_for('auth.logout') }}">登出</a></li>
-                    </ul>
-                </li>
-                {% else %}
-                <li><a href="{{ url_for('auth.login') }}">登陆</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
+    <!-- Start of Header -->
+    <div class="header-wrapper">
+        <header>
+            <div class="container">
+
+                <div class="logo-container">
+                    <!-- Website Logo -->
+                    <a href="index-2.html"  title="Wild Pointer">
+                        <img src="{{ url_for('static', filename='images/logo.png', _external=True) }}" alt="Wild Pointer">
+                    </a>
+                    <span class="tag-line">程序员问答社区</span>
+                </div>
+
+                <!-- Start of Main Navigation -->
+                <nav class="main-nav">
+                    <div class="menu-top-menu-container">
+                        <ul id="menu-top-menu" class="clearfix">
+                            <li class="current-menu-item"><a href="index-2.html">主页</a></li>
+                            <li><a href="#">问题</a>
+                                <ul class="sub-menu">
+                                    <li><a href="blue-skin.html">最新问题</a></li>
+                                    <li><a href="index-2.html">我的问题</a></li>
+                                    <li><a href="index-2.html">我的回答</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#">任务池</a>
+                                <ul class="sub-menu">
+                                    <li><a href="blue-skin.html">最新任务</a></li>
+                                    <li><a href="index-2.html">我发布的任务</a></li>
+                                    <li><a href="index-2.html">我接受的任务</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="faq.html">消息</a></li>
+                            <li><a href="#">我的</a>
+                                <ul class="sub-menu">
+                                    <li><a href="blue-skin.html">个人资料</a></li>
+                                    <li><a href="green-skin.html">安全中心</a></li>
+                                    <li><a href="green-skin.html">我的文章</a></li>
+                                    <li><a href="red-skin.html">登出</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <!-- End of Main Navigation -->
+            </div>
+        </header>
     </div>
-    {% endfor %}
+    <!-- End of Header -->
 
     {% block page_content %}{% endblock %}
-</div>
+
+    <!-- Start of Footer -->
+    <footer id="footer-wrapper">
+        <div id="footer" class="container">
+            <div class="row">
+                <div class="span3">
+                    <section class="widget">
+                        <h3 class="title">关于 Wild Pointer</h3>
+                        <div class="textwidget">
+                            <p>Wild Pointer 是 <a href="http://forec.cn">Forec</a> 和 <a href="https://github.com/non1996">non1996</a> 2017 年的数据库系统课程设计选题，本质为仿 Stack-Overflow 的程序设计问答社区。</p>
+                            <p>相比 StackOverflow，Wild Pointer 增加了基于积分奖励的问答机制，并允许用户打造自己的技术博客，并与其他用户分享。</p>
+                        </div>
+                    </section>
+                </div>
+                <div class="span3">
+                    <section class="widget"><h3 class="title">导航</h3>
+                        <ul>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">发布新文章</a> </li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">提出新问题</a></li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">搜索问题</a></li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet, ">加入 Wild Pointer</a></li>
+                        </ul>
+                    </section>
+                </div>
+                <div class="span3">
+                    <section class="widget"><h3 class="title">联系我们</h3>
+                        <ul>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">GitHub</a> </li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">问题反馈</a></li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">提出建议</a></li>
+                            <li><a href="#" title="Lorem ipsum dolor sit amet,">找回密码</a></li>
+                        </ul>
+                    </section>
+                </div>
+                <div class="span3">
+                    <section class="widget">
+                        <h3 class="title">手机二维码访问</h3>
+                        <div class="flickr-photos" id="basicuse">
+                            <img src="{{ url_for('static', filename='images/qr.png', _external=True) }}"/>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <!-- end of #footer -->
+
+        {% block footer_bottom %}
+        {% endblock %}
+    </footer>
+    <!-- End of Footer -->
+
+    {% block after_footer %}
 {% endblock %}
 
+{% endblock %}
+
+
 {% block scripts %}
-{{ super() }}
 {{ moment.include_moment() }}
 {{ moment.include_jquery() }}
 {{ moment.lang("zh-CN") }}
+<!-- script -->
+<script type='text/javascript' src="{{ url_for('static', filename='js/jquery-1.8.3.min.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/jquery.easing.1.3.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/prettyphoto/jquery.prettyPhoto.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/jflickrfeed.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/jquery.liveSearch.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/jquery.form.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/jquery.validate.min.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/custom.js', _external=True) }}"></script>
 {% endblock %}

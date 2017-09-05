@@ -19,7 +19,7 @@ import hashlib
 import bleach
 
 class Permission:
-    FOLLOW = 0x01  # follow other users
+    FOLLOW = 0x01  # focus other users
     COMMENT = 0x02  # comment on other users' articles
     WRITE_ARTICLES = 0x04  # write articles
     MODERATE_COMMENTS = 0x08  # moderate users' comments
@@ -385,6 +385,9 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
         return True
+
+    def is_confirmed(self):
+        return self.confirmed
 
     def change_email(self, token):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])

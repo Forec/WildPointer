@@ -1,0 +1,317 @@
+<!doctype html>
+        <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en-US"> <![endif]-->
+        <!--[if IE 7]>    <html class="lt-ie9 lt-ie8" lang="en-US"> <![endif]-->
+        <!--[if IE 8]>    <html class="lt-ie9" lang="en-US"> <![endif]-->
+        <!--[if gt IE 8]><!--> <html lang="en-US"> <!--<![endif]-->
+        <head>
+                <!-- META TAGS -->
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+                <title>Wild Pointer</title>
+
+                <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', _external=True) }}" />
+
+                <!-- Style Sheet-->
+                <link rel="stylesheet" href="{{ url_for('static', filename='style.css', _external=True) }}"/>
+                <link rel='stylesheet' id='bootstrap-css-css'  href="{{ url_for('static', filename='css/bootstrap5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+                <link rel='stylesheet' id='responsive-css-css'  href="{{ url_for('static', filename='css/responsive5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+                <link rel='stylesheet' id='pretty-photo-css-css'  href="{{ url_for('static', filename='js/prettyphoto/prettyPhotoaeb9.css', _external=True) }}?ver=3.1.4" type='text/css' media='all' />
+                <link rel='stylesheet' id='main-css-css'  href="{{ url_for('static', filename='css/main5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+                <link rel='stylesheet' id='custom-css-css'  href="{{ url_for('static', filename='css/custom5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
+
+        </head>
+
+        <body>
+
+                <!-- Start of Header -->
+                <div class="header-wrapper">
+                        <header>
+                                <div class="container">
+
+
+                                        <div class="logo-container">
+                                                <!-- Website Logo -->
+                                                <a href="index-2.html"  title="Wild Pointer">
+                                                        <img src="{{ url_for('static', filename='images/logo.png', _external=True) }}" alt="Wild Pointer">
+                                                </a>
+                                                <span class="tag-line">程序员问答社区</span>
+                                        </div>
+
+
+                                        <!-- Start of Main Navigation -->
+                                        <nav class="main-nav">
+                                                <div class="menu-top-menu-container">
+                                                        <ul id="menu-top-menu" class="clearfix">
+                                                                <li class="current-menu-item"><a href="index-2.html">主页</a></li>
+                                                                <li><a href="#">问题</a>
+                                                                        <ul class="sub-menu">
+                                                                                <li><a href="blue-skin.html">最新问题</a></li>
+                                                                                <li><a href="index-2.html">我的问题</a></li>
+                                                                                <li><a href="index-2.html">我的回答</a></li>
+                                                                        </ul>
+                                                                </li>
+                                                                <li><a href="#">任务池</a>
+                                                                        <ul class="sub-menu">
+                                                                                <li><a href="blue-skin.html">最新任务</a></li>
+                                                                                <li><a href="index-2.html">我发布的任务</a></li>
+                                                                                <li><a href="index-2.html">我接受的任务</a></li>
+                                                                        </ul>
+                                                                </li>
+                                                                <li><a href="faq.html">消息</a></li>
+                                                                <li><a href="#">我的</a>
+                                                                        <ul class="sub-menu">
+                                                                                <li><a href="blue-skin.html">个人资料</a></li>
+                                                                                <li><a href="green-skin.html">安全中心</a></li>
+                                                                                <li><a href="green-skin.html">我的文章</a></li>
+                                                                                <li><a href="red-skin.html">登出</a></li>
+                                                                        </ul>
+                                                                </li>
+                                                        </ul>
+                                                </div>
+                                        </nav>
+                                        <!-- End of Main Navigation -->
+
+                                </div>
+                        </header>
+                </div>
+                <!-- End of Header -->
+
+                <!-- Start of Search Wrapper -->
+                <div class="search-area-wrapper">
+                        <div class="search-area container">
+                                <h3 class="search-header">有什么可以帮你？</h3>
+                                <p class="search-tag-line">若你有任何疑问，请在下方文本框中搜索或提问！</p>
+
+                                <form id="search-form" class="search-form clearfix" method="get" action="#" autocomplete="off">
+                                        <input class="search-term required" type="text" id="s" name="s" placeholder="在此输入搜索关键词" title="* 请输入您要检索的关键词！" />
+                                        <input class="search-btn" type="submit" value="检索" />
+                                        <div id="search-error-container"></div>
+                                </form>
+                        </div>
+                </div>
+                <!-- End of Search Wrapper -->
+                <div class="copyrights">Wild Pointer 由 <a href="http://forec.cn" title="Forec">Forec</a> 和 <a href="https://github.com/non1996">non1996</a> 设计</div>
+
+                <!-- Start of Page Container -->
+                <div class="page-container">
+                        <div class="container">
+                                <div class="row">
+
+                                        <!-- start of page content -->
+                                        <div class="span8 page-content">
+
+                                                <!-- Basic Home Page Template -->
+                                                <div class="row separator">
+                                                        <section class="span4 articles-list">
+                                                                <h3>热搜文章</h3>
+                                                                <ul class="articles">
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
+                                                                                <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
+                                                                                <span class="like-count">66</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">WordPress Site Maintenance</a></h4>
+                                                                                <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                                <span class="like-count">15</span>
+                                                                        </li>
+                                                                        <li class="article-entry video">
+                                                                                <h4><a href="single.html">Meta Tags in WordPress</a></h4>
+                                                                                <span class="article-meta">23 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                                <span class="like-count">8</span>
+                                                                        </li>
+                                                                        <li class="article-entry image">
+                                                                                <h4><a href="single.html">WordPress in Your Language</a></h4>
+                                                                                <span class="article-meta">22 Feb, 2013 in <a href="#" title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
+                                                                                <span class="like-count">6</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">Know Your Sources</a></h4>
+                                                                                <span class="article-meta">22 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                                <span class="like-count">2</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">Validating a Website</a></h4>
+                                                                                <span class="article-meta">21 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                                <span class="like-count">3</span>
+                                                                        </li>
+                                                                </ul>
+                                                        </section>
+
+
+                                                        <section class="span4 articles-list">
+                                                                <h3>最新问题</h3>
+                                                                <ul class="articles">
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
+                                                                                <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
+                                                                                <span class="like-count">66</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">Using Javascript</a></h4>
+                                                                                <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
+                                                                                <span class="like-count">18</span>
+                                                                        </li>
+                                                                        <li class="article-entry image">
+                                                                                <h4><a href="single.html">Using Images</a></h4>
+                                                                                <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Designing in WordPress">Designing in WordPress</a></span>
+                                                                                <span class="like-count">7</span>
+                                                                        </li>
+                                                                        <li class="article-entry video">
+                                                                                <h4><a href="single.html">Using Video</a></h4>
+                                                                                <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in WordPress Plugins">WordPress Plugins</a></span>
+                                                                                <span class="like-count">7</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">WordPress Site Maintenance</a></h4>
+                                                                                <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                                <span class="like-count">15</span>
+                                                                        </li>
+                                                                        <li class="article-entry standard">
+                                                                                <h4><a href="single.html">WordPress CSS Information and Techniques</a></h4>
+                                                                                <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in Theme Development">Theme Development</a></span>
+                                                                                <span class="like-count">1</span>
+                                                                        </li>
+                                                                </ul>
+                                                        </section>
+                                                </div>
+                                        </div>
+                                        <!-- end of page content -->
+
+
+                                        <!-- start of sidebar -->
+                                        <aside class="span4 page-sidebar">
+
+                                                <section class="widget">
+                                                        <div class="support-widget">
+                                                                <h3 class="title">帮助</h3>
+                                                                <p class="intro">需要更多帮助吗？如果你没有搜索到想要的答案，试试提出一个新问题？</p>
+                                                        </div>
+                                                </section>
+
+                                                <section class="widget">
+                                                        <div class="quick-links-widget">
+                                                                <h3 class="title">快速链接</h3>
+                                                                <ul id="menu-quick-links" class="menu clearfix">
+                                                                        <li><a href="index-2.html">我的文章</a></li>
+                                                                        <li><a href="articles-list.html">我的提问</a></li>
+                                                                        <li><a href="faq.html">我的回答</a></li>
+                                                                        <li><a href="contact.html">我的任务</a></li>
+                                                                </ul>
+                                                        </div>
+                                                </section>
+
+                                                <section class="widget">
+                                                        <h3 class="title">标签</h3>
+                                                        <div class="tagcloud">
+                                                                <a href="#" class="btn btn-mini">basic</a>
+                                                                <a href="#" class="btn btn-mini">beginner</a>
+                                                                <a href="#" class="btn btn-mini">blogging</a>
+                                                                <a href="#" class="btn btn-mini">colour</a>
+                                                                <a href="#" class="btn btn-mini">css</a>
+                                                                <a href="#" class="btn btn-mini">date</a>
+                                                                <a href="#" class="btn btn-mini">design</a>
+                                                                <a href="#" class="btn btn-mini">files</a>
+                                                                <a href="#" class="btn btn-mini">format</a>
+                                                                <a href="#" class="btn btn-mini">header</a>
+                                                                <a href="#" class="btn btn-mini">images</a>
+                                                                <a href="#" class="btn btn-mini">plugins</a>
+                                                                <a href="#" class="btn btn-mini">setting</a>
+                                                                <a href="#" class="btn btn-mini">templates</a>
+                                                                <a href="#" class="btn btn-mini">theme</a>
+                                                                <a href="#" class="btn btn-mini">time</a>
+                                                                <a href="#" class="btn btn-mini">videos</a>
+                                                                <a href="#" class="btn btn-mini">website</a>
+                                                                <a href="#" class="btn btn-mini">wordpress</a>
+                                                        </div>
+                                                </section>
+
+                                        </aside>
+                                        <!-- end of sidebar -->
+                                </div>
+                        </div>
+                </div>
+                <!-- End of Page Container -->
+
+                <!-- Start of Footer -->
+                <footer id="footer-wrapper">
+                        <div id="footer" class="container">
+                                <div class="row">
+
+                                        <div class="span3">
+                                                <section class="widget">
+                                                        <h3 class="title">关于 Wild Pointer</h3>
+                                                        <div class="textwidget">
+                                                                <p>Wild Pointer 是 <a href="http://forec.cn">Forec</a> 和 <a href="https://github.com/non1996">non1996</a> 2017 年的数据库系统课程设计选题，本质为仿 Stack-Overflow 的程序设计问答社区。</p>
+                                                                <p>相比 StackOverflow，Wild Pointer 增加了基于积分奖励的问答机制，并允许用户打造自己的技术博客，并与其他用户分享。</p>
+                                                        </div>
+                                                </section>
+                                        </div>
+
+                                        <div class="span3">
+                                                <section class="widget"><h3 class="title">导航</h3>
+                                                        <ul>
+                                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">发布新文章</a> </li>
+                                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">提出新问题</a></li>
+                                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">搜索问题</a></li>
+                                                                <li><a href="#" title="Lorem ipsum dolor sit amet, ">加入 Wild Pointer</a></li>
+                                                        </ul>
+                                                </section>
+                                        </div>
+
+                                        <div class="span3">
+                                          <section class="widget"><h3 class="title">联系我们</h3>
+                                                  <ul>
+                                                          <li><a href="#" title="Lorem ipsum dolor sit amet,">GitHub</a> </li>
+                                                          <li><a href="#" title="Lorem ipsum dolor sit amet,">问题反馈</a></li>
+                                                          <li><a href="#" title="Lorem ipsum dolor sit amet,">提出建议</a></li>
+                                                          <li><a href="#" title="Lorem ipsum dolor sit amet,">找回密码</a></li>
+                                                  </ul>
+                                          </section>
+                                        </div>
+
+                                        <div class="span3">
+                                                <section class="widget">
+                                                        <h3 class="title">手机二维码访问</h3>
+                                                        <div class="flickr-photos" id="basicuse">
+                                                            <img src="{{ url_for('static', filename='images/qr.png', _external=True) }}"/>
+                                                        </div>
+                                                </section>
+                                        </div>
+
+                                </div>
+                        </div>
+                        <!-- end of #footer -->
+
+                        <!-- Footer Bottom -->
+                        <div id="footer-bottom-wrapper">
+                                <div id="footer-bottom" class="container">
+                                        <div class="row">
+                                                <div class="span6">
+                                                        <p class="copyright">
+                                                                Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+                                                        </p>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                        <!-- End of Footer Bottom -->
+
+                </footer>
+                <!-- End of Footer -->
+
+                <a href="#top" id="scroll-top"></a>
+
+                <!-- script -->
+                <script type='text/javascript' src="{{ url_for('static', filename='js/jquery-1.8.3.min.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/jquery.easing.1.3.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/prettyphoto/jquery.prettyPhoto.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/jflickrfeed.js', _external=True) }}"></script>
+				<script type='text/javascript' src="{{ url_for('static', filename='js/jquery.liveSearch.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/jquery.form.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/jquery.validate.min.js', _external=True) }}"></script>
+                <script type='text/javascript' src="{{ url_for('static', filename='js/custom.js', _external=True) }}"></script>
+
+        </body>
+</html>
