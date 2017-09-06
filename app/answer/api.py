@@ -13,7 +13,7 @@ from . import ans
 from ..models import Permission, Answer
 
 
-@ans.route('/detail/<int:answer_id', methods=['GET'])
+@ans.route('/detail/<int:answer_id>', methods=['GET'])
 def detail(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     if answer is None:

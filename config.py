@@ -21,13 +21,14 @@ class Config:
     WP_MAIL_SENDER = os.environ.get('WP_MAIL_SENDER') or 'Wild-Pointer Admin <wild-pointer@forec.cn>'
     WP_ADMIN = os.environ.get('WP_ADMIN') or 'root'
 
-    WP_POSTS_PER_PAGE = 20
+    WP_POSTS_PER_PAGE = 15
     WP_FOLLOWERS_PER_PAGE = 20
-    WP_COMMENTS_PER_PAGE = 15
-    WP_QUESTIONS_PER_PAGE = 20
-    WP_ANSWERS_PER_PAGE = 15
-    PROFILE_WP_POSTS_PER_PAGE = 6
-    PROFILE_WP_TASKS_PER_PAGE = 6
+    WP_COMMENTS_PER_PAGE = 6
+    WP_QUESTIONS_PER_PAGE = 15
+    WP_ANSWERS_PER_PAGE = 8
+    WP_MESSAGES_PER_PAGE = 10
+    PROFILE_WP_POSTS_PER_PAGE = 4
+    PROFILE_WP_TASKS_PER_PAGE = 4
     EMAIL_ADMIN ='forec@bupt.edu.cn'
     @staticmethod
     def init_app(app):

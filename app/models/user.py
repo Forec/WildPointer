@@ -219,6 +219,20 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
 
+    # Part about Comments
+    def modify_comment(self, comment, disable):
+        if comment is None:
+            return False
+        from ..models import PostComment, AnswerComment, QuestionComment
+        if comment.author_id == self.id or self.can(Permission.MODERATE_COMMENTS) or \
+                (isinstance(comment, PostComment) and comment.post.author_id == self.id) or \
+                (isinstance(comment, QuestionComment) and comment.question.publisher_id == self.id) or \
+                (isinstance(comment, AnswerComment) and comment.answer.author_id == self.id):
+            comment.disable = disable
+            db.session.add(comment)
+            return True
+        return False
+
     # Like part about Posts
     def like_post(self, post):
         if not self.is_like_post(post):

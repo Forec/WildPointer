@@ -56,5 +56,7 @@ def create_app(config_name):
     app.register_blueprint(ans_blueprint, url_prefix='/answer')
     from .post import post as post_blueprint
     app.register_blueprint(post_blueprint, url_prefix='/post')
+    from .comment import comment as comm_blueprint
+    app.register_blueprint(comm_blueprint, url_prefix='/comment')
 
     return app

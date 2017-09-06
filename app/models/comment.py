@@ -18,24 +18,26 @@ class Comment(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean, default=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    comment_type = db.Column(db.String(16))
 
-    @staticmethod
-    def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i', 'br', 'strong']
-        target.body_html = bleach.linkify(
-            bleach.clean(markdown(value, output_format='html'),
-                         tags=allowed_tags, strip=True)
-        )
+    __mapper_args__ = {
+        'polymorphic_identity': 'normal',
+        'polymorphic_on': comment_type
+    }
 
 
 class PostComment(Comment):
-    __tablename__ = "post_comments"
+    __tablename__ = "comment_posts"
 
+    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'post',
+    }
 
     @staticmethod
     def generate_fake(count=100):
@@ -59,12 +61,21 @@ class PostComment(Comment):
                      post=p)
             db.session.add(c)
         db.session.commit()
+
+    @property
+    def parent(self):
+        return self.post
 
 
 class QuestionComment(Comment):
-    __tablename__ = "question_comments"
+    __tablename__ = "comment_questions"
 
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
+    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'question',
+    }
 
     @staticmethod
     def generate_fake(count=100):
@@ -88,13 +99,22 @@ class QuestionComment(Comment):
                      post=p)
             db.session.add(c)
         db.session.commit()
+
+    @property
+    def parent(self):
+        return self.question
 
 
 class AnswerComment(Comment):
 
-    __tablename__ = "answer_comments"
+    __tablename__ = "comment_answers"
 
-    answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'))
+    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
+    answer_id = db.Column(db.Integer, db.ForeignKey('answers.id'))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'answer',
+    }
 
     @staticmethod
     def generate_fake(count=100):
@@ -118,3 +138,7 @@ class AnswerComment(Comment):
                      post=p)
             db.session.add(c)
         db.session.commit()
+
+    @property
+    def parent(self):
+        return self.answer

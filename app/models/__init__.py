@@ -26,6 +26,20 @@ from .. import db
 login_manager.anonymous_user = AnonymousUser
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
-db.event.listen(PostComment.body, 'set', PostComment.on_changed_body)
-db.event.listen(QuestionComment.body, 'set', QuestionComment.on_changed_body)
-db.event.listen(AnswerComment.body, 'set', AnswerComment.on_changed_body)
+
+comment_table = {
+    'post': PostComment,
+    'answer': AnswerComment,
+    'question': QuestionComment
+}
+
+material_table = {
+    'post': Post,
+    'answer': Answer,
+    'question': Question,
+    'comment': comment_table,
+    'message': Message,
+    'user': User,
+    'role': Role,
+    'permission': Permission
+}
