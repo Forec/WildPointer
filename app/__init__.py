@@ -46,11 +46,15 @@ def create_app(config_name):
     app.register_blueprint(main_blueprint)
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
-    from .prob import prob as prob_blueprint
-    app.register_blueprint(prob_blueprint, url_prefix='/prob')
+    from .question import ques as ques_blueprint
+    app.register_blueprint(ques_blueprint, url_prefix='/question')
     from .profile import profile as profile_blueprint
     app.register_blueprint(profile_blueprint, url_prefix='/profile')
     from .focus import focus as focus_blueprint
     app.register_blueprint(focus_blueprint, url_prefix='/focus')
+    from .answer import ans as ans_blueprint
+    app.register_blueprint(ans_blueprint, url_prefix='/answer')
+    from .post import post as post_blueprint
+    app.register_blueprint(post_blueprint, url_prefix='/post')
 
     return app

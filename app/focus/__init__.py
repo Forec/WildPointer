@@ -11,7 +11,7 @@ from flask import Blueprint
 
 focus = Blueprint('focus', __name__)
 
-from . import views
+from . import api
 
 from ..models import Permission
 

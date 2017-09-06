@@ -14,101 +14,18 @@ from sqlalchemy import or_
 from . import main
 from .forms import HomeForm, CommentForm, SearchForm, EditApplyForm
 from .. import db
-from ..models import Permission, Post, Comment, Advice
+from ..models import Permission, Post, Question
 from ..decorators import permission_required
 
 
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET'])
 def index():
-    form = HomeForm()
-    if current_user.can(Permission.WRITE_ARTICLES) and \
-        form.validate_on_submit():
-        if form.title.data == '' or form.title.data is None:
-            form.title.data = "Untitled"
-        post = Post(title = form.title.data,
-                    body = form.body.data,
-                    author = current_user._get_current_object())
-        db.session.add(post)
-        # db.session.commit()
-        return redirect(url_for('.index'))
-    show_followed = False
-    if current_user.is_authenticated:
-        show_followed = bool(request.cookies.get('show_followed', ''))
-    if show_followed:
-        query = current_user.followed_posts
-    else:
-        query = Post.query
-    page = request.args.get('page', 1, type=int)
-    pagination = query.order_by(Post.timestamp.desc()).paginate(
-        page, per_page=current_app.config['WP_POSTS_PER_PAGE'],
-        error_out=False
-    )
-    posts = pagination.items
-    return render_template('index.html', form=form, posts=posts,
-                           pagination=pagination, show_followed=show_followed)
+    posts = Post.query.order_by(Post.timestamp.desc()).slice(0, 6)
+    questions = Question.query.order_by(Question.timestamp.desc()).slice(0, 6)
+    return render_template('index.html', posts=posts, questions=questions)
 
 
-@main.route('/all')
-@login_required
-def show_all():
-    resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '', max_age=30*24*60*60)
-    return resp
 
-
-@main.route('/followed')
-@login_required
-def show_followed():
-    resp = make_response(redirect(url_for('.index')))
-    resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
-    return resp
-
-
-@main.route('/post/<int:id>', methods=['GET', 'POST'])
-def post(id):
-    post = Post.query.get_or_404(id)
-    form =CommentForm()
-    if form.validate_on_submit():
-        comment = Comment(body = form.body.data,
-                          post = post,
-                          author = current_user._get_current_object())
-        db.session.add(comment)
-        flash('您的评论已发布')
-        return redirect(url_for('.post', id=post.id, page=-1))
-    page = request.args.get('page', 1, type=int)
-    if page == -1:
-        page = (post.comments.count() - 1)// \
-            current_app.config['WP_COMMENTS_PER_PAGE'] + 1
-    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
-        page, per_page=current_app.config['WP_COMMENTS_PER_PAGE'],
-        error_out=False
-    )
-    comments = pagination.items
-    return render_template('main/post.html', posts=[post], comments = comments,
-                           pagination = pagination, post = post, form = form,
-                           moderate=current_user.can(Permission.MODERATE_COMMENTS))
-
-
-@main.route('/edit/<int:id>', methods=['GET','POST'])
-@login_required
-def edit(id):
-    post = Post.query.get_or_404(id)
-    if current_user != post.author and \
-        not current_user.can(Permission.ADMINISTER):
-        abort(403)
-    form = HomeForm()
-    if form.validate_on_submit():
-        if form.title.data == '' or form.title.data is None:
-            form.title.data = 'Untitled'
-        post.title = form.title.data
-        post.body = form.body.data
-        db.session.add(post)
-        db.session.commit()
-        flash('文章已更新')
-        return redirect(url_for('.post', id=post.id))
-    form.body.data = post.body
-    form.title.data = post.title
-    return render_template('main/edit_post.html', form = form)
 
 
 
@@ -133,42 +50,6 @@ def delete_post(id):
     return render_template('main/confirm_delete_post.html',post = post,form=form, token=current_user.generate_delete_token(postid=id, expiration=3600))
 
 
-@main.route('/delete-post-confirm/<token>')
-@login_required
-def delete_post_confirm(token):
-    if current_user.delete_post(token):
-        flash('文章已被删除')
-        return redirect(url_for('main.index'))
-    else:
-        abort(403)
-
-
-@main.route('/rules')
-def rules():
-    return render_template('main/rules.html')
-
-
-@main.route('/moderate_comments', methods=['GET', 'POST'])
-@login_required
-@permission_required(Permission.MODERATE_COMMENTS)
-def moderate_comments():
-    form = SearchForm()
-    if form.validate_on_submit():
-        return redirect(url_for('main.moderate_comments', key=form.key.data))
-    page = request.args.get('page', 1, type=int)
-    key = request.args.get('key', '', type=str)
-    if key == '':
-        comment = Comment.query
-    else:
-        comment = Comment.query.filter(Comment.body.like('%'+key+'%'))
-    pagination = comment.order_by(Comment.timestamp.desc()).paginate(
-        page, per_page=current_app.config['WP_COMMENTS_PER_PAGE'],
-        error_out=False)
-    comments = pagination.items
-    form.key.data = key
-    return render_template('main/moderate_comments.html', comments=comments,
-                           pagination=pagination, page=page, form=form)
-
 
 @main.route('/moderate_comments/enable/<int:id>')
 @login_required
@@ -190,17 +71,6 @@ def moderate_comments_disable(id):
     db.session.add(comment)
     return redirect(url_for('.moderate_comments',
                             page=request.args.get('page', 1, type=int)))
-
-
-@main.route('/moderate_comments/disable_own/<int:id>')
-@login_required
-def moderate_comments_disable_own(id):
-    comment = Comment.query.get_or_404(id)
-    if comment.author == current_user or comment.post.author == current_user:
-        comment.disabled = True
-        db.session.add(comment)
-        flash('评论已被设置为不可见')
-        return redirect(url_for('.post', id = comment.post_id))
 
 
 @main.route('/moderate_posts', methods=['GET', 'POST'])

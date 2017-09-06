@@ -1,0 +1,9 @@
+<div class="tagcloud">
+	{% if tags|length == 0 %}
+	    <a href="#" class="btn btn-mini">暂无</a>
+	{% else %}
+	    {% for tag in tags %}
+	    <a href="#" class="btn btn-mini">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
+</div>
