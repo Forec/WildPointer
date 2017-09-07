@@ -69,7 +69,7 @@
                             </li>
 	                        {% else %}
 	                        <li><a href="faq.html">注册</a></li>
-	                        <li><a href="#" onclick='modalHidden("#login-modal")'>登入</a></li>
+	                        <li><a href="javascript:void(0)" onclick="modalHidden('login-dialog')">登入</a></li>
 	                        {% endif %}
                         </ul>
                     </div>
@@ -135,7 +135,7 @@
     {% block after_footer %}
     {% endblock %}
 
-    {% include 'components/login-modal.html' %}
+    {% include 'components/login-dialog.html' %}
 
 {% endblock %}
 

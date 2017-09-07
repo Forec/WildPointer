@@ -9,8 +9,6 @@
 
 from .. import db
 from datetime import datetime
-from markdown import markdown
-import bleach
 
 
 class Comment(db.Model):
@@ -24,7 +22,7 @@ class Comment(db.Model):
     comment_type = db.Column(db.String(16))
 
     __mapper_args__ = {
-        'polymorphic_identity': 'normal',
+        'polymorphic_identity': 'Basic',
         'polymorphic_on': comment_type
     }
 
@@ -32,11 +30,12 @@ class Comment(db.Model):
 class PostComment(Comment):
     __tablename__ = "comment_posts"
 
-    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
+    id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
     __mapper_args__ = {
         'polymorphic_identity': 'post',
+
     }
 
     @staticmethod
@@ -53,12 +52,11 @@ class PostComment(Comment):
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
             p = Post.query.offset(randint(0, post_count-1)).first()
-            c = Comment(
-                     body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                     timestamp=forgery_py.date.date(True),
-                     author=u,
-                     disabled=False,
-                     post=p)
+            c = Comment(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                        timestamp=forgery_py.date.date(True),
+                        author=u,
+                        disabled=False,
+                        post=p)
             db.session.add(c)
         db.session.commit()
 
@@ -70,7 +68,7 @@ class PostComment(Comment):
 class QuestionComment(Comment):
     __tablename__ = "comment_questions"
 
-    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
+    id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
 
     __mapper_args__ = {
@@ -84,19 +82,19 @@ class QuestionComment(Comment):
         seed()
 
         from .user import User
-        from .post import Post
+        from .question import Question
 
         user_count = User.query.count()
-        post_count = Post.query.count()
+        ques_count = Question.query.count()
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
-            p = Post.query.offset(randint(0, post_count-1)).first()
-            c = Comment(
+            q = Question.query.offset(randint(0, ques_count-1)).first()
+            c = QuestionComment(
                      body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
                      timestamp=forgery_py.date.date(True),
                      author=u,
                      disabled=False,
-                     post=p)
+                     question=q)
             db.session.add(c)
         db.session.commit()
 
@@ -106,10 +104,9 @@ class QuestionComment(Comment):
 
 
 class AnswerComment(Comment):
-
     __tablename__ = "comment_answers"
 
-    id = db.Column(db.Integer, db.ForeignKey('comments.id', primary_key=True))
+    id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id'))
 
     __mapper_args__ = {
@@ -123,19 +120,19 @@ class AnswerComment(Comment):
         seed()
 
         from .user import User
-        from .post import Post
+        from .answer import Answer
 
         user_count = User.query.count()
-        post_count = Post.query.count()
+        ans_count = Answer.query.count()
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
-            p = Post.query.offset(randint(0, post_count-1)).first()
+            a = Answer.query.offset(randint(0, ans_count-1)).first()
             c = Comment(
                      body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
                      timestamp=forgery_py.date.date(True),
                      author=u,
                      disabled=False,
-                     post=p)
+                     answer=a)
             db.session.add(c)
         db.session.commit()
 

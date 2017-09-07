@@ -1,8 +1,16 @@
-function modalHidden(id){
-    var e = jQuery(id).css("visibility");
-    if (e == "visible") {
-         jQuery(id").css("visibility", "hidden");
+/*
+*显示和隐藏模态对话框
+*	参数：
++		modal:	对话框id值
+*/
+function modalHidden(modalID) {
+    console.log("fuck nong");
+	var idString = "#" + modalID;
+	var modal = jQuery(idString);
+    var visibility = modal.css("visibility");
+    if (visibility == "visible") {
+        modal.css("visibility", "hidden");
     } else {
-         jQuery(id).css("visibility", "visible");
+		modal.css("visibility", "visible");
     }
 };

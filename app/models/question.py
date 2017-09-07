@@ -41,7 +41,7 @@ class Question(db.Model):
                                cascade='all, delete-orphan')
     tags = db.relationship('QuestionTags',
                            foreign_keys=[QuestionTags.question_id],
-                           backref=db.backref('tags', lazy='joined'),
+                           backref=db.backref('questions', lazy='joined'),
                            lazy='dynamic',
                            cascade='all, delete-orphan')
     answers = db.relationship('Answer', backref='question', lazy='dynamic')

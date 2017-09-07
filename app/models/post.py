@@ -34,7 +34,7 @@ class Post(db.Model):
                              cascade='all, delete-orphan')
     tags = db.relationship('PostTags',
                            foreign_keys=[PostTags.post_id],
-                           backref=db.backref('tags', lazy='joined'),
+                           backref=db.backref('posts', lazy='joined'),
                            lazy='dynamic',
                            cascade='all, delete-orphan')
 
