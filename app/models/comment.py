@@ -52,11 +52,11 @@ class PostComment(Comment):
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
             p = Post.query.offset(randint(0, post_count-1)).first()
-            c = Comment(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                        timestamp=forgery_py.date.date(True),
-                        author=u,
-                        disabled=False,
-                        post=p)
+            c = PostComment(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                            timestamp=forgery_py.date.date(True),
+                            author=u,
+                            disabled=False,
+                            post=p)
             db.session.add(c)
         db.session.commit()
 
@@ -127,12 +127,11 @@ class AnswerComment(Comment):
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
             a = Answer.query.offset(randint(0, ans_count-1)).first()
-            c = Comment(
-                     body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                     timestamp=forgery_py.date.date(True),
-                     author=u,
-                     disabled=False,
-                     answer=a)
+            c = AnswerComment(body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
+                              timestamp=forgery_py.date.date(True),
+                              author=u,
+                              disabled=False,
+                              answer=a)
             db.session.add(c)
         db.session.commit()
 

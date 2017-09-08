@@ -236,13 +236,15 @@ class User(UserMixin, db.Model):
     # Like part about Posts
     def like_post(self, post):
         if not self.is_like_post(post):
-            relation = LikePosts(liker=self, post=post)
+            relation = LikePosts(liker_id=self.id, post_id=post.id)
             author = post.author
             post.score = post.score + 1
             author.agree = author.agree + 1
             db.session.add(relation)
             db.session.add(author)
             db.session.add(post)
+            return post
+        return None
 
     def cancel_like_post(self, post):
         relation = self.like_posts.filter_by(post_id=post.id).first()
@@ -253,6 +255,8 @@ class User(UserMixin, db.Model):
             db.session.delete(relation)
             db.session.add(author)
             db.session.add(post)
+            return post
+        return None
 
     def is_like_post(self, post):
         return self.like_posts.filter_by(post_id=post.id).first() is not None
@@ -262,7 +266,7 @@ class User(UserMixin, db.Model):
         if self.is_unlike_question(question):
             self.cancel_unlike_question(question)
         if not self.is_like_question(question):
-            relation = LikeQuestions(liker=self, question=question)
+            relation = LikeQuestions(liker_id=self.id, question_id=question.id)
             question.score = question.score + 1
             db.session.add(relation)
             db.session.add(question)
@@ -278,7 +282,7 @@ class User(UserMixin, db.Model):
         if self.is_like_question(question):
             self.cancel_like_question(question)
         if not self.is_unlike_question(question):
-            relation = UnLikeQuestions(unliker=self, question=question)
+            relation = UnLikeQuestions(unliker_id=self.id, question_id=question.id)
             question.score = question.score - 1
             db.session.add(relation)
             db.session.add(question)
@@ -301,7 +305,7 @@ class User(UserMixin, db.Model):
         if self.is_unlike_answer(answer):
             self.cancel_unlike_answer(answer)
         if not self.is_like_answer(answer):
-            relation = LikeAnswers(liker=self, answer=answer)
+            relation = LikeAnswers(liker_id=self.id, answer_id=answer.id)
             author = answer.author
             answer.score = answer.score + 1
             author.agree = author.agree + 1
@@ -323,7 +327,7 @@ class User(UserMixin, db.Model):
         if self.is_like_answer(answer):
             self.cancel_like_answer(answer)
         if not self.is_unlike_answer(answer):
-            relation = UnLikeAnswers(unliker=self, answer=answer)
+            relation = UnLikeAnswers(unliker_id=self.id, answer_id=answer.id)
             answer.score = answer.score - 1
             db.session.add(relation)
             db.session.add(answer)
@@ -424,7 +428,7 @@ class User(UserMixin, db.Model):
         super(User, self).__init__(**kwargs)
         if self.role is None:
             if self.email == current_app.config['EMAIL_ADMIN']:
-                self.role = Role.query.filter_by(permission=0xff).first()
+                self.role = Role.query.filter_by(permissions=0xff).first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
         if self.email is not None and self.avatar_hash is None:

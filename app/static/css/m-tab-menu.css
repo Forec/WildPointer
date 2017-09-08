@@ -1,0 +1,33 @@
+.mtabinput, .tabsection {
+  clear: both;
+  padding-top: 10px;
+  display: none;
+}
+.tablabel {
+  width: 49.5%;
+  text-align:center;
+  font-weight: bold;
+  font-size: 14px;
+  display: block;
+  float: left;
+  padding: 10px 0px;
+  border-top: 2px solid transparent;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  border-bottom: 1px solid #DDD;
+}
+.tablabel:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#tab1:checked ~ #content1, #tab2:checked ~ #content2 {
+  display: block;
+}
+
+.mtabinput:checked + .tablabel {
+  border-top-color: #FFB03D;
+  border-right-color: #DDD;
+  border-left-color: #DDD;
+  border-bottom-color: transparent;
+  text-decoration: none;
+}

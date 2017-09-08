@@ -53,7 +53,7 @@ jQuery(document).ready(function(e) {
 	/*-----------------------------------------------------------------------------------*/
 	/*	Flickr Feed
 	/*-----------------------------------------------------------------------------------*/
-//
+	
 //	$('#basicuse').jflickrfeed({
 //								limit: 9,
 //								qstrings: {
@@ -73,7 +73,7 @@ jQuery(document).ready(function(e) {
 //												overlay_gallery: false
 //											});
 //							});
-
+//
 
     /*-----------------------------------------------------------------------------------*/
 	/* Pretty Photo Lightbox
@@ -235,15 +235,31 @@ jQuery(document).ready(function(e) {
     /* ---------------------------------------------------- */
     /*	Like Button JS
      /* ---------------------------------------------------- */
-    $('#like-it-form .like-it').click(function(){
-        var likeButton = $(this);
-        var likeHtml = likeButton.html();
-        var likeNum = parseInt(likeHtml, 10);
-        likeNum++;
-        likeButton.html(likeNum);
+    $('#like-it-form .like-it').click(function() {
+        var parent = $(this);
+        var action = function(){
+            var likeButton = parent;
+            var likeHtml = likeButton.html();
+            var likeNum = parseInt(likeHtml, 10);
 
-         //   $('#like-it-form').ajaxSubmit(options);
-    });
+            var liked = jQuery("#liked");
+
+            if (liked.val() == "like_it") {
+                var url = jQuery("#like_url").val();
+                likeNum++;
+                likeButton.removeClass("like-it").addClass("dislike-it");
+                likeButton.html(likeNum);
+                thumbUp(url);
+            } else if (liked.val() == "not_like_it") {
+                var url = jQuery("#unlike_url").val();
+                likeNum--;
+                likeButton.addClass("like-it").removeClass("dislike-it");
+                likeButton.html(likeNum);
+                thumbDown(url);
+            }
+	    };
+	    auth_before_action(action);
+	});
 
 
 
@@ -350,9 +366,9 @@ jQuery(document).ready(function(e) {
                 /*-----------------------------------------------------------------------------------*/
                 /*	Live Search
                 /*-----------------------------------------------------------------------------------*/
-                if(jQuery().liveSearch){
-                        jQuery('#s').liveSearch({url: 'search.php?livesearch=used&s='});
-                }
+//                if(jQuery().liveSearch){
+//                        jQuery('#s').liveSearch({url: 'search.php?livesearch=used&s='});
+//                }
 				
 });
 

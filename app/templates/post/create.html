@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}编辑 - {{ post.title }}{% endblock %}
+{% block title %}创建新文章{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -18,10 +18,16 @@
 
 			<!-- start of page content -->
 			<div class="span8 page-content">
-				{{ wtf.quick_form(form) }}
+				<section id="create-post">
+					<form method="POST" action="/">
+						{{ form.csrf_token }}
+						{{ form.name.label }} {{ form.name(size=20) }}
+						<input type="submit" value="Go">
+					</form>
+				</section>
+
 			</div>
 			<!-- end of page content -->
-
 
 			<!-- start of sidebar -->
 			<aside class="span4 page-sidebar">

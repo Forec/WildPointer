@@ -13,7 +13,7 @@ from . import auth
 from .. import db
 from ..models import User
 from ..email import send_email
-from ..verifiers import verify_email, verify_username
+from ..verifiers import *
 import json
 
 
@@ -25,13 +25,20 @@ def login():
             'code': False
         })
     req = json.loads(req)
-    email = req.get('email')
+    username = req.get('username')
     password = req.get('password')
-    if email is None or password is None or not verify_email(email):
+    if not password or not username or not verify_password(password):
         return jsonify({
             'code': False
         })
-    user = User.query.filter_by(email=email).first()
+    if verify_email(username):
+        user = User.query.filter_by(email=username).first()
+    elif verify_username(username):
+        user = User.query.filter_by(username=username).first()
+    else:
+        return jsonify({
+            'code': False
+        })
     if user is None or not user.verify_password(password):
         return jsonify({
             'code': False
@@ -157,4 +164,11 @@ def change_email_request():
         })
     return jsonify({
         'code': 2  # 认证失败
+    })
+
+
+@auth.route('/is_confirmed', methods=['GET'])
+def is_confirmed():
+    return jsonify({
+        'code': current_user.is_authenticated and current_user.confirmed
     })

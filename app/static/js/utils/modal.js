@@ -4,7 +4,6 @@
 +		modal:	对话框id值
 */
 function modalHidden(modalID) {
-    console.log("fuck nong");
 	var idString = "#" + modalID;
 	var modal = jQuery(idString);
     var visibility = modal.css("visibility");

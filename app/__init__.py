@@ -58,5 +58,9 @@ def create_app(config_name):
     app.register_blueprint(post_blueprint, url_prefix='/post')
     from .comment import comment as comm_blueprint
     app.register_blueprint(comm_blueprint, url_prefix='/comment')
+    from .message import message as mess_blueprint
+    app.register_blueprint(mess_blueprint, url_prefix='/message')
+    from .search import sea as sea_blueprint
+    app.register_blueprint(sea_blueprint, url_prefix='/search')
 
     return app

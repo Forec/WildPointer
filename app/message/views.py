@@ -16,7 +16,7 @@ from ..models import Message
 
 @mess.route('/')
 @login_required
-def message():
+def home():
     unread_messages = current_user.messages.order_by(Message.viewed.asc()).order_by(Message.timestamp.desc())
     page = request.args.get('page', 1, type=int)
     pagination = unread_messages.paginate(

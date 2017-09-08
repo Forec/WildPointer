@@ -41,18 +41,18 @@ def init():
     u = User(email='forec@bupt.edu.cn',
              username='forec',
              nickname='龙日天',
-             password='test',
+             password='password',
              confirmed=True,
              role=Role.query.filter_by(name='Administrator').first(),
              location='Beijing, China',
              about_me='Wait for updating')
-    u2 = User(email='test@test.com',
+    u2 = User(email='flyingx@qq.com',
               nickname='泰日地',
-              username='test',
-              password='test',
+              username='flyingx',
+              password='password',
               role=Role.query.filter_by(name='User').first(),
               location='Beijing University Of Posts and Telecommunications',
-              about_me='test account',
+              about_me='Nong 1996',
               confirmed=True)
     db.session.add(u)
     db.session.add(u2)
@@ -62,7 +62,7 @@ def init():
     Question.generate_fake(350)
     Answer.generate_fake(150)
     PostComment.generate_fake(350)
-    QuestionComment.generate(100)
+    QuestionComment.generate_fake(100)
     AnswerComment.generate_fake(100)
 
 if __name__ == "__main__":

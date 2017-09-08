@@ -9,6 +9,7 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  '9d0e91f3372224b3ec7afec2' \
@@ -29,26 +30,31 @@ class Config:
     WP_MESSAGES_PER_PAGE = 10
     PROFILE_WP_POSTS_PER_PAGE = 4
     PROFILE_WP_TASKS_PER_PAGE = 4
-    EMAIL_ADMIN ='forec@bupt.edu.cn'
+    EMAIL_ADMIN = 'forec@bupt.edu.cn'
+
     @staticmethod
     def init_app(app):
         pass
 
+
 class DevConfig(Config):
     DEBUG = True
     MAIL_SERVER = 'smtp.exmail.qq.com'
-    MAIL_PORT = 25 # SSL is 465
+    MAIL_PORT = 25  # SSL is 465
     MAIL_USE_TLS = True
     MAIL_USERNAME = "wild-pointer@forec.cn"
     MAIL_PASSWORD = os.environ.get('WP_MAIL_PASSWORD') or "WP-MAIL-ADMIN"
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'tmp/debug.db')
 
+
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'tmp/test.db')
 
+
 class ProductionConfig(Config):
     pass
+
 
 config = {
     'dev': DevConfig,

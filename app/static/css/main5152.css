@@ -643,8 +643,25 @@ ul.articles li.article-entry:last-child {
   border-radius: 3px;
   color: #8cd24e;
 }
+.like-btn .dislike-it {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 13px;
+  padding-left: 25px;
+  background: #fafafa url("../images/dislike-btn.png") no-repeat 10px -20px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #e54137;
+}
 .like-btn .like-it:hover {
   background: #b6b6b6 url("../images/like-btn.png") no-repeat 10px 10px;
+  color: #fff;
+}
+.like-btn .dislike-it:hover {
+  background: #b6b6b6 url("../images/dislike-btn.png") no-repeat 10px 10px;
   color: #fff;
 }
 .like-btn .like-it.already-voted {

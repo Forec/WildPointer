@@ -8,12 +8,13 @@
 
 
 from flask import render_template, request, current_app
+from flask_login import login_required, current_user
 from . import ques
 from ..models import Question, Answer
 
 
 @ques.route('/latest', methods=['GET'])
-def latest_questions():
+def latest():
     page = request.args.get('page', 1, type=int)
     pagination = Question.query.order_by(Question.timestamp.desc()).paginate(
         page, per_page=current_app.config['WP_QUESTIONS_PER_PAGE'],
@@ -36,3 +37,16 @@ def detail(question_id):
                            question=question,
                            answers=answers,
                            pagination=pagination)
+
+
+@ques.route('/me', methods=['GET'])
+@login_required
+def me():
+    query = Question.query.filter_by(publisher_id=current_user.id)
+    page = request.args.get('page', 1, type=int)
+    pagination = query.order_by(Question.timestamp.desc()).paginate(
+        page, per_page=current_app.config['WP_QUESTIONS_PER_PAGE'],
+        error_out=False
+    )
+    questions = pagination.items
+    return render_template('question/me.html', questions=questions, pagination=pagination)

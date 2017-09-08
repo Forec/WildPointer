@@ -1,30 +1,50 @@
-{% extends "bootstrap/base.html" %}
+<!doctype html>
+<!--[if lt IE 7]>
+<html class="lt-ie9 lt-ie8 lt-ie7" lang="en-US"> <![endif]-->
+<!--[if IE 7]>
+<html class="lt-ie9 lt-ie8" lang="en-US"> <![endif]-->
+<!--[if IE 8]>
+<html class="lt-ie9" lang="en-US"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en-US"> <!--<![endif]-->
+<head>
+	<!-- META TAGS -->
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %}Wild Pointer{% endblock title %}</title>
+	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', _external=True) }}" />
 
-{% block title %}Wild Pointer{% endblock %}
+	{% block head %}
+	<!-- Style Sheet-->
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css', _external=True) }}"/>
+	<link rel='stylesheet' id='bootstrap-css-css'
+	      href="{{ url_for('static', filename='css/bootstrap5152.css', _external=True) }}?ver=1.0" type='text/css'
+	      media='all'/>
+	<link rel='stylesheet' id='responsive-css-css'
+	      href="{{ url_for('static', filename='css/responsive5152.css', _external=True) }}?ver=1.0" type='text/css'
+	      media='all'/>
+	<link rel='stylesheet' id='pretty-photo-css-css'
+	      href="{{ url_for('static', filename='js/prettyphoto/prettyPhotoaeb9.css', _external=True) }}?ver=3.1.4"
+	      type='text/css' media='all'/>
+	<link rel='stylesheet' id='main-css-css'
+	      href="{{ url_for('static', filename='css/main5152.css', _external=True) }}?ver=1.0" type='text/css'
+	      media='all'/>
+	<link rel='stylesheet' id='custom-css-css'
+	      href="{{ url_for('static', filename='css/custom5152.css', _external=True) }}?ver=1.0" type='text/css'
+	      media='all'/>
+	<link rel="stylesheet" id='fontawesome-css-css'
+	      href="{{ url_for('static', filename='css/fonts/fontawesome/css/font-awesome.min.css', _external=True) }}"
+	      type='text/css' media='all'/>
+	<link rel="stylesheet" id='m-tab-menu-css-css'
+	      href="{{ url_for('static', filename='css/m-tab-menu.css', _external=True) }}" type='text/css'
+	      media='all'/>
 
-{% block head %}
-<!-- META TAGS -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
+	{% endblock head %}
+</head>
 
-<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', _external=True) }}" />
-
-<!-- Style Sheet-->
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css', _external=True) }}"/>
-<link rel='stylesheet' id='bootstrap-css-css'  href="{{ url_for('static', filename='css/bootstrap5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
-<link rel='stylesheet' id='responsive-css-css'  href="{{ url_for('static', filename='css/responsive5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
-<link rel='stylesheet' id='pretty-photo-css-css'  href="{{ url_for('static', filename='js/prettyphoto/prettyPhotoaeb9.css', _external=True) }}?ver=3.1.4" type='text/css' media='all' />
-<link rel='stylesheet' id='main-css-css'  href="{{ url_for('static', filename='css/main5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
-<link rel='stylesheet' id='custom-css-css'  href="{{ url_for('static', filename='css/custom5152.css', _external=True) }}?ver=1.0" type='text/css' media='all' />
-<link rel="stylesheet" id='fontawesome-css-css'  href="{{ url_for('static', filename='css/fonts/fontawesome/css/font-awesome.min.css', _external=True) }}" type="'text/css" media="'all" />
-
-<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
-{% endblock %}
-
-{% block navbar %}
-{% endblock %}
-
-{% block content %}
+<body>
+{% block body %}
     <!-- Start of Header -->
     <div class="header-wrapper">
         <header>
@@ -32,7 +52,7 @@
 
                 <div class="logo-container">
                     <!-- Website Logo -->
-                    <a href="index-2.html"  title="Wild Pointer">
+                    <a href="{{ url_for('main.index', _external=True) }}"  title="Wild Pointer">
                         <img src="{{ url_for('static', filename='images/logo.png', _external=True) }}" alt="Wild Pointer">
                     </a>
                     <span class="tag-line">程序员问答社区</span>
@@ -42,34 +62,40 @@
                 <nav class="main-nav">
                     <div class="menu-top-menu-container">
                         <ul id="menu-top-menu" class="clearfix">
-                            <li class="current-menu-item"><a href="index-2.html">主页</a></li>
-                            <li class="current-menu-item"><a href="">刷新</a></li>
+                            <li class="current-menu-item">
+	                            <a href="{{ url_for('main.index', _external=True) }}">主页</a>
+                            </li>
 	                        {% if current_user.is_authenticated %}
-                            <li><a href="#">问题</a>
+                            <li class="current-menu-item"><a href="#">文章</a>
                                 <ul class="sub-menu">
-                                    <li><a href="blue-skin.html">最新问题</a></li>
-                                    <li><a href="index-2.html">我的问题</a></li>
-                                    <li><a href="index-2.html">我的回答</a></li>
+                                    <li><a href="{{ url_for('post.home', _external=True) }}">最新文章</a></li>
+                                    <li><a href="{{ url_for('post.me', _external=True) }}">我的文章</a></li>
+                                </ul>
+                            </li>
+                            <li class="current-menu-item"><a href="#">问题</a>
+                                <ul class="sub-menu">
+                                    <li><a href="{{ url_for('ques.latest', _external=True) }}">最新问题</a></li>
+                                    <li><a href="{{ url_for('ques.me', _external=True) }}">我的问题</a></li>
+                                    <li><a href="{{ url_for('ans.me', _external=True) }}">我的回答</a></li>
                                 </ul>
                             </li>
                             {% else %}
-                            <li class="current-menu-item"><a href="index-2.html">问题</a></li>
+                            <li class="current-menu-item"><a href="{{ url_for('post.home', _external=True) }}">文章</a></li>
+                            <li class="current-menu-item"><a href="{{ url_for('ques.latest', _external=True) }}">问题</a></li>
                             {% endif %}
 
 	                        {% if current_user.is_authenticated %}
-                            <li><a href="faq.html">消息</a></li>
-                            <li><a href="#">我的</a>
+                            <li class="current-menu-item"><a href="{{ url_for('message.home', _external=True) }}">消息</a></li>
+                            <li class="current-menu-item"><a href="#">我的</a>
                                 <ul class="sub-menu">
-                                    <li><a href="blue-skin.html">个人资料</a></li>
-                                    <li><a href="blue-skin.html">我的关注</a></li>
-                                    <li><a href="green-skin.html">安全中心</a></li>
-                                    <li><a href="green-skin.html">我的文章</a></li>
-                                    <li><a href="red-skin.html">登出</a></li>
+                                    <li><a href="{{ url_for('profile.detail', username=current_user.username, _external=True) }}">个人资料</a></li>
+                                    <li><a href="{{ url_for('post.only_show_followed', _external=True) }}">我的关注</a></li>
+                                    <li><a href="{{ url_for('auth.secure', _external=True) }}">安全中心</a></li>
+                                    <li><a href="{{ url_for('auth.logout', _external=True) }}">登出</a></li>
                                 </ul>
                             </li>
 	                        {% else %}
-	                        <li><a href="faq.html">注册</a></li>
-	                        <li><a href="javascript:void(0)" onclick="modalHidden('login-dialog')">登入</a></li>
+	                        <li class="current-menu-item"><a href="javascript:void(0)" onclick="modalHidden('auth-dialog')">认证</a></li>
 	                        {% endif %}
                         </ul>
                     </div>
@@ -80,7 +106,8 @@
     </div>
     <!-- End of Header -->
 
-    {% block page_content %}{% endblock %}
+    {% block page_content %}
+    {% endblock page_content %}
 
     <!-- Start of Footer -->
     <footer id="footer-wrapper">
@@ -98,20 +125,24 @@
                 <div class="span3">
                     <section class="widget"><h3 class="title">导航</h3>
                         <ul>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">发布新文章</a> </li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">提出新问题</a></li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">搜索问题</a></li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet, ">加入 Wild Pointer</a></li>
+	                        {% if not current_user.is_authenticated or not current_user.confirmed %}
+                            <li><a href="javascript:void(0)" onclick="alertNotLogin()" title="发布新文章">发布新文章</a></li>
+	                        {% else %}
+	                        <li><a href="{{ url_for('post.create', _external=True) }}" title="发布新文章">发布新文章</a></li>
+	                        {% endif %}
+                            <li><a href="javascript:void(0)" onclick="raiseQuestion()" title="提出新问题">提出新问题</a></li>
+                            <li><a href="{{ url_for('main.index', _external=True) }}" title="搜索问题">搜索问题</a></li>
+                            <li><a href="{{ url_for('ques.latest', _external=True) }}" title="去回答">去回答</a></li>
                         </ul>
                     </section>
                 </div>
                 <div class="span3">
                     <section class="widget"><h3 class="title">联系我们</h3>
                         <ul>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">GitHub</a> </li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">问题反馈</a></li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">提出建议</a></li>
-                            <li><a href="#" title="Lorem ipsum dolor sit amet,">找回密码</a></li>
+                            <li><a href="https://github.com/Forec/WildPointer" title="GitHub">GitHub</a> </li>
+                            <li><a href="mailto:feedback@forec.cn" title="问题反馈">问题反馈</a></li>
+                            <li><a href="mailto:advice@forec.cn" title="提出建议">提出建议</a></li>
+                            <li><a href="{{ url_for('auth.forget', _external=True) }}" title="找回密码">找回密码</a></li>
                         </ul>
                     </section>
                 </div>
@@ -128,21 +159,19 @@
         <!-- end of #footer -->
 
         {% block footer_bottom %}
-        {% endblock %}
+        {% endblock footer_bottom %}
     </footer>
     <!-- End of Footer -->
 
     {% block after_footer %}
-    {% endblock %}
+    {% endblock after_footer %}
 
-    {% include 'components/login-dialog.html' %}
-
-{% endblock %}
+    {% if not current_user.is_authenticated %}
+        {% include 'components/auth-dialog.html' %}
+    {% endif %}
 
 
 <!-- script -->
-<!--<script type='text/javascript' src="{{ url_for('static', filename='js/bootstrap.min.js', _external=True) }}"></script>-->
-<!--<script type='text/javascript' src="{{ url_for('static', filename='js/jquery-1.8.3.min.js', _external=True) }}"></script>-->
 <script type='text/javascript' src="{{ url_for('static', filename='js/jquery.easing.1.3.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/prettyphoto/jquery.prettyPhoto.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/jflickrfeed.js', _external=True) }}"></script>
@@ -153,11 +182,22 @@
 <script type='text/javascript' src="{{ url_for('static', filename='js/custom.js', _external=True) }}"></script>
 
 {% for message in get_flashed_messages() %}
-<script type='text/javascript' src="{{ url_for('static', filename='js/utils/flash-message.js', _external=True) }}"></script>
+{% include 'js/flash-message.html' %}
 {% endfor %}
 
-<script type='text/javascript' src="{{ url_for('static', filename='js/utils/auth.js', _external=True) }}"></script>
+{% if not current_user.is_authenticated %}
+    {% include 'js/auth.html' %}
+{% endif %}
+
+{% include 'js/auth_before_action.html' %}
+
 <script type='text/javascript' src="{{ url_for('static', filename='js/utils/modal.js', _external=True) }}"></script>
 
+{{ moment.include_moment(local_js, "http://127.0.0.1:5000/static/js/moment/moment-with-locales.js") }}
+{{ moment.lang("zh-CN") }}
+
 {% block scripts %}
-{% endblock %}
+{% endblock scripts %}
+{% endblock body %}
+</body>
+</html>

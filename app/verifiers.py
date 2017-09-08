@@ -17,12 +17,18 @@ def verify_email(email):
 
 
 def verify_username(username):
-    if len(username) < 5 or len(username) > 32:
+    if len(username) < 5 or len(username) > 16:
         return False
     invalid = ['?', '/', '=', '>', '<', '!', ',', ';', '.', '\\']
     for inv in invalid:
         if inv in username:
             return False
+    return True
+
+
+def verify_password(password):
+    if len(password) < 8 or len(password) > 22:
+        return False
     return True
 
 

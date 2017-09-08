@@ -1,0 +1,18 @@
+<script>
+function auth_before_action(action) {
+	$.ajax({
+		url: "{{ url_for('auth.is_confirmed', _external=True) }}",
+		type: "GET",
+		success: function(response) {
+            if (response.code == true) {
+                action();
+            } else {
+                console.log("您必须先登录并激活账号后才可使用此功能");
+            }
+		},
+		err: function(error) {
+		    console.log("抱歉，我们无法认证您的身份，请登录并激活账号后重试");
+		}
+	});
+}
+</script>

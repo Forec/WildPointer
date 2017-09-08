@@ -19,7 +19,8 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64), index=True)
     body = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    create = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    last_edit = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     score = db.Column(db.Integer, default=0)
     answer_count = db.Column(db.Integer, default=0)
     comment_count = db.Column(db.Integer, default=0)
@@ -60,10 +61,9 @@ class Question(db.Model):
             u = User.query.offset(randint(0, user_count-1)).first()
             q = Question(title=forgery_py.lorem_ipsum.words(randint(1, 2)),
                          body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                         timestamp=forgery_py.date.date(True),
+                         create=forgery_py.date.date(True),
                          publisher=u)
             db.session.add(q)
-            u.contribute(q)
         db.session.commit()
 
     def clear_tags(self):

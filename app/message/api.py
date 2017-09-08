@@ -49,10 +49,3 @@ def view(message_id):
     return jsonify({
         'code': 1  # 修改状态成功
     })
-
-@main.route('/advice/<int:id>')
-def advice(id):
-    advice= Advice.query.get_or_404(id)
-    task = advice.task
-    return render_template('main/single_advice.html',tasks=[task],advices=[advice])
-

@@ -1,7 +1,14 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Wild Pointer{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
 
 {% block page_content %}
 <!-- Start of Search Wrapper -->
@@ -30,42 +37,17 @@
 					<section class="span4 articles-list">
 						<h3>热搜文章</h3>
 						<ul class="articles">
+							{% for post in posts %}
 							<li class="article-entry standard">
-								<h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
-								<span class="article-meta">25 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
-								<span class="like-count">66</span>
+								<h4><a href="{{ url_for('post.detail', post_id=post.id, _external=True) }}">{{ post.title }}</a></h4>
+								<span class="article-meta">
+									{{ moment(post.create).format('LL') }}&nbsp;&nbsp;
+									<a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
+									   title="Author">{{ post.author.nickname }}</a>
+								</span>
+								<span class="like-count">{{ post.score }}</span>
 							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">WordPress Site Maintenance</a></h4>
-								<span class="article-meta">24 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Website Dev">Website Dev</a></span>
-								<span class="like-count">15</span>
-							</li>
-							<li class="article-entry video">
-								<h4><a href="single.html">Meta Tags in WordPress</a></h4>
-								<span class="article-meta">23 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Website Dev">Website Dev</a></span>
-								<span class="like-count">8</span>
-							</li>
-							<li class="article-entry image">
-								<h4><a href="single.html">WordPress in Your Language</a></h4>
-								<span class="article-meta">22 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
-								<span class="like-count">6</span>
-							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">Know Your Sources</a></h4>
-								<span class="article-meta">22 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Website Dev">Website Dev</a></span>
-								<span class="like-count">2</span>
-							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">Validating a Website</a></h4>
-								<span class="article-meta">21 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Website Dev">Website Dev</a></span>
-								<span class="like-count">3</span>
-							</li>
+							{% endfor %}
 						</ul>
 					</section>
 
@@ -73,42 +55,20 @@
 					<section class="span4 articles-list">
 						<h3>最新问题</h3>
 						<ul class="articles">
+							{% for question in questions %}
 							<li class="article-entry standard">
-								<h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
-								<span class="article-meta">25 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
-								<span class="like-count">66</span>
+								<h4><a href="{{ url_for('ques.detail', question_id=question.id, _external=True) }}">{{ question.title }}</a></h4>
+								<span class="article-meta">
+									{{ moment(question.create).format('LL') }}&nbsp;
+									{% if question.answers.count() == 0 %}
+									<a href="{{ url_for('ques.detail', question_id=question.id, _external=True) }}">去做第一个回答者</a>
+									{% else %}
+									<a href="{{ url_for('ques.detail', question_id=question.id, _external=True) }}">{{ question.answers.count() }} 条回答</a>
+									{% endif %}
+								</span>
+								<span class="like-count">{{ question.score }}</span>
 							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">Using Javascript</a></h4>
-								<span class="article-meta">25 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
-								<span class="like-count">18</span>
-							</li>
-							<li class="article-entry image">
-								<h4><a href="single.html">Using Images</a></h4>
-								<span class="article-meta">25 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Designing in WordPress">Designing in WordPress</a></span>
-								<span class="like-count">7</span>
-							</li>
-							<li class="article-entry video">
-								<h4><a href="single.html">Using Video</a></h4>
-								<span class="article-meta">24 Feb, 2013 in <a href="#"
-								                                              title="View all posts in WordPress Plugins">WordPress Plugins</a></span>
-								<span class="like-count">7</span>
-							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">WordPress Site Maintenance</a></h4>
-								<span class="article-meta">24 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Website Dev">Website Dev</a></span>
-								<span class="like-count">15</span>
-							</li>
-							<li class="article-entry standard">
-								<h4><a href="single.html">WordPress CSS Information and Techniques</a></h4>
-								<span class="article-meta">24 Feb, 2013 in <a href="#"
-								                                              title="View all posts in Theme Development">Theme Development</a></span>
-								<span class="like-count">1</span>
-							</li>
+							{% endfor %}
 						</ul>
 					</section>
 				</div>
@@ -130,10 +90,19 @@
 					<div class="quick-links-widget">
 						<h3 class="title">快速链接</h3>
 						<ul id="menu-quick-links" class="menu clearfix">
-							<li><a href="index-2.html">我的文章</a></li>
-							<li><a href="articles-list.html">我的提问</a></li>
-							<li><a href="faq.html">我的回答</a></li>
-							<li><a href="contact.html">我的任务</a></li>
+							{% if current_user.is_authenticated %}
+							<li><a href="{{ url_for('post.me', _external=True) }}">我的文章</a></li>
+							<li><a href="{{ url_for('ques.me', _external=True) }}">我的提问</a></li>
+							<li><a href="{{ url_for('ans.me', _external=True) }}">我的回答</a></li>
+							{% if current_user.confirmed %}
+							    <li><a href="{{ url_for('auth.secure', _external=True) }}">安全中心</a></li>
+							{% else %}
+							    <li><a href="{{ mail_address }}">激活账号</a></li>
+							{% endif %}
+							{% else %}
+							<li><a href="javascript:void(0)" onclick="modalHidden('auth-dialog')">登录／注册</a></li>
+							<li><a href="{{ url_for('post.home', _external=True) }}">最新文章</a></li>
+							{% endif %}
 						</ul>
 					</div>
 				</section>
@@ -150,7 +119,7 @@
 </div>
 <!-- End of Page Container -->
 
-{% endblock %}  <!-- page_content -->
+{% endblock page_content %}
 
 {% block footer_bottom %}
 <!-- Footer Bottom -->
@@ -166,11 +135,11 @@
 	</div>
 </div>
 <!-- End of Footer Bottom -->
-{% endblock %}  <!-- footer_bottom -->
+{% endblock footer_bottom %}
 
 {% block after_footer %}
 <a href="#top" id="scroll-top"></a>
-{% endblock %}
+{% endblock after_footer %}
 
 
 {% block scripts %}

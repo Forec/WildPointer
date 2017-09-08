@@ -1,0 +1,199 @@
+<script>
+function verifyEmail(email) {
+    var emailReg=/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
+    if (email.search(emailReg) == -1)
+        return 0;
+    return 1;
+}
+
+// 登录请求，用Ajax刷新页面
+// 参数：usnID:	用户名输入框ID; pwdID: 密码输入框ID
+function loginPressed(usnID, pwdID) {
+	var username = jQuery('#' + usnID).val();
+	var password = jQuery('#' + pwdID).val();
+
+	var err = verify(username, password);
+	if (err != 0) {
+		showInputErr(err);
+		return;
+	}
+
+	$.ajax({
+		url: "{{ url_for('auth.login', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'username': username,
+				'password': password
+			})
+		},
+		success: loginSuccess,
+		err: loginFailed
+	});
+}
+
+// 登录成功回调函数
+function loginSuccess(response) {
+	console.log("收到回复");
+	var opts = {
+		"closeButton": true,
+		"debug": false,
+		"positionClass": "toast-top-full-width",
+		"onclick": null,
+		"showDuration": "300",
+		"hideDuration": "1000",
+		"timeOut": "5000",
+		"extendedTimeOut": "1000",
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
+	if(response.code == true){
+	jQuery("#auth-dialog").css("visibility", "hidden");
+		console.log("登录成功");
+		window.location.href = "{{ url_for('main.index', _external=True) }}";
+	} else {
+	    console.log("登陆验证失败");
+		toastr.error("您填写的 <strong>账号</strong> 或 <strong>密码</strong> 不正确！", "登录失败", opts);
+	}
+}
+
+// 登录失败回调函数
+function loginFailed(error) {
+	console.log("登录失败");
+}
+
+
+// 验证用户名和密码
+function verify(username, password) {
+	if (username == "") {
+		return 1;
+	}
+	if (password == "") {
+		return 2;
+	}
+	if (username.length < 5 || username.length > 32) {
+		return 3;
+	}
+	if (username.indexOf('#') != -1 && verifyEmail(username) == 0) {
+	    return 4;
+	}
+	if (password.length < 8 || password.length > 22) {
+		return 5;
+	}
+	return 0;
+};
+
+// 根据错误码显示用户输入错误
+function showInputErr(err) {
+	if (err == 1) {
+		console.log("用户名不能为空");
+	} else if (err == 2) {
+		console.log("密码不能为空");
+	} else if (err == 3) {
+		console.log("用户名长度在 5 至 16 个字符之间");
+	} else if (err == 4) {
+	    console.log("邮箱格式不正确");
+	} else if (err == 5) {
+		console.log("密码长度在 8 至 22 个字符之间");
+	}
+}
+
+// 用户登出
+function logoutPressed() {
+	jQuery("#loginBtn").css("display", "inline");
+	jQuery("#mineBtn").css("display", "none");
+}
+
+
+/* 调用Ajax向服务器发送注册信息，根据服务器回复刷新页面
+*	参数：
+*		emailID:	邮箱输入框ID
+*		usnID:		用户名输入框ID
+*		pwdID:		密码输入框ID
+*		cpwdID:		确认密码输入框ID
+*		checkID:	用户协议确认按钮ID
+*/
+function signupPressed(emailID, usnID, pwdID, cpwdID, checkID) {
+	var email 		= jQuery('#' + emailID).val();
+	var username 	= jQuery('#' + usnID).val();
+	var password 	= jQuery('#' + pwdID).val();
+	var cpassword 	= jQuery('#' + cpwdID).val();
+	var check 		= jQuery('#' + checkID).is(':checked');
+    console.log(check);
+	if (!verifySignup(email, username, password, cpassword, check)) {
+		return;
+	}
+
+	$.ajax({
+		url: "{{ url_for('auth.register', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'email': email,
+				'username': username,
+				'password': password,
+				'password2': cpassword
+			})
+		},
+		success: signupSuccess,
+		err: signupFailed
+	});
+}
+
+function verifySignup(email, username, password, cpassword, check) {
+	if (verifyEmail(email) == 0) {
+		console.log("邮箱格式不合法");
+		return false;
+	}
+	if (username == "") {
+		console.log("用户名不能为空");
+		return false;
+	}
+	if (password == "") {
+		console.log("密码不能为空");
+		return false;
+	}
+	if (username.length < 5 || username.length > 16) {
+		console.log("用户名长度在 5 至 16 个字符之间");
+		return false;
+	}
+	if (password.length < 8 || password.length > 22) {
+		console.log("密码长度在 8 至 22 个字符之间");
+		return false;
+	}
+	if (password != cpassword) {
+		console.log("两次输入密码不一致");
+		return false;
+	}
+	if (!check) {
+		console.log("您必须接受《用户协议》方可注册");
+		return false;
+	}
+	return true;
+}
+
+function signupSuccess(response) {
+	if (response.code == 4){
+	    jQuery("#auth-dialog").css("visibility", "hidden");
+		console.log("注册成功，即将登陆");
+		window.location.href = "{{ url_for('main.index', _external=True) }}";
+	} else if (response.code == 3) {
+	    console.log("用户名已被注册");
+		toastr.error("您填写的 <strong>用户名</strong> 已被注册！", "注册失败", opts);
+	} else if (response.code == 2) {
+	    console.log("邮箱已被注册");
+		toastr.error("您填写的 <strong>邮箱</strong> 已被注册！", "注册失败", opts);
+	} else if (response.code == 1) {
+	    console.log("信息格式不正确");
+		toastr.error("您填写的信息格式不正确！", "注册失败", opts);
+	}
+}
+
+function signupFailed(error) {
+    console.log("注册失败，连接失败");
+}
+</script>

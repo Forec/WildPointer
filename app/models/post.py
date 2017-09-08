@@ -24,7 +24,8 @@ class Post(db.Model):
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
     score = db.Column(db.Integer, default=0)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    last_edit = db.Column(db.DateTime, default=datetime.utcnow)
+    create = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('PostComment', backref='post', lazy='dynamic')
     likers = db.relationship('LikePosts',
@@ -61,7 +62,7 @@ class Post(db.Model):
             p = Post(title=forgery_py.lorem_ipsum.words(randint(1, 2)),
                      disabled=False,
                      body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
-                     timestamp=forgery_py.date.date(True),
+                     create=forgery_py.date.date(True),
                      author=u)
             db.session.add(p)
         db.session.commit()

@@ -55,8 +55,8 @@ def change_email(token):
     return redirect(url_for('profile.detail'))
 
 
-@auth.route('/reset', methods=['GET', 'POST'])
-def forget_password():
+@auth.route('/forget', methods=['GET', 'POST'])
+def forget():
     if not current_user.is_anonymous:
         flash('您已经登陆，请在 "安全中心" 修改密码')
         return redirect(url_for('auth.secure', _external=True))
