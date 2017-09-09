@@ -34,7 +34,7 @@ def follow(username):
     })
 
 
-@focus.route('/unfollow/<username>')
+@focus.route('/unfollow/<username>', methods=['GET'])
 @login_required
 @permission_required(Permission.FOLLOW)
 def unfollow(username):

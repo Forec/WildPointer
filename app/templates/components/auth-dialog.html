@@ -28,6 +28,9 @@
 								        onclick="loginPressed('username-login', 'password-login')">登录
 								</button>
 							</div>
+							<div class="control-group" style="text-align: center">
+								<a href="javascript:void(0)" onclick="modalHidden('auth-dialog'); modalHidden('forget-dialog');">忘记密码</a>
+							</div>
 						</form>
 					</div>
 				</section>
@@ -67,3 +70,32 @@
 	</div>
 </div>
 <!-- End of Login dialog -->
+
+<div class="modal" aria-hidden="true" id="forget-dialog" style="visibility: hidden;">
+	<div class="modal-dialog" style="opacity: 1.0; width: 400px; top: 200px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;"
+				   onclick="modalHidden('forget-dialog')">×
+				</a>
+				<h4 class="modal-title center">重置密码</h4>
+			</div>
+
+			<div>
+				<div class="modal-body">
+					<form role="form" class="form-horizontal" style="margin: 2px 0 15px;">
+						<div class="control-group" style="text-align: center">
+							<input type="text" class="controls-center" id="forget-email" placeholder="请填写注册时使用的邮箱">
+						</div>
+						<div class="control-group" style="text-align: center">
+							<button type="button" class="btn btn-primary" style="width: 200px;"
+							        onclick="forgetPressed('forget-email')">发送重置邮件
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Forget dialog -->

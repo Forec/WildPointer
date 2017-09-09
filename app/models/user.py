@@ -61,27 +61,27 @@ class User(UserMixin, db.Model):
                                   cascade='all, delete-orphan')
     like_posts = db.relationship('LikePosts',
                                  foreign_keys=[LikePosts.liker_id],
-                                 backref=db.backref('likers', lazy='joined'),
+                                 backref=db.backref('liker', lazy='joined'),
                                  lazy='dynamic',
                                  cascade='all, delete-orphan')
     like_questions = db.relationship('LikeQuestions',
                                      foreign_keys=[LikeQuestions.liker_id],
-                                     backref=db.backref('likers', lazy='joined'),
+                                     backref=db.backref('liker', lazy='joined'),
                                      lazy='dynamic',
                                      cascade='all, delete-orphan')
     unlike_questions = db.relationship('UnLikeQuestions',
                                        foreign_keys=[UnLikeQuestions.unliker_id],
-                                       backref=db.backref('unlikers', lazy='joined'),
+                                       backref=db.backref('unliker', lazy='joined'),
                                        lazy='dynamic',
                                        cascade='all, delete-orphan')
     like_answers = db.relationship('LikeAnswers',
                                    foreign_keys=[LikeAnswers.liker_id],
-                                   backref=db.backref('likers', lazy='joined'),
+                                   backref=db.backref('liker', lazy='joined'),
                                    lazy='dynamic',
                                    cascade='all, delete-orphan')
     unlike_answers = db.relationship('UnLikeAnswers',
                                      foreign_keys=[UnLikeAnswers.unliker_id],
-                                     backref=db.backref('unlikers', lazy='joined'),
+                                     backref=db.backref('unliker', lazy='joined'),
                                      lazy='dynamic',
                                      cascade='all, delete-orphan')
 

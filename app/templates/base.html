@@ -36,9 +36,14 @@
 	      href="{{ url_for('static', filename='css/fonts/fontawesome/css/font-awesome.min.css', _external=True) }}"
 	      type='text/css' media='all'/>
 	<link rel="stylesheet" id='m-tab-menu-css-css'
-	      href="{{ url_for('static', filename='css/m-tab-menu.css', _external=True) }}" type='text/css'
+	      href="{{ url_for('static', filename='css/non/m-tab-menu.css', _external=True) }}" type='text/css'
 	      media='all'/>
-
+	<link rel="stylesheet" id='m-tag-css-css'
+	      href="{{ url_for('static', filename='css/non/m-tag.css', _external=True) }}" type='text/css'
+	      media='all'/>
+	<link rel="stylesheet" id='toastr-css'
+	      href="{{ url_for('static', filename='css/toastr/toastr.min.css', _external=True) }}" type='text/css'
+	      media='all'/>
 	<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
 	{% endblock head %}
 </head>
@@ -55,7 +60,7 @@
                     <a href="{{ url_for('main.index', _external=True) }}"  title="Wild Pointer">
                         <img src="{{ url_for('static', filename='images/logo.png', _external=True) }}" alt="Wild Pointer">
                     </a>
-                    <span class="tag-line">程序员问答社区</span>
+                    <span id="pc-mention" class="tag-line">程序员问答社区</span>
                 </div>
 
                 <!-- Start of Main Navigation -->
@@ -65,23 +70,45 @@
                             <li class="current-menu-item">
 	                            <a href="{{ url_for('main.index', _external=True) }}">主页</a>
                             </li>
-	                        {% if current_user.is_authenticated %}
+	                        {% if current_user.is_authenticated and current_user.confirmed %}  <!-- 已登录且已经激活账号 -->
                             <li class="current-menu-item"><a href="#">文章</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ url_for('post.home', _external=True) }}">最新文章</a></li>
+	                                <li><a href="{{ url_for('post.follow', _external=True) }}">我的关注</a></li>
+                                    <li><a href="{{ url_for('post.create', _external=True) }}">发布新文章</a></li>
                                     <li><a href="{{ url_for('post.me', _external=True) }}">我的文章</a></li>
                                 </ul>
                             </li>
                             <li class="current-menu-item"><a href="#">问题</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ url_for('ques.latest', _external=True) }}">最新问题</a></li>
+                                    <li><a href="javascript:void(0)" onclick="showQuestionDialog('new-question-dialog')">我要提问</a></li>
                                     <li><a href="{{ url_for('ques.me', _external=True) }}">我的问题</a></li>
                                     <li><a href="{{ url_for('ans.me', _external=True) }}">我的回答</a></li>
                                 </ul>
                             </li>
                             {% else %}
-                            <li class="current-menu-item"><a href="{{ url_for('post.home', _external=True) }}">文章</a></li>
-                            <li class="current-menu-item"><a href="{{ url_for('ques.latest', _external=True) }}">问题</a></li>
+	                            {% if current_user.is_authenticated and not current_user.confirmed %}  <!-- 已登录但尚未激活账号 -->
+	                            <li class="current-menu-item"><a href="#">文章</a>
+	                                <ul class="sub-menu">
+	                                    <li><a href="{{ url_for('post.home', _external=True) }}">最新文章</a></li>
+                                        <li><a href="javascript:void(0)" onclick="alertNotConfirm()">我的关注</a></li>
+	                                    <li><a href="javascript:void(0)" onclick="alertNotConfirm()">发布新文章</a></li>
+	                                    <li><a href="javascript:void(0)" onclick="alertNotConfirm()">我的文章</a></li>
+	                                </ul>
+	                            </li>
+	                            <li class="current-menu-item"><a href="#">问题</a>
+	                                <ul class="sub-menu">
+	                                    <li><a href="{{ url_for('ques.latest', _external=True) }}">最新问题</a></li>
+	                                    <li><a href="javascript:void(0)" onclick="alertNotConfirm()">我要提问</a></li>
+	                                    <li><a href="javascript:void(0)" onclick="alertNotConfirm()">我的问题</a></li>
+	                                    <li><a href="javascript:void(0)" onclick="alertNotConfirm()">我的回答</a></li>
+	                                </ul>
+	                            </li>
+	                            {% else %}  <!-- 尚未登录 -->
+                                <li class="current-menu-item"><a href="{{ url_for('post.home', _external=True) }}">文章</a></li>
+                                <li class="current-menu-item"><a href="{{ url_for('ques.latest', _external=True) }}">问题</a></li>
+	                            {% endif %}
                             {% endif %}
 
 	                        {% if current_user.is_authenticated %}
@@ -89,7 +116,6 @@
                             <li class="current-menu-item"><a href="#">我的</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ url_for('profile.detail', username=current_user.username, _external=True) }}">个人资料</a></li>
-                                    <li><a href="{{ url_for('post.only_show_followed', _external=True) }}">我的关注</a></li>
                                     <li><a href="{{ url_for('auth.secure', _external=True) }}">安全中心</a></li>
                                     <li><a href="{{ url_for('auth.logout', _external=True) }}">登出</a></li>
                                 </ul>
@@ -126,11 +152,17 @@
                     <section class="widget"><h3 class="title">导航</h3>
                         <ul>
 	                        {% if not current_user.is_authenticated or not current_user.confirmed %}
-                            <li><a href="javascript:void(0)" onclick="alertNotLogin()" title="发布新文章">发布新文章</a></li>
-	                        {% else %}
+	                            {% if not current_user.is_authenticated %}  <!-- 尚未登录 -->
+	                            <li><a href="javascript:void(0)" onclick="alertNotLogin()" title="发布新文章">发布新文章</a></li>
+                                <li><a href="javascript:void(0)" onclick="alertNotLogin()" title="提出新问题">提出新问题</a></li>
+	                            {% else %}  <!-- 已登录但尚未认证 -->
+	                            <li><a href="javascript:void(0)" onclick="alertNotConfirm()" title="发布新文章">发布新文章</a></li>
+                                <li><a href="javascript:void(0)" onclick="showQuestionDialog()" title="提出新问题">提出新问题</a></li>
+	                            {% endif %}
+	                        {% else %}  <!-- 已登录并已认证 -->
 	                        <li><a href="{{ url_for('post.create', _external=True) }}" title="发布新文章">发布新文章</a></li>
+                            <li><a href="javascript:void(0)" onclick="modalHidden('new-question-dialog')" title="提出新问题">提出新问题</a></li>
 	                        {% endif %}
-                            <li><a href="javascript:void(0)" onclick="raiseQuestion()" title="提出新问题">提出新问题</a></li>
                             <li><a href="{{ url_for('main.index', _external=True) }}" title="搜索问题">搜索问题</a></li>
                             <li><a href="{{ url_for('ques.latest', _external=True) }}" title="去回答">去回答</a></li>
                         </ul>
@@ -142,7 +174,7 @@
                             <li><a href="https://github.com/Forec/WildPointer" title="GitHub">GitHub</a> </li>
                             <li><a href="mailto:feedback@forec.cn" title="问题反馈">问题反馈</a></li>
                             <li><a href="mailto:advice@forec.cn" title="提出建议">提出建议</a></li>
-                            <li><a href="{{ url_for('auth.forget', _external=True) }}" title="找回密码">找回密码</a></li>
+                            <li><a href="javascript:void(0)" onclick="modalHidden('forget-dialog')" title="找回密码">找回密码</a></li>
                         </ul>
                     </section>
                 </div>
@@ -169,6 +201,9 @@
     {% if not current_user.is_authenticated %}
         {% include 'components/auth-dialog.html' %}
     {% endif %}
+    {% if current_user.is_authenticated and current_user.confirmed %}
+        {% include 'components/new-question-dialog.html' %}
+    {% endif %}
 
 
 <!-- script -->
@@ -180,21 +215,39 @@
 <script type='text/javascript' src="{{ url_for('static', filename='js/jquery.validate.min.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/toastr/toastr.min.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/custom.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/utils/verifiers.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/utils/flash-message.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/utils/ispc.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/modal.js', _external=True) }}"></script>
 
+<!-- 显示所有等待的 flash 消息 -->
 {% for message in get_flashed_messages() %}
-{% include 'js/flash-message.html' %}
+<script>flash_normal("{{ message }}")</script>
 {% endfor %}
 
+<!-- 对于未登录／认证用户，在 ajax 前结束其请求 -->
+{% include 'js/auth_before_action.html' %}
+
+<!-- 提问的脚本 -->
+{% include 'js/new-question.html' %}
+
+<!-- 未登录用户提供认证脚本 -->
 {% if not current_user.is_authenticated %}
     {% include 'js/auth.html' %}
 {% endif %}
 
-{% include 'js/auth_before_action.html' %}
-
-<script type='text/javascript' src="{{ url_for('static', filename='js/utils/modal.js', _external=True) }}"></script>
-
+<!-- 使用本地 moment.js，部署到不同服务器时需修改此链接 -->
 {{ moment.include_moment(local_js, "http://127.0.0.1:5000/static/js/moment/moment-with-locales.js") }}
 {{ moment.lang("zh-CN") }}
+
+<!-- 判断是否为手机端访问 -->
+<script>
+jQuery(document).ready(function($){
+    if (IsPC() == false) {
+        $("#pc-mention").html("手机端请设置浏览器使用<b>请求桌面版网站</b>访问");
+    }
+});
+</script>
 
 {% block scripts %}
 {% endblock scripts %}

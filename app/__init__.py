@@ -62,5 +62,7 @@ def create_app(config_name):
     app.register_blueprint(mess_blueprint, url_prefix='/message')
     from .search import sea as sea_blueprint
     app.register_blueprint(sea_blueprint, url_prefix='/search')
+    from .tag import tag as tag_blueprint
+    app.register_blueprint(tag_blueprint, url_prefix='/tag')
 
     return app

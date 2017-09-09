@@ -7,11 +7,10 @@
 # @Contact : forec@bupt.edu.cn
 
 
-from flask import request, jsonify
+from flask import request, jsonify, flash, redirect, url_for, render_template
 from flask_login import login_required, login_user, current_user
 from . import auth
 from .. import db
-from ..models import User
 from ..email import send_email
 from ..verifiers import *
 import json
@@ -95,6 +94,8 @@ def register():
                user=user,
                token=token)
     login_user(user)
+    flash("您已经成功注册了账户 " + user.username +
+          "，我们已经向您注册时填写的邮箱发送了一封确认邮件，请您根据确认邮件的内容激活您的账户。")
     return jsonify({
         'code': 4
     })
@@ -165,6 +166,70 @@ def change_email_request():
     return jsonify({
         'code': 2  # 认证失败
     })
+
+
+@auth.route('/forget', methods=['POST'])
+def forget():
+    req = request.form.get('request')
+    if req is None:
+        return jsonify({
+            'code': 0  # 没有请求
+        })
+    if not current_user.is_anonymous:
+        return jsonify({
+            'code': 1  # 已经登陆
+        })
+    req = json.loads(req)
+    email = req.get('email')
+    if not verify_email(email):
+        return jsonify({
+            'code': 2  # 邮箱格式不正确
+        })
+    user = User.query.filter_by(email=email).first()
+    if user:
+        token = user.generate_reset_token()
+        send_email(user.email, '重置您的密码', 'auth/email/reset_password', user=user, token=token,
+                   next=request.args.get('next'))
+    return jsonify({
+        'code': 3  # 请求成功
+    })
+
+
+@auth.route('/reset/<token>', methods=['GET', 'POST'])
+def reset(token):
+    if not current_user.is_anonymous:
+        flash('您已经登陆，如需修改密码，请在 "安全中心" 处理。')
+        return redirect(url_for('auth.secure', _external=True))
+    if request.method == 'GET':
+        return render_template('auth/reset.html', token=token)
+    else:
+        req = request.form.get('request')
+        if req is None:
+            return jsonify({
+                'code': 0  # 没有请求
+            })
+        req = json.loads(req)
+        email = req.get('email')
+        password = req.get('password')
+        password2 = req.get('password2')
+        if not verify_email(email) or not verify_password(password) or password != password2:
+            return jsonify({
+                'code': 2  # 邮箱／密码格式不正确
+            })
+        user = User.query.filter_by(email=email).first()
+        if user is None:
+            return jsonify({
+                'code': 1  # 链接已失效
+            })
+        if user.reset_password(token, password):
+            flash("您的密码已重置成功，请使用新密码登录。")
+            return jsonify({
+                'code': 3  # 重置成功
+            })
+        else:
+            return jsonify({
+                'code': 1  # 链接已失效
+            })
 
 
 @auth.route('/is_confirmed', methods=['GET'])

@@ -2,7 +2,7 @@
 # @Time    : 2017/9/4 22:32
 # @Author  : Forec
 # @File    : config.py
-# @Software: Wild-Pointer
+# @Software: Wild-Pointer-
 # @license : Copyright(C), Forec
 # @Contact : forec@bupt.edu.cn
 
@@ -22,10 +22,10 @@ class Config:
     WP_MAIL_SENDER = os.environ.get('WP_MAIL_SENDER') or 'Wild-Pointer Admin <wild-pointer@forec.cn>'
     WP_ADMIN = os.environ.get('WP_ADMIN') or 'root'
 
-    WP_POSTS_PER_PAGE = 15
+    WP_POSTS_PER_PAGE = 10
     WP_FOLLOWERS_PER_PAGE = 20
     WP_COMMENTS_PER_PAGE = 6
-    WP_QUESTIONS_PER_PAGE = 15
+    WP_QUESTIONS_PER_PAGE = 10
     WP_ANSWERS_PER_PAGE = 8
     WP_MESSAGES_PER_PAGE = 10
     PROFILE_WP_POSTS_PER_PAGE = 4
@@ -43,7 +43,7 @@ class DevConfig(Config):
     MAIL_PORT = 25  # SSL is 465
     MAIL_USE_TLS = True
     MAIL_USERNAME = "wild-pointer@forec.cn"
-    MAIL_PASSWORD = os.environ.get('WP_MAIL_PASSWORD') or "WP-MAIL-ADMIN"
+    MAIL_PASSWORD = os.environ.get('WP_MAIL_PASSWORD') or "WPAdmin123"
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'tmp/debug.db')
 
 

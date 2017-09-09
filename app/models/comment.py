@@ -19,6 +19,7 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean, default=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    active = db.Column(db.Integer, default=0)
     comment_type = db.Column(db.String(16))
 
     __mapper_args__ = {
@@ -32,6 +33,7 @@ class PostComment(Comment):
 
     id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    refer = db.Column(db.Integer, db.ForeignKey('comment_posts.id'), default=None)
 
     __mapper_args__ = {
         'polymorphic_identity': 'post',
@@ -70,6 +72,7 @@ class QuestionComment(Comment):
 
     id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    refer = db.Column(db.Integer, db.ForeignKey('comment_questions.id'), default=None)
 
     __mapper_args__ = {
         'polymorphic_identity': 'question',
@@ -108,6 +111,7 @@ class AnswerComment(Comment):
 
     id = db.Column(db.Integer, db.ForeignKey('comments.id'), primary_key=True)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id'))
+    refer = db.Column(db.Integer, db.ForeignKey('comment_answers.id'), default=None)
 
     __mapper_args__ = {
         'polymorphic_identity': 'answer',

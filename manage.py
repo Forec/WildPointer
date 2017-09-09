@@ -8,7 +8,7 @@
 
 
 from app import create_app, db
-from app.models import User, Role, Post, Answer, Question, PostComment, QuestionComment, AnswerComment
+from app.models import User, Role, Post, Answer, Question, PostComment, QuestionComment, AnswerComment, Tag
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -60,6 +60,7 @@ def init():
     User.generate_fake(10)
     Post.generate_fake(150)
     Question.generate_fake(350)
+    Tag.generate_fake(30, 100)
     Answer.generate_fake(150)
     PostComment.generate_fake(350)
     QuestionComment.generate_fake(100)

@@ -21,3 +21,8 @@ def index():
     posts = Post.query.order_by(Post.create.desc()).slice(0, 6)
     questions = Question.query.order_by(Question.create.desc()).slice(0, 6)
     return render_template('index.html', posts=posts, questions=questions, mail_address=mail_address)
+
+
+@main.route('/faq', methods=['GET'])
+def faq():
+    return render_template('faq.html')

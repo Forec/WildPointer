@@ -7,12 +7,20 @@ function auth_before_action(action) {
             if (response.code == true) {
                 action();
             } else {
-                console.log("您必须先登录并激活账号后才可使用此功能");
+                flash_error("您必须先登录并激活账号后才可使用此功能。");
             }
 		},
 		err: function(error) {
-		    console.log("抱歉，我们无法认证您的身份，请登录并激活账号后重试");
+		    flash_error("抱歉，我们无法认证您的身份，请登录并激活账号后重试。");
 		}
 	});
+}
+
+function alertNotConfirm() {
+    flash_warning("很抱歉，您尚未激活您的账号，因此暂时无法使用该功能。我们已经向您注册时使用的邮箱发送了一封激活邮件，请根据邮件的指导激活账号。");
+}
+
+function alertNotLogin() {
+    flash_warning("很抱歉，您尚未登录，因此暂时无法使用该功能。请通过 认证->注册 来获取一个新账号，或使用您的已有账号登录。");
 }
 </script>

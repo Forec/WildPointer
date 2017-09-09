@@ -1,0 +1,43 @@
+<div class="modal" aria-hidden="true" id="new-question-dialog" style="top: -200px; visibility: hidden;">
+	<div class="modal-dialog" style="opacity: 1.0;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;"
+				        onclick="modalHidden('new-question-dialog')">×
+				</a>
+				<h3 class="modal-title">你遇到了什么问题？</h3>
+			</div>
+
+			<div class="modal-body">
+				<form role="form" class="form-horizontal" method="post" id="commentform">
+					<div class="control-group">
+						<label for="questionTitle">标题 *</label>
+						<input class="span8" type="text" id="questionTitle" value="" size="22" style="width: 98%;"
+						       placeholder="在此写下你的问题">
+					</div>
+
+					<div class="control-group">
+						<label for="questionTag">标签（可自定义新标签，使用分号隔开，不可包含特殊字符）</label>
+						<input class="span8" type="text" id="questionTag" value="" size="22" style="width: 98%;">
+					</div>
+
+					<div class="control-group">
+						<label for="questionContent">详细描述</label>
+						<textarea class="span8" id="questionContent" cols="90" rows="10" style="width: 98%;"
+						          placeholder="详细说明你的问题，以便获得更好的答案"></textarea>
+					</div>
+					<p>你可以在详细描述中使用 MarkDown 语法编辑。</p>
+				</form>
+				<div class="control-group" id="tag-group">
+					<label>推荐标签</label>
+					<div class="tagcloud" id="tag-Cloud"></div>
+				</div>
+				<div class="control-group" style="text-align: center;">
+					<button type="button" class="btn btn-primary" style="width: 200px;"
+					        onclick="submitQuestionPressed('questionTitle', 'questionTag', 'questionContent')">提交
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

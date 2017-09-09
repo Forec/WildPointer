@@ -1,0 +1,113 @@
+<script>
+function showQuestionDialog(dialogID) {
+	jQuery("#new-question-dialog").css("visibility", "visible");
+	$.ajax ({
+		url: "{{ url_for('tag.recommend', tag_count=15, _external=True) }}",
+		type: "GET",
+		success: function(response) {
+            if (response.code != 1) {
+		        jQuery("#tag-Cloud").html("暂无");
+                return;
+            }
+            if (response.list.length == 0) {
+		        jQuery("#tag-Cloud").html("暂无");
+                return;
+            }
+		    var tag_list = response.list;
+	        var tags = "";
+	        for (var i = 0; i < tag_list.length; ++i) {
+		        tags += '<button href="javascript:void(0)" onclick="clickTag(this.id)" class="m-qu-tag m-qu-tag1" id="qutag' + i + '">'+ tag_list[i]+'</a>\r\n';
+	        }
+	        jQuery("#tag-Cloud").html(tags);
+	        for (var i = 0; i < tag_list.length; ++i) {
+		        jQuery('#qutag' + i).val("on");
+	        }
+		},
+		err: function(error) {
+		    jQuery("#tag-Cloud").html("暂无");
+		}
+	});
+};
+
+function clickTag(tagID) {
+	console.log(tagID);
+	var tag = jQuery('#' + tagID);
+	var tagLine = jQuery("#questionTag");
+
+	if (tag.val() == "on") {
+		tag.val("pushed");
+		tagLine.val(tagLine.val() + tag.text() + ";");
+		tag.removeClass("m-qu-tag1").addClass("m-qu-tag2");
+	} else if (tag.val() == "pushed") {
+		tag.val("on");
+		var index = tagLine.val().indexOf(tag.text());
+		tagLine.val(tagLine.val().substr(0, index) + tagLine.val().substr(index + tag.text().length + 1));
+		tag.removeClass("m-qu-tag2").addClass("m-qu-tag1");
+	}
+}
+
+function submitQuestionPressed(titleID, tagID, questionID) {
+	var title = jQuery('#' + titleID).val();
+	var body = jQuery('#' + questionID).val();
+	var tags = jQuery('#' + tagID).val();
+	if (!verifyQuestion(title, body, tags))
+	    return;
+
+	$.ajax({
+		url: "{{ url_for('ques.create', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'title': title,
+				'body': body,
+				'tags': tags
+			})
+		},
+		success: function(response) {
+		    if (response.code == 3) {
+	            jQuery("#new-question-dialog").css("visibility", "hidden");
+		        var prefixPos = "{{ url_for('ques.detail', question_id=0, _external=True) }}".lastIndexOf('/');
+		        var post_url = "{{ url_for('ques.detail', question_id=0, _external=True) }}".substr(0, prefixPos) + '/' + response.id;
+		        window.location.href = post_url;
+		    } else if (response.code == 2) {
+		        flash_warning("您填写的标签中包含非法字符！");
+		    } else if (response.code == 1) {
+		        flash_warning("标题为必填字段！");
+		    } else {
+                flash_error("发生了未知错误！请检查您是否已经登录并且激活了您的账号，否则您无法提问。");
+		    }
+		},
+		err: function(error) {
+		    flash_error("网络不稳定，未能连接至服务器！");
+		}
+	});
+};
+
+function verifyQuestion(title, body, tags) {
+	if (title == "") {
+		flash_warning("请输入问题标题。");
+		return false;
+	}
+	if (body.length > 1200) {
+	    flash_warning("您的问题描述过长，请限制在 1200 字以内。");
+	    return false;
+	}
+	var tag_list = tags.split(';').map(function(x){return x.trim();}).filter(function(x){return x.length > 0;});
+	if (tag_list.length > 5) {
+	    flash_warning("您的标签数量过多，请限制在 5 个标签内，每个标签不超过 6 个中文字符。");
+	    return false;
+	}
+    if (tag_list.filter(function(x){ return x.length > 6; }).length > 0) {
+	    flash_warning("您的某个标签过长，请限制每个标签不超过 6 个中文字符。");
+	    return false;
+    }
+	var valid_keywords = "#,.!-=+/\\`~?$%^&*()@";
+	for (var i = 0; i < valid_keywords.length; i++) {
+	    if (tags.indexOf(valid_keywords[i]) != -1) {
+	        flash_warning("您的标签中包含了非法字符，")
+	    }
+	}
+	return true;
+};
+</script>

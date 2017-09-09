@@ -12,31 +12,44 @@ from . import ques
 from .. import db
 from ..models import Question, Permission
 from ..verifiers import verify_token
+from ..decorators import confirm_required
 import json
 
 
 @ques.route('/create', methods=['POST'])
 @login_required
+@confirm_required
 def create():
     req = request.form.get('request')
     if req is None:
         return jsonify({
-            'code': -1  # 无请求
+            'code': 0  # 无请求
         })
     req = json.loads(req)
-    [email, token, title, body, tags] = [req.get(name) for name in ['email', 'token', 'title', 'body', 'tags']]
-    user = verify_token(email, token)
-    if title is None or not user or user.id != current_user.id:
+    title = req.get('title')
+    body = '' if not req.get('body') else req.get('body')
+    tags_string = '' if not req.get('tags') else req.get('tags')
+    if not title:
         return jsonify({
-            'code': 0   # 参数格式不正确／用户不存在／认证失败
+            'code': 1   # 标题为空
         })
+    invalid_tag_char = '#,.!-=+/\\`~?$%^&*()@'
+    for char in invalid_tag_char:
+        if tags_string.find(char) != -1:
+            return jsonify({
+                'code': 2  # 标签中包含不合法字符
+            })
     question = Question(title=title,
-                        publisher=user,
+                        publisher=current_user._get_current_object(),
                         body='' if body is None else body)
-    question.fill_tags(tags)
     db.session.add(question)
+    db.session.commit()
+    tag_names = [tag_string.strip() for tag_string in tags_string.split(';')]
+    question.reset_tags(tag_names)
+    db.session.add(question)
+    db.session.commit()
     return jsonify({
-        'code': 1,
+        'code': 3,
         'id': question.id
     })
 

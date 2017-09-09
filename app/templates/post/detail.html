@@ -36,6 +36,11 @@
 							</a>
 					        {% endif %}
 						</span>
+						{% if moderate %}
+						<span class="garbage">
+							<a href="javascript:void(0)" onclick="modalHidden('delete-dialog')">删除</a>
+						</span>
+						{% endif %}
 						<span class="like-count">{{ post.score }}</span>
 					</div><!-- end of post meta -->
 
@@ -56,7 +61,7 @@
 						暂无
 						{% endif %}
 						{% for tag in tags %}
-						    <a href="#" rel="tag">{{ tag.name }}</a>
+						    <a href="#" rel="tag">{{ tag.name }}</a>&nbsp;&nbsp;
 						{% endfor %}
 					</span>
 
@@ -140,9 +145,38 @@
 </div>
 <!-- End of Page Container -->
 
-{% block scripts %}
-<script type='text/javascript' src="{{ url_for('static', filename='js/utils/m-thumb-up.js', _external=True) }}"></script>
-{% endblock scripts %}
-
-
+{% include 'components/delete-confirm.html' %}
 {% endblock page_content %}
+
+{% block scripts %}
+<script>
+function confirmBeforeAction(component_id) {
+    var content = jQuery('#' + component_id).val();
+    if (content == '{{ post.id }}') {
+        $.ajax({
+		    url: "{{ url_for('post.delete', post_id=post.id, _external=True) }}",
+		    type: "GET",
+    		success: function(response) {
+	            if (response.code == 1){
+		            window.location.href = "{{ url_for('post.me', _external=True) }}";
+	            } else if (response.code == 0) {
+    		        flash_error("您对文章《{{ post.title }}》无操作权限！");
+    		        modalHidden('delete-dialog');
+	            } else if (response.code == 2) {
+    	        	flash_error("请求失败，服务器发生了未知错误！");
+    	        	modalHidden('delete-dialog');
+    	        }
+            },
+	    	err: function(err) {
+		        flash_error("无法连接至服务器，删除失败。");
+		        modalHidden('delete-dialog');
+		    }
+	    });
+    } else {
+        flash_warning("您输入的文章 ID 与当前文章不符，请再次核实您的删除操作！");
+        modalHidden('delete-dialog');
+    }
+}
+</script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
+{% endblock scripts %}

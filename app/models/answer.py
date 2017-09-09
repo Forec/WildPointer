@@ -21,14 +21,15 @@ class Answer(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
     score = db.Column(db.Integer, default=0, index=True)
+    active = db.Column(db.Integer, default=0)  # whether there are new activities
     likers = db.relationship('LikeAnswers',
                              foreign_keys=[LikeAnswers.answer_id],
-                             backref=db.backref('like_answers', lazy='joined'),
+                             backref=db.backref('answer', lazy='joined'),
                              lazy='dynamic',
                              cascade='all, delete-orphan')
     unlikers = db.relationship('UnLikeAnswers',
                                foreign_keys=[UnLikeAnswers.answer_id],
-                               backref=db.backref('unlike_answers', lazy='joined'),
+                               backref=db.backref('answer', lazy='joined'),
                                lazy='dynamic',
                                cascade='all, delete-orphan')
     comments = db.relationship('AnswerComment', backref='answer', lazy='dynamic')

@@ -55,43 +55,6 @@ def change_email(token):
     return redirect(url_for('profile.detail'))
 
 
-@auth.route('/forget', methods=['GET', 'POST'])
-def forget():
-    if not current_user.is_anonymous:
-        flash('您已经登陆，请在 "安全中心" 修改密码')
-        return redirect(url_for('auth.secure', _external=True))
-    form = PasswordResetRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            token = user.generate_reset_token()
-            send_email(user.email, '重置您的密码', 'auth/email/reset_password', user=user, token=token,
-                       next=request.args.get('next'))
-            flash('一封指导您重置密码的邮件已经发送到您注册时填写的邮箱，请查看邮件并重置您的密码')
-            return redirect(url_for('auth.login'))
-    return render_template('auth/forget.html', form=form)
-
-
-@auth.route('/reset/<token>', methods=['GET', 'POST'])
-def password_reset(token):
-    if not current_user.is_anonymous:
-        flash('您已经登陆，请在 "安全中心" 修改密码')
-        return redirect(url_for('auth.secure', _external=True))
-    form = PasswordResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is None:
-            flash('此链接已失效')
-            return redirect(url_for('main.index'))
-        if user.reset_password(token, form.password.data):
-            flash('您的密码已经重置成功')
-            return redirect(url_for('auth.login'))
-        else:
-            flash('此链接已失效')
-            return redirect(url_for('main.index'))
-    return render_template('auth/reset.html', form=form)
-
-
 @auth.before_app_request
 def before_request():
     if current_user.is_authenticated:

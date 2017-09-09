@@ -1,10 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}重置密码{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+			<!-- start of page content -->
+			<div class="span8 page-content">
+				<section id="reset-area">
+					<div id="respond">
+						<h3>重置您的密码</h3>
+						<form action="#" method="post" id="reset-password-form">
+							<div>
+								<label for="email">您注册时使用的邮箱</label>
+								<input class="span8" type="text" name="email" id="email" value="" size="22">
+							</div>
+							<div>
+								<label for="password">新密码</label>
+								<input class="span8" type="text" name="password" id="password" value="" size="22"/>
+							</div>
+							<div>
+								<label for="password2">新密码</label>
+								<input class="span8" type="text" name="password2" id="password2" value="" size="22"/>
+							</div>
+							<div>
+								<input class="btn" name="submit" type="submit" id="submit"
+								       onclick="reset_password('email', 'password', 'password2')" value="重置">
+							</div>
+						</form>
+					</div>
+				</section>
+			</div>
+		<!-- end of page content -->
+
+
+			<!-- start of sidebar -->
+			<aside class="span4 page-sidebar">
+
+				<section class="widget">
+					<div class="support-widget">
+						<h3 class="title">更多支持</h3>
+						<p class="intro">您需要更多帮助吗？如果您对重置密码的流程不太熟悉，可以查看 <a href="{{ url_for('main.faq', _external=True) }}">FAQs</a>。</p>
+					</div>
+				</section>
+
+				<section class="widget">
+					<div class="quick-links-widget">
+						<h3 class="title">快速链接</h3>
+						<ul id="menu-quick-links" class="menu clearfix">
+							<li><a href="javascript:void(0)" onclick="modalHidden('auth-dialog')">登录／注册</a></li>
+							<li><a href="javascript:void(0)" onclick="modalHidden('forget-dialog')">忘记密码</a></li>
+							<li><a href="{{ url_for('post.home', _external=True) }}">最新文章</a></li>
+						</ul>
+					</div>
+				</section>
+
+			</aside>
+			<!-- end of sidebar -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+
+
+{% block footer_bottom %}
+<!-- Footer Bottom -->
+<div id="footer-bottom-wrapper">
+	<div id="footer-bottom" class="container">
+		<div class="row">
+			<div class="span6">
+				<p class="copyright">
+					Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Footer Bottom -->
+{% endblock footer_bottom %}
+
+{% block after_footer %}
+<a href="#top" id="scroll-top"></a>
+{% endblock after_footer %}
+
+
+{% block scripts %}
+<script>
+// 重置密码请求
+function reset_password(emailID, p1ID, p2ID) {
+	var email = jQuery('#' + emailID).val();
+	var p1 = jQuery('#' + p1ID).val();
+	var p2 = jQuery('#' + p2ID).val();
+
+    console.log(email, p1, p2);
+    if (!verifyEmail(email)) {
+        flash_warning("您的邮箱格式不正确，请检查后重新提交！");
+        return;
+    }
+    if (p1 != p2) {
+        flash_warning("您两次输入的密码不一致！");
+        return;
+    }
+    if (!verifyPassword(p1) || !verifyPassword(p2)){
+        flash_warning("您输入的密码格式不符合要求！");
+        return;
+    }
+	$.ajax({
+		url: "{{ url_for('auth.reset', token=token, _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'email': email,
+				'password': p1,
+				'password2': p2
+			})
+		},
+		success: function(response) {
+		    if (response.code == 3) {
+		        window.location.href = "{{ url_for('main.index', _external=True) }}";
+		    } else if (response.code == 2) {
+		        flash_error("您填写的信息格式不正确，请检查后重新提交！");
+		    } else if (response.code == 1) {
+		        flash_error("您的重置链接已失效，请重新申请重置密码！");
+		    } else {
+                flash_error("网络不稳定，未能连接至服务器，密码重置失败！");
+		    }
+		},
+		err: function(error) {
+		    flash_error("网络不稳定，未能连接至服务器，密码重置失败！");
+		}
+	});
+}
+</script>
+{% endblock scripts %}

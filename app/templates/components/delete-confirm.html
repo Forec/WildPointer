@@ -1,0 +1,28 @@
+<div class="modal" aria-hidden="true" id="delete-dialog" style="visibility: hidden;">
+	<div class="modal-dialog" style="opacity: 1.0; width: 400px; top: 200px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;"
+				   onclick="modalHidden('delete-dialog')">×
+				</a>
+				<h4 class="modal-title center">确认删除</h4>
+			</div>
+
+			<div>
+				<div class="modal-body">
+					<form role="form" class="form-horizontal" style="margin: 2px 0 15px;">
+						<div class="control-group" style="text-align: center">
+							<input type="text" class="controls-center" id="delete-id" placeholder="输入地址栏末尾的数字以确认操作">
+						</div>
+						<div class="control-group" style="text-align: center">
+							<button type="button" class="btn btn-danger" style="width: 200px;"
+							        onclick="confirmBeforeAction('delete-id')">确认删除
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Forget dialog -->

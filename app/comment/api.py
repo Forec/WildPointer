@@ -66,7 +66,7 @@ def modify_post_comment(comment_id):
     })
 
 
-@comm.route('/question/<int:comment_id>')
+@comm.route('/question/<int:comment_id>', methods=['GET'])
 @login_required
 def modify_question_comment(comment_id):
     comment = QuestionComment.query.filter_by(id=comment_id).first()
@@ -83,7 +83,7 @@ def modify_question_comment(comment_id):
     })
 
 
-@comm.route('/answer/<int:comment_id>')
+@comm.route('/answer/<int:comment_id>', methods=['GET'])
 @login_required
 def modify_answer_comment(comment_id):
     comment = AnswerComment.query.filter_by(id=comment_id).first()
