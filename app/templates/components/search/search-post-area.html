@@ -1,0 +1,13 @@
+<!-- Start of Search Wrapper -->
+<div class="search-area-wrapper" id="search-post-area">
+	<div class="search-area container">
+		<h3 class="search-header">有什么想搜索的文章？</h3>
+		<p class="search-tag-line">切换到<a href="{{ url_for('main.index', _external=True) }}">综合查询</a>以查找符合条件的全部文章或提问</p>
+		<form id="search-form" class="search-form clearfix" method="get" action="#" autocomplete="off">
+			<input class="search-term required" type="text" id="s" name="s" placeholder="在此输入搜索关键词" title="请输入您要检索的关键词！" />
+			<input class="search-btn" type="submit" value="检索" />
+			<div id="search-error-container"></div>
+		</form>
+	</div>
+</div>
+<!-- End of Search Wrapper -->

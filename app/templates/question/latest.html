@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}最新问题{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+{% include 'components/search/search-question-area.html' %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<!-- start of page content -->
+			<div class="span8 main-listing">
+				{% for ques in questions %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('ques.detail', question_id=ques.id) }}">{{ ques.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">{{ moment(ques.create).format('LL') }}</span>
+							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ ques.publisher.username }}')"
+							   title="提出者">{{ ques.publisher.username }}</a></span></span>
+							<span class="comments">
+								{% if ques.answers.count() == 0 %}
+								暂无回答
+								{% else %}
+								<a href="javascript:void(0)" onclick="{{ url_for('ques.detail', question_id=ques.id, _external=True) }}" title="Answer">
+							    {{ ques.answers.count() }} 条回答
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ ques.score }}</span>
+						</div>
+
+					</header>
+					{{ ques.body_html|safe|truncate(200) }}
+
+				</article>
+				{% endfor %}
+
+                {{ pag.pagination_widget(pagination, 'ques.latest') }}
+
+			</div>
+			<!-- end of page content -->
+
+			<!-- start of sidebar -->
+			<aside class="span4 page-sidebar">
+
+				<section class="widget">
+					<div class="support-widget">
+						<h3 class="title">积极回答</h3>
+						<p class="intro">Wild Pointer 鼓励用户对熟悉领域积极参与，您的贡献将展示在您的个人资料中。</p>
+					</div>
+				</section>
+
+				<section class="widget">
+					<h3 class="title">热门问题</h3>
+					<ul class="articles">
+						{% for _ques in hot_questions %}
+						<li class="article-entry standard">
+							<h4><a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}">{{ _ques.title }}</a></h4>
+							<span class="article-meta">
+								{{ moment(_ques.create).fromNow() }}&nbsp;&nbsp;
+								{% if _ques.answers.count() == 0 %}
+								<a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}">去做第一个回答者</a>
+								{% else %}
+								<a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}" title="Comment">
+							    {{ _ques.comments.count() }} 条回答
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ _ques.score }}</span>
+						</li>
+						{% endfor %}
+					</ul>
+				</section>
+
+
+				<section class="widget"><h3 class="title">标签</h3>
+					{% include 'components/_tags.html' %}
+				</section>
+
+			</aside>
+			<!-- end of sidebar -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+
+{% block scripts %}
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
+{% endblock scripts %}

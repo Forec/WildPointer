@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<!-- start of page content -->
+			<div class="span8 page-content">
+
+				<article class=" type-post format-standard hentry clearfix">
+
+					<h1 class="post-title"><a href="#">{{ post.title }}</a></h1>
+
+					<div class="post-meta clearfix">
+						<span class="date">{{ post.create }}</span>
+						<span class="author">
+							<a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
+							   title="作者">{{ post.author.username }}</a></span>
+						<span class="comments">
+						    {% if post.comments.count() == 0 %}
+						    暂无评论
+						    {% else %}
+							<a href="javascript:void(0)" onclick="showCommentsOfPost({{ post.id }})" title="Comment">
+							    {{ post.comments.count() }} 条评论
+							</a>
+					        {% endif %}
+						</span>
+						{% if moderate %}
+						<span class="garbage">
+							<a href="javascript:void(0)" onclick="modalHidden('delete-dialog')">删除</a>
+						</span>
+						{% endif %}
+						<span class="like-count">{{ post.score }}</span>
+					</div><!-- end of post meta -->
+
+					{{ post.body_html|safe }}
+
+				</article>
+				<div class="like-btn">
+					<form id="like-it-form" action="#" method="post">
+						<span class="like-it" id="like-it-counter">{{ post.score }}</span>
+						<input type="hidden" name="like_url" id="like_url" value="{{ url_for('post.like', post_id=post.id, _external=True) }}">
+						<input type="hidden" name="unlike_url" id="unlike_url" value="{{ url_for('post.cancel_like', post_id=post.id, _external=True) }}">
+						<input type="hidden" name="action" id="liked" value="{% if has_liked %}dislike_it{% else %}like_it{% endif %}">
+					</form>
+
+					<span class="tags">
+						<strong>Tags:&nbsp;&nbsp;</strong>
+						{% if tags|length == 0 %}
+						暂无
+						{% endif %}
+						{% for tag in tags %}
+						    <a href="#" rel="tag">{{ tag.name }}</a>&nbsp;&nbsp;
+						{% endfor %}
+					</span>
+
+				</div>
+
+				<hr/>
+
+				<section id="comments">
+
+					<div id="respond">
+
+						<form action="#" method="post" id="commentform">
+							<div>
+								<label for="comment">评论</label>
+								{% if not current_user.is_authenticated or not current_user.confirmed %}
+								<textarea class="span8" name="comment" cols="58" rows="10" disabled="disabled"></textarea>
+								{% else %}
+								<textarea class="span8" name="comment" id="comment" cols="58" rows="10"></textarea>
+								{% endif %}
+							</div>
+							{% if not current_user.is_authenticated %}
+							<p class="allowed-tags">你需要先登录并激活账号后才可以发表评论。</p>
+							{% endif %}
+							{% if current_user.is_authenticated %}
+							<div>
+								<input class="btn" name="submit" type="submit" id="submit" value="提交评论">
+							</div>
+							{% endif %}
+						</form>
+
+					</div>
+
+				</section><!-- end of comments -->
+
+			</div>
+			<!-- end of page content -->
+
+
+			<!-- start of sidebar -->
+			<aside class="span4 page-sidebar">
+
+				<section class="widget">
+					<div class="support-widget">
+						<h3 class="title">更多支持</h3>
+						<p class="intro">您需要更多帮助吗？如果您找不到想要的答案，试试 <a href="mailto:help@forec.cn">联系我们</a>。</p>
+					</div>
+				</section>
+
+
+				<section class="widget">
+					<h3 class="title">作者其它热搜文章</h3>
+					<ul class="articles">
+						{% for _post in recent_posts %}
+						<li class="article-entry standard">
+							<h4><a href="{{ url_for('post.detail', post_id=_post.id, _external=True) }}">{{ _post.title }}</a></h4>
+							<span class="article-meta">
+								{{ moment(_post.create).fromNow() }}&nbsp;&nbsp;
+								{% if _post.comments.count() == 0 %}
+								<a href="{{ url_for('post.detail', post_id=_post.id, _external=True) }}">去做第一个评论者</a>
+								{% else %}
+								<a href="javascript:void(0)" onclick="showCommentsOfPost({{ _post.id }})" title="Comment">
+							    {{ _post.comments.count() }} 条评论
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ _post.score }}</span>
+						</li>
+						{% endfor %}
+					</ul>
+				</section>
+
+
+				<section class="widget"><h3 class="title">标签</h3>
+					{% include 'components/_tags.html' %}
+				</section>
+
+			</aside>
+			<!-- end of sidebar -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+
+{% include 'components/delete-confirm.html' %}
+{% endblock page_content %}
+
+{% block scripts %}
+<script>
+function confirmBeforeAction(component_id) {
+    var content = jQuery('#' + component_id).val();
+    if (content == '{{ post.id }}') {
+        $.ajax({
+		    url: "{{ url_for('post.delete', post_id=post.id, _external=True) }}",
+		    type: "GET",
+    		success: function(response) {
+	            if (response.code == 1){
+		            window.location.href = "{{ url_for('post.me', _external=True) }}";
+	            } else if (response.code == 0) {
+    		        flash_error("您对文章《{{ post.title }}》无操作权限！");
+    		        modalHidden('delete-dialog');
+	            } else if (response.code == 2) {
+    	        	flash_error("请求失败，服务器发生了未知错误！");
+    	        	modalHidden('delete-dialog');
+    	        }
+            },
+	    	err: function(err) {
+		        flash_error("无法连接至服务器，删除失败。");
+		        modalHidden('delete-dialog');
+		    }
+	    });
+    } else {
+        flash_warning("您输入的文章 ID 与当前文章不符，请再次核实您的删除操作！");
+        modalHidden('delete-dialog');
+    }
+}
+</script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
+{% endblock scripts %}

@@ -37,19 +37,35 @@ def create():
     for char in invalid_tag_char:
         if tags_string.find(char) != -1:
             return jsonify({
-                'code': 2  # 标签中包含不合法字符
+                'code': 3  # 标签中包含不合法字符
             })
+    tag_names = [tag_string.strip() for tag_string in tags_string.split(';')]
+    if len(tag_names) > 5:
+        return jsonify({
+            'code': 2  # 标签数量过多
+        })
+    alphaB = 'abcdefghijklmnopqrstuvwxyz'
+    for tag_name in tag_names:
+        if len(tag_name) > 18:
+            return jsonify({
+                'code': 3  # 标签长度过长
+            })
+        if len(tag_name) > 6:
+            for char in tag_name:
+                if alphaB.find(char) == -1:
+                    return jsonify({
+                        'code': 3
+                    })
     question = Question(title=title,
                         publisher=current_user._get_current_object(),
                         body='' if body is None else body)
     db.session.add(question)
     db.session.commit()
-    tag_names = [tag_string.strip() for tag_string in tags_string.split(';')]
     question.reset_tags(tag_names)
     db.session.add(question)
     db.session.commit()
     return jsonify({
-        'code': 3,
+        'code': 4,  # 成功
         'id': question.id
     })
 

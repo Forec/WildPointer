@@ -86,12 +86,14 @@ function create_post(titleID, tagsID, bodyID) {
 			})
 		},
 		success: function(response) {
-		    if (response.code == 3) {
+		    if (response.code == 4) {
 		        var prefixPos = "{{ url_for('post.detail', post_id=0, _external=True) }}".lastIndexOf('/');
 		        var post_url = "{{ url_for('post.detail', post_id=0, _external=True) }}".substr(0, prefixPos) + '/' + response.id;
 		        window.location.href = post_url;
+		    } else if (response.code == 3) {
+		        flash_warning("您填写的标签长度过长，或者标签中包含非法字符！");
 		    } else if (response.code == 2) {
-		        flash_warning("您填写的标签中包含非法字符！");
+		        flash_warning("您提交的标签数量过多！");
 		    } else if (response.code == 1) {
 		        flash_warning("您的正文为空或过长，请限制字数在 1400 内！");
 		    } else {

@@ -144,4 +144,4 @@ class Question(db.Model):
 
     def reset_tags(self, tags):
         self.clear_tags()
-        self.fill_tags(tags)
+        self.fill_tag_by_names(tags)

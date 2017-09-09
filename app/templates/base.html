@@ -157,11 +157,11 @@
                                 <li><a href="javascript:void(0)" onclick="alertNotLogin()" title="提出新问题">提出新问题</a></li>
 	                            {% else %}  <!-- 已登录但尚未认证 -->
 	                            <li><a href="javascript:void(0)" onclick="alertNotConfirm()" title="发布新文章">发布新文章</a></li>
-                                <li><a href="javascript:void(0)" onclick="showQuestionDialog()" title="提出新问题">提出新问题</a></li>
+                                <li><a href="javascript:void(0)" onclick="alertNotConfirm()" title="提出新问题">提出新问题</a></li>
 	                            {% endif %}
 	                        {% else %}  <!-- 已登录并已认证 -->
 	                        <li><a href="{{ url_for('post.create', _external=True) }}" title="发布新文章">发布新文章</a></li>
-                            <li><a href="javascript:void(0)" onclick="modalHidden('new-question-dialog')" title="提出新问题">提出新问题</a></li>
+                            <li><a href="javascript:void(0)" onclick="showQuestionDialog('new-question-dialog')" title="提出新问题">提出新问题</a></li>
 	                        {% endif %}
                             <li><a href="{{ url_for('main.index', _external=True) }}" title="搜索问题">搜索问题</a></li>
                             <li><a href="{{ url_for('ques.latest', _external=True) }}" title="去回答">去回答</a></li>
