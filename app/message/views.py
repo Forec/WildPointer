@@ -23,12 +23,8 @@ def home():
         page, per_page=current_app.config['WP_MESSAGES_PER_PAGE'],
         error_out=False
     )
-    latest_messages = pagination.items
-    return render_template('message/home.html', messages=latest_messages, pagination=pagination)
-
-
-@mess.route('/detail/<int:message_id>')
-@login_required
-def detail(message_id):
-    message = Message.query.get_or_404(message_id)
-    return render_template('message/detail.html', message=message)
+    messages = pagination.items
+    message_count = int(len(messages) / 2) if len(messages) % 2 == 0 else int(len(messages) / 2) + 1
+    messages_1 = messages[:message_count]
+    messages_2 = messages[message_count:]
+    return render_template('message/list.html', messages_1=messages_1, messages_2=messages_2, pagination=pagination)

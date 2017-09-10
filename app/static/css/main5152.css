@@ -624,6 +624,9 @@ ul.articles li.article-entry:last-child {
 .hentry .post-meta .garbage {
   background: url("../images/garbage.png") no-repeat left center;
 }
+.hentry .post-meta .answer {
+  background: url("../images/category-main-icon.png") no-repeat left center;
+}
 .hentry .post-meta .like-count {
   float: right;
   background: url("../images/like.png") no-repeat 4px 6px;
@@ -632,7 +635,17 @@ ul.articles li.article-entry:last-child {
   background: url("../images/like.png") no-repeat 4px -24px;
   color: #395996;
 }
-
+span.support-count {
+    display: inline-block;
+    height: 20px;
+    color: #f0b70c;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #fafafa;
+    line-height: 20px;
+}
 .like-btn .like-it {
   display: inline-block;
   height: 20px;
@@ -672,6 +685,96 @@ ul.articles li.article-entry:last-child {
 }
 .like-btn .like-it.already-voted:hover {
   background: #fafafa url("../images/like-btn.png") no-repeat 10px -20px;
+  color: #8cd24e;
+}
+
+/* 自定义的支持／反对 */
+.support-btn .like-it {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 5px;
+  padding-left: 25px;
+  padding-right: 6px;
+  background: #fafafa url("../images/like-btn.png") no-repeat 10px -20px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #8cd24e;
+}
+.support-btn .dislike-it {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 5px;
+  padding-left: 25px;
+  padding-right: 6px;
+  background: #fafafa url("../images/dislike-btn.png") no-repeat 10px -20px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #e54137;
+}
+/* 自定义反对部分 */
+.support-btn .unlike-it {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 5px;
+  padding-left: 25px;
+  padding-right: 6px;
+  background: #fafafa url("../images/unlike-btn.png") no-repeat 10px -20px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #8cd24e;
+}
+.support-btn .disunlike-it {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  padding: 5px 5px;
+  padding-left: 25px;
+  padding-right: 6px;
+  background: #fafafa url("../images/disunlike-btn.png") no-repeat 10px -20px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  color: #e54137;
+}
+.support-btn .like-it:hover {
+  background: #b6b6b6 url("../images/like-btn.png") no-repeat 10px 10px;
+  color: #fff;
+}
+.support-btn .dislike-it:hover {
+  background: #b6b6b6 url("../images/dislike-btn.png") no-repeat 10px 10px;
+  color: #fff;
+}
+.support-btn .like-it.already-voted {
+  cursor: default;
+}
+.support-btn .like-it.already-voted:hover {
+  background: #fafafa url("../images/like-btn.png") no-repeat 10px -20px;
+  color: #8cd24e;
+}
+/* 自定义 反对 */
+.support-btn .unlike-it:hover {
+  background: #b6b6b6 url("../images/unlike-btn.png") no-repeat 10px 10px;
+  color: #fff;
+}
+.support-btn .disunlike-it:hover {
+  background: #b6b6b6 url("../images/disunlike-btn.png") no-repeat 10px 10px;
+  color: #fff;
+}
+.support-btn .unlike-it.already-voted {
+  cursor: default;
+}
+.support-btn .unlike-it.already-voted:hover {
+  background: #fafafa url("../images/unlike-btn.png") no-repeat 10px -20px;
   color: #8cd24e;
 }
 

@@ -1,0 +1,154 @@
+<script>
+function answerVoteUp(url_string, answer_id) {
+	$.ajax({
+		url: url_string,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 1) {
+		        jQuery("#support-counter-answer-" + answer_id).text(response.score);
+		        flash_success("您的称赞已提交。");
+		        clearAnswerBackup(answer_id);
+		    } else if (response.code == 0) {
+		        flash_info("已取消称赞。");
+		        jQuery("#support-counter-answer-" + answer_id).text(response.score);
+		        clearAnswerBackup(answer_id);
+		    } else if (response.code == -1) {
+		        flash_error("该回答不存在。");
+		        rollbackAnswerVote(answer_id);
+		    } else if (response.code == 2) {
+		        flash_error("您不能称赞自己的答案。");
+		        rollbackAnswerVote(answer_id);
+		    } else {
+		        flash_error("您没有权限执行此操作，请确认您已经登录并且激活了您的账号。");
+		        rollbackAnswerVote(answer_id);
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请检查您的网络设置。");
+		    rollbackAnswerVote(answer_id);
+		}
+	});
+}
+
+function answerVoteDown(url_string, answer_id) {
+	$.ajax({
+		url: url_string,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 1) {
+		        jQuery("#support-counter-answer-" + answer_id).text(response.score);
+		        flash_success("您的反对意见已提交。");
+		        clearAnswerBackup(answer_id);
+		    } else if (response.code == 0) {
+		        jQuery("#support-counter-answer-" + answer_id).text(response.score);
+		        flash_info("已取消反对。");
+		        clearAnswerBackup(answer_id);
+		    } else if (response.code == -1) {
+		        flash_error("该回答不存在。");
+		        rollbackAnswerVote(answer_id);
+		    } else if (response.code == 2) {
+                flash_error("您不能反对自己的答案。");
+                rollbackAnswerVote(answer_id);
+		    } else {
+		        flash_error("您没有权限执行此操作，请确认您已经登录并且激活了您的账号。");
+		        rollbackAnswerVote(answer_id);
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请检查您的网络设置。");
+		    rollbackAnswerVote(answer_id);
+		}
+	});
+}
+
+function backupAnswerVote(answer_id) {
+    if (jQuery("#answer-" + answer_id + "_backup_action").val() != "")
+        return;
+    var backupMsg = jQuery("#support-counter-answer-" + answer_id).html() + ";" +
+                    jQuery("#answer-" + answer_id + "_like_action").val() + ";" +
+                    jQuery("#answer-" + answer_id + "_unlike_action").val() + ";" +
+                    jQuery("#answer-like-button-" + answer_id).attr("class") + ";" +
+                    jQuery("#answer-unlike-button-" + answer_id).attr("class");
+    jQuery("#answer-" + answer_id + "_backup_action").val(backupMsg);
+}
+
+function clearAnswerBackup(answer_id) {
+    jQuery("#answer-" + answer_id + "_backup_action").val("");
+}
+
+function rollbackAnswerVote(answer_id) {
+    var backupMsg = jQuery("#answer-" + answer_id + "_backup_action").val();
+	jQuery("#support-counter-answer-" + answer_id).html(backupMsg.split(";")[0]);
+	jQuery("#answer-" + answer_id + "_like_action").val(backupMsg.split(";")[1]);
+	jQuery("#answer-" + answer_id + "_unlike_action").val(backupMsg.split(";")[2]);
+	jQuery("#answer-like-button-" + answer_id).attr("class", backupMsg.split(";")[3]);
+	jQuery("#answer-unlike-button-" + answer_id).attr("class", backupMsg.split(";")[4]);
+	clearAnswerBackup(answer_id);
+}
+
+
+function press_like_button(answer_id){
+    var likeNum = parseInt(jQuery("#support-counter-answer-" + answer_id).html(), 10);
+    var like_action = jQuery("#answer-" + answer_id + "_like_action").val();
+    var unlike_action = jQuery("#answer-" + answer_id + "_unlike_action").val();
+    if (like_action == "like_it") {
+        if (unlike_action == "cancel_unlike_it") {
+            likeNum++;
+            jQuery("#answer-unlike-button-" + answer_id).removeClass("disunlike-it").addClass("unlike-it");
+            jQuery("#answer-" + answer_id + "_unlike_action").val("unlike_it");
+        }
+        likeNum++;
+        jQuery("#answer-like-button-" + answer_id).removeClass("like-it").addClass("dislike-it");
+        jQuery("#answer-" + answer_id + "_like_action").val("cancel_like_it");
+        jQuery("#support-counter-answer-" + answer_id).html(likeNum);
+    } else if (like_action == "cancel_like_it") {  /* 此时不可能已经点了 unlike */
+        likeNum--;
+        jQuery("#answer-like-button-" + answer_id).addClass("like-it").removeClass("dislike-it");
+        jQuery("#answer-" + answer_id + "_like_action").val("like_it");
+        jQuery("#support-counter-answer-" + answer_id).html(likeNum);
+    }
+    answerVoteUp(jQuery("#answer-" + answer_id + "_like_url").val(), answer_id);
+}
+
+function press_unlike_button(answer_id){
+    var likeNum = parseInt(jQuery("#support-counter-answer-" + answer_id).html(), 10);
+    var like_action = jQuery("#answer-" + answer_id + "_like_action").val();
+    var unlike_action = jQuery("#answer-" + answer_id + "_unlike_action").val();
+    if (unlike_action == "unlike_it") {
+        if (like_action == "cancel_like_it") {
+            likeNum--;
+            jQuery("#answer-like-button-" + answer_id).removeClass("dislike-it").addClass("like-it");
+            jQuery("#answer-" + answer_id + "_like_action").val("like_it");
+        }
+        likeNum--;
+        jQuery("#answer-unlike-button-" + answer_id).removeClass("unlike-it").addClass("disunlike-it");
+        jQuery("#answer-" + answer_id + "_unlike_action").val("cancel_unlike_it");
+        jQuery("#support-counter-answer-" + answer_id).html(likeNum);
+    } else if (unlike_action == "cancel_unlike_it") {  /* 此时不可能已经点了 like */
+        likeNum--;
+        jQuery("#answer-unlike-button-" + answer_id).addClass("unlike-it").removeClass("disunlike-it");
+        jQuery("#answer-" + answer_id + "_unlike_action").val("unlike_it");
+        jQuery("#support-counter-answer-" + answer_id).html(likeNum);
+    }
+    answerVoteDown(jQuery("#answer-" + answer_id + "_unlike_url").val(), answer_id);
+};
+
+jQuery(document).ready(function(e) {
+	$ = jQuery;
+
+    {% for answer in answers %}
+        $('#answer-like-button-{{ answer.id }}').click(function() {
+            backupAnswerVote('{{ answer.id }}');
+            auth_before_action(function() {
+                press_like_button('{{ answer.id }}');
+            });
+        });
+        $('#answer-unlike-button-{{ answer.id }}').click(function() {
+            backupAnswerVote('{{ answer.id }}');
+            auth_before_action(function() {
+                press_unlike_button('{{ answer.id }}');
+            });
+        });
+    {% endfor %}
+});
+</script>

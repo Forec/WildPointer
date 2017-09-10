@@ -20,7 +20,7 @@
 				<section id="edit-area">
 					<div id="respond">
 						<h3>发布新文章</h3>
-						<form action="#" method="post" id="create-post-form">
+						<form action="javascript:create_post('title', 'tags', 'body')" method="post" id="create-post-form">
 							<p class="comment-notes">你可以使用 MarkDown 语法编写文章。标注 <span class="required">*</span> 的为必填项。</p>
 							<div>
 								<label for="title">标题</label>
@@ -35,8 +35,8 @@
 								<textarea class="span8" name="body" id="body" cols="58" rows="10"></textarea>
 							</div>
 							<div>
-								<input class="btn" name="submit" type="submit" id="submit"
-								       onclick="create_post('title', 'tags', 'body')" value="提交">
+								<input class="btn" name="submit" type="submit" id="submit" value="提交">
+								       <!--onclick="create_post('title', 'tags', 'body')"-->
 							</div>
 						</form>
 					</div>
@@ -95,7 +95,7 @@ function create_post(titleID, tagsID, bodyID) {
 		    } else if (response.code == 2) {
 		        flash_warning("您提交的标签数量过多！");
 		    } else if (response.code == 1) {
-		        flash_warning("您的正文为空或过长，请限制字数在 1400 内！");
+		        flash_warning("您的正文为空或过长，请限制字数在 100000 内！");
 		    } else {
                 flash_error("发生了未知错误！请检查您是否已经登录并激活了您的账号，否则您无法发布新文章。");
 		    }

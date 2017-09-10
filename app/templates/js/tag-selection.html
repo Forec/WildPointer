@@ -1,0 +1,17 @@
+<script>
+function clickTag(tagID) {
+	var tag = jQuery('#' + tagID);
+	var tagLine = jQuery("#taglist-text");
+
+	if (tag.attr("value") == "on") {
+		tag.attr("value", "pushed");
+		tagLine.val(tagLine.val() + tag.text() + ";");
+		tag.removeClass("btn").addClass("btn-success");
+	} else if (tag.attr("value") == "pushed") {
+		tag.attr("value", "on");
+		var index = tagLine.val().indexOf(tag.text() + ";");
+		tagLine.val(tagLine.val().substr(0, index) + tagLine.val().substr(index + tag.text().length + 1));
+		tag.removeClass("btn-success").addClass("btn");
+	}
+}
+</script>

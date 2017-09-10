@@ -50,31 +50,6 @@ jQuery(document).ready(function(e) {
     $('.tagcloud a').removeAttr('style').addClass('btn btn-mini');
 
 	
-	/*-----------------------------------------------------------------------------------*/
-	/*	Flickr Feed
-	/*-----------------------------------------------------------------------------------*/
-	
-//	$('#basicuse').jflickrfeed({
-//								limit: 9,
-//								qstrings: {
-//									id: '52617155@N08'
-//								},
-//								itemTemplate: '<a href="{{image_b}}" title="{{title}}" data-rel="prettyPhoto[flickrg]"><img src="{{image_s}}" alt="{{title}}" /></a>'
-//							}, function(data){
-//
-//											$('a[data-rel]').each(function() {
-//												$(this).attr('rel', $(this).data('rel'));
-//											});
-//
-//
-//											$("a[rel^='prettyPhoto']").prettyPhoto({
-//												deeplinking: false,
-//												social_tools: false,
-//												overlay_gallery: false
-//											});
-//							});
-//
-
     /*-----------------------------------------------------------------------------------*/
 	/* Pretty Photo Lightbox
 	/*-----------------------------------------------------------------------------------*/
@@ -250,8 +225,8 @@ jQuery(document).ready(function(e) {
                 likeButton.removeClass("like-it").addClass("dislike-it");
                 likeButton.html(likeNum);
                 thumbUp(url);
-            } else if (liked.val() == "not_like_it") {
-                var url = jQuery("#unlike_url").val();
+            } else if (liked.val() == "cancel_like_it") {
+                var url = jQuery("#cancel_like_url").val();
                 likeNum--;
                 likeButton.addClass("like-it").removeClass("dislike-it");
                 likeButton.html(likeNum);
@@ -261,6 +236,92 @@ jQuery(document).ready(function(e) {
 	    auth_before_action(action);
 	});
 
+	$('#like-it-form .dislike-it').click(function() {
+        var parent = $(this);
+        var action = function(){
+            var likeButton = parent;
+            var likeHtml = likeButton.html();
+            var likeNum = parseInt(likeHtml, 10);
+
+            var liked = jQuery("#liked");
+
+            if (liked.val() == "like_it") {
+                var url = jQuery("#like_url").val();
+                likeNum++;
+                likeButton.removeClass("like-it").addClass("dislike-it");
+                likeButton.html(likeNum);
+                thumbUp(url);
+            } else if (liked.val() == "cancel_like_it") {
+                var url = jQuery("#cancel_like_url").val();
+                likeNum--;
+                likeButton.addClass("like-it").removeClass("dislike-it");
+                likeButton.html(likeNum);
+                thumbDown(url);
+            }
+	    };
+	    auth_before_action(action);
+	});
+
+	/* ------------------------------------------------------*/
+	/* Support Button JS
+	/* ------------------------------------------------------*/
+	$('#like-button').click(function() {
+	    backupVote();
+        var action = function(){
+            var likeNum = parseInt(jQuery("#support-counter").html(), 10);
+            var like_action = jQuery("#like_action").val();
+            var unlike_action = jQuery("#unlike_action").val();
+
+            if (like_action == "like_it") {
+                if (unlike_action == "cancel_unlike_it") {
+                    likeNum++;
+                    jQuery("#unlike-button").removeClass("disunlike-it").addClass("unlike-it");
+                    jQuery("#unlike_action").val("unlike_it");
+                }
+                likeNum++;
+                jQuery("#like-button").removeClass("like-it").addClass("dislike-it");
+                jQuery("#like_action").val("cancel_like_it");
+                jQuery("#support-counter").html(likeNum);
+            } else if (like_action == "cancel_like_it") {  /* 此时不可能已经点了 unlike */
+                likeNum--;
+                jQuery("#like-button").addClass("like-it").removeClass("dislike-it");
+                jQuery("#like_action").val("like_it");
+                jQuery("#support-counter").html(likeNum);
+            }
+            voteUp(jQuery("#like_url").val());
+	    };
+	    auth_before_action(action);
+	});
+
+
+
+	$('#unlike-button').click(function() {
+	    backupVote();
+        var action = function(){
+            var likeNum = parseInt(jQuery("#support-counter").html(), 10);
+            var like_action = jQuery("#like_action").val();
+            var unlike_action = jQuery("#unlike_action").val();
+
+            if (unlike_action == "unlike_it") {
+                if (like_action == "cancel_like_it") {
+                    likeNum--;
+                    jQuery("#like-button").removeClass("dislike-it").addClass("like-it");
+                    jQuery("#like_action").val("like_it");
+                }
+                likeNum--;
+                jQuery("#unlike-button").removeClass("unlike-it").addClass("disunlike-it");
+                jQuery("#unlike_action").val("cancel_unlike_it");
+                jQuery("#support-counter").html(likeNum);
+            } else if (unlike_action == "cancel_unlike_it") {  /* 此时不可能已经点了 like */
+                likeNum--;
+                jQuery("#unlike-button").addClass("unlike-it").removeClass("disunlike-it");
+                jQuery("#unlike_action").val("unlike_it");
+                jQuery("#support-counter").html(likeNum);
+            }
+            voteDown(jQuery("#unlike_url").val());
+	    };
+	    auth_before_action(action);
+	});
 
 
 
@@ -338,30 +399,30 @@ jQuery(document).ready(function(e) {
                 /*  Validation Plugin : http://bassistance.de/jquery-plugins/jquery-plugin-validation/
                 /*	Form Ajax Plugin : http://www.malsup.com/jquery/form/
                 /*---------------------------------------------------------------------------------- */
-                if(jQuery().validate && jQuery().ajaxSubmit)
-                {
-                        // Contact Form Handling
-                        var contact_options = {
-                                target: '#message-sent',
-                                beforeSubmit: function(){
-                                        $('#contact-loader').fadeIn('fast');
-                                        $('#message-sent').fadeOut('fast');
-                                },
-                                success: function(){
-                                        $('#contact-loader').fadeOut('fast');
-                                        $('#message-sent').fadeIn('fast');
-                                        $('#contact-form').resetForm();
-                                }
-                        };
-
-                        $('#contact-form').validate({
-                                errorLabelContainer: $("div.error-container"),
-                                submitHandler: function(form) {
-                                        $(form).ajaxSubmit(contact_options);
-                                }
-                        });
-
-                }
+//                if(jQuery().validate && jQuery().ajaxSubmit)
+//                {
+//                        // Contact Form Handling
+//                        var contact_options = {
+//                                target: '#message-sent',
+//                                beforeSubmit: function(){
+//                                        $('#contact-loader').fadeIn('fast');
+//                                        $('#message-sent').fadeOut('fast');
+//                                },
+//                                success: function(){
+//                                        $('#contact-loader').fadeOut('fast');
+//                                        $('#message-sent').fadeIn('fast');
+//                                        $('#contact-form').resetForm();
+//                                }
+//                        };
+//
+//                        $('#contact-form').validate({
+//                                errorLabelContainer: $("div.error-container"),
+//                                submitHandler: function(form) {
+//                                        $(form).ajaxSubmit(contact_options);
+//                                }
+//                        });
+//
+//                }
 
                 /*-----------------------------------------------------------------------------------*/
                 /*	Live Search

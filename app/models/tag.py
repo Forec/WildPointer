@@ -30,6 +30,15 @@ class Tag(db.Model):
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
 
+    def get_posts(self):
+        from .post import Post
+        return Post.query.join(PostTags, PostTags.post_id == Post.id).filter(PostTags.tag_id == self.id)
+
+    def get_questions(self):
+        from .question import Question
+        return Question.query.join(QuestionTags, QuestionTags.question_id == Question.id).\
+            filter(QuestionTags.tag_id == self.id)
+
     @staticmethod
     def generate_fake(tag_count=30, relation_count=100):
         from random import seed, randint

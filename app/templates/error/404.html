@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>404 资源不存在</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png', _external=True) }}" />
+<link href="{{ url_for('static', filename='errors/css/style.css', _external=True) }}" rel="stylesheet" type="text/css" media="all" />
+<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
+</head>
+<body>
+	<!-----start-wrap--------->
+	<div class="wrap">
+		<!-----start-content--------->
+		<div class="content">
+			<!-----start-logo--------->
+			<div class="logo">
+				<h1><a href="#"><img src="{{ url_for('static', filename='errors/images/logo.png', _external=True) }}"/></a></h1>
+				<span><img src="{{ url_for('static', filename='errors/images/signal.png', _external=True) }}"/>很抱歉，您请求的资源不存在！</span>
+			</div>
+			<!-----end-logo--------->
+			<!-----start-search-bar-section--------->
+			<div class="buttom">
+				<div class="seach_bar">
+					<p>您可以回到 <span><a href="{{ url_for('main.index', _external=True) }}">主页</a></span> 或在这里检索</p>
+					<!-----start-sear-box--------->
+					<div class="search_box">
+					<form method="#" action="javascript:submit_search_request()"  autocomplete="off">
+					    <input type="text" id="s">
+				    </form>
+					 </div>
+				</div>
+			</div>
+			<!-----end-sear-bar--------->
+		</div>
+		<!----copy-right-------------->
+	<p class="copy_right">&#169; 2017 Wild Pointer 团队</p>
+	</div>
+
+
+<script>
+function submit_search_request() {
+	var keywords = jQuery('#s').val();
+    window.location.href = "{{ url_for('sea.home', key='', _external=True) }}" + keywords;
+}
+</script>
+	
+	<!---------end-wrap---------->
+</body>
+</html>

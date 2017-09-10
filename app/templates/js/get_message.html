@@ -1,0 +1,53 @@
+<script>
+function showMessage(content) {
+    var message = '<div class="ns-thumb"><img src="{{ url_for('static', filename='images/wp.jpg', _external=True) }}"/></div>';
+    message = message + '<div class="ns-content"><p>' + content + '</p></div>';
+
+	var notification = new NotificationFx({
+    	message : message,
+    	layout : 'other',
+	    ttl : 120000,
+        effect : 'thumbslider',
+	    type : 'notice',
+	    onClose : function() {
+	    }
+    });
+	notification.show();
+}
+
+function requestNewMessage() {
+	$.ajax({
+		url: "{{ url_for('message.tick', _external=True) }}",
+		type: "GET",
+		success: function(response) {
+	        if(response.code == 1 && response.count > 0){
+                jQuery("#message-counter").text(response.count);
+                jQuery("#message-counter").show();
+                for (var i = 0; i < response.messages.length; i++) {
+                    showMessage(response.messages[i]);
+                }
+	        }
+        },
+		err: function(err) {
+		    flash_error("无法获取到您的最新消息，因为我们无法与服务器建立连接，请检查您的网络配置。");
+		}
+	});
+}
+
+function load() {
+	window.onfocus=function() {
+		window.timeId = setInterval(requestNewMessage, 3000);
+	};
+	window.onblur=function() {
+		clearInterval(window.timeId);
+	};
+}
+
+jQuery(document).ready(function($){
+    jQuery("#message-counter").hide();
+    {% if current_user.is_authenticated %}
+    setTimeout(load, 1);
+    window.timeId = setInterval(requestNewMessage, 3000);
+    {% endif %}
+});
+</script>

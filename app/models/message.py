@@ -21,6 +21,7 @@ class Message(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     viewed = db.Column(db.Boolean, default=False)
+    noticed = db.Column(db.Boolean, default=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     @staticmethod

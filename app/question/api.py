@@ -6,7 +6,7 @@
 # @license : Copyright(C), Forec
 # @Contact : forec@bupt.edu.cn
 
-from flask import jsonify, request
+from flask import jsonify, request, flash
 from flask_login import login_required, current_user
 from . import ques
 from .. import db
@@ -72,6 +72,7 @@ def create():
 
 @ques.route('/edit/<int:question_id>', methods=['GET', 'POST'])
 @login_required
+@confirm_required
 def edit(question_id):
     question = Question.query.filter_by(id=question_id).first()
     if question is None:
@@ -111,30 +112,22 @@ def edit(question_id):
         })
 
 
-@ques.route('/delete', methods=['POST'])
+@ques.route('/delete/<int:question_id>', methods=['GET'])
 @login_required
-def delete():
-    req = request.form.get('request')
-    if req is None:
-        return jsonify({
-            'code': 1   # 没有请求
-        })
-    req = json.loads(req)
-    question_id = req.get('question_id')
+@confirm_required
+def delete(question_id):
     question = Question.query.filter_by(id=question_id).first()
     if question is None:
         return jsonify({
             'code': -1  # 对应 Question 不存在
         })
-    email = req.get('email')
-    token = req.get('token')
-    user = verify_token(email, token)
-    if not user:
+    title = question.title
+    if not current_user.delete_question(question_id):
         return jsonify({
-            'code': 2   # 认证失败
+            'code': 2  # 删除失败
         })
-    user.delete_question(question_id)
     db.session.delete(question)
+    flash("您已成功删除问题《" + title + "》。")
     return jsonify({
         'code': 3       # 删除成功
     })
@@ -142,16 +135,22 @@ def delete():
 
 @ques.route('/like/<int:question_id>', methods=['GET'])
 @login_required
+@confirm_required
 def like(question_id):
     question = Question.query.filter_by(id=question_id).first()
     if question is None:
         return jsonify({
             'code': -1  # 对应 Question 不存在
         })
+    if current_user.id == question.publisher_id:
+        return jsonify({
+            'code': 2  # 不能给自己点赞
+        })
     if current_user.is_like_question(question):
         current_user.cancel_like_question(question)
         return jsonify({
-            'code': 0   # 已取消点赞
+            'code': 0,   # 已取消点赞
+            'score': question.score
         })
     current_user.like_question(question)
     return jsonify({
@@ -162,16 +161,22 @@ def like(question_id):
 
 @ques.route('/unlike/<int:question_id>', methods=['GET'])
 @login_required
+@confirm_required
 def unlike(question_id):
     question = Question.query.filter_by(id=question_id).first()
     if question is None:
         return jsonify({
             'code': -1  # 对应 Question 不存在
         })
+    if current_user.id == question.publisher_id:
+        return jsonify({
+            'code': 2  # 不能反对自己的问题
+        })
     if current_user.is_unlike_question(question):
         current_user.cancel_unlike_question(question)
         return jsonify({
-            'code': 0   # 已取消反对
+            'code': 0,   # 已取消反对
+            'score': question.score
         })
     current_user.unlike_question(question)
     return jsonify({

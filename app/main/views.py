@@ -10,7 +10,7 @@
 from flask import render_template
 from flask_login import current_user
 from . import main
-from ..models import Post, Question
+from ..models import Post, Question, Tag
 
 
 @main.route('/', methods=['GET'])
@@ -20,7 +20,9 @@ def index():
     mail_address = 'mail.' + mail_address
     posts = Post.query.order_by(Post.create.desc()).slice(0, 6)
     questions = Question.query.order_by(Question.create.desc()).slice(0, 6)
-    return render_template('index.html', posts=posts, questions=questions, mail_address=mail_address)
+    hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
+    return render_template('index.html', posts=posts, questions=questions, mail_address=mail_address,
+                           tags=hot_tags, used_tags=[], type='all')
 
 
 @main.route('/faq', methods=['GET'])

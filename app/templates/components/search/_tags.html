@@ -1,0 +1,45 @@
+<div class="tagcloud">
+	<p>过滤标签（自定义标签请用分号隔开，不可包含特殊字符）</p>
+	<form method="#" action="javascript:submit_search_request('{{ type }}')" autocomplete="off">
+	<input class="span4" type="text" id="taglist-text" value="{% for tag in used_tags %}{{ tag.name }};{% endfor %}"
+	       size="22" style="width: 98%; margin-top: -15px; margin-bottom: -15px">
+	</form>
+	{% if used_tags %}
+	    {% for tag in used_tags %}
+	    <a href="javascript:void(0)"
+	       onclick="selectFilterTag(this.id)"
+	       class="btn-success btn-mini"
+	       id="selectTag-{{ tag.id }}" value="pushed">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
+	{% if tags|length == 0 %}
+	    {% if not used_tags %}
+	    <p>暂无推荐标签</p>
+	    {% endif %}
+	{% else %}
+	    {% for tag in tags %}
+	    <a href="javascript:void(0)"
+	       onclick="selectFilterTag(this.id)"
+	       class="btn btn-mini"
+	       id="selectTag-{{ tag.id }}" value="on">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
+</div>
+
+<script>
+function selectFilterTag(tagID) {
+	var tag = jQuery('#' + tagID);
+	var tagLine = jQuery("#taglist-text");
+
+	if (tag.attr("value") == "on") {
+		tag.attr("value", "pushed");
+		tagLine.val(tagLine.val() + tag.text() + ";");
+		tag.removeClass("btn").addClass("btn-success");
+	} else if (tag.attr("value") == "pushed") {
+		tag.attr("value", "on");
+		var index = tagLine.val().indexOf(tag.text() + ";");
+		tagLine.val(tagLine.val().substr(0, index) + tagLine.val().substr(index + tag.text().length + 1));
+		tag.removeClass("btn-success").addClass("btn");
+	}
+}
+</script>

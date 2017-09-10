@@ -55,7 +55,7 @@ class UnLikeAnswers(db.Model):
 
 class ContributeQuestions(db.Model):
     __tablename__ = 'contributes'
-    contributer_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    contributor_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
     timestamp = db.Column(db.DateTime(), default=datetime.utcnow)
 

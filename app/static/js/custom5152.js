@@ -50,31 +50,6 @@ jQuery(document).ready(function(e) {
     $('.tagcloud a').removeAttr('style').addClass('btn btn-mini');
 
 	
-	/*-----------------------------------------------------------------------------------*/
-	/*	Flickr Feed
-	/*-----------------------------------------------------------------------------------*/
-//
-//	$('#basicuse').jflickrfeed({
-//								limit: 9,
-//								qstrings: {
-//									id: '52617155@N08'
-//								},
-//								itemTemplate: '<a href="{{image_b}}" title="{{title}}" data-rel="prettyPhoto[flickrg]"><img src="{{image_s}}" alt="{{title}}" /></a>'
-//							}, function(data){
-//
-//											$('a[data-rel]').each(function() {
-//												$(this).attr('rel', $(this).data('rel'));
-//											});
-//
-//
-//											$("a[rel^='prettyPhoto']").prettyPhoto({
-//												deeplinking: false,
-//												social_tools: false,
-//												overlay_gallery: false
-//											});
-//							});
-
-
     /*-----------------------------------------------------------------------------------*/
 	/* Pretty Photo Lightbox
 	/*-----------------------------------------------------------------------------------*/
@@ -241,8 +216,6 @@ jQuery(document).ready(function(e) {
         var likeNum = parseInt(likeHtml, 10);
         likeNum++;
         likeButton.html(likeNum);
-
-         //   $('#like-it-form').ajaxSubmit(options);
     });
 
 
@@ -350,10 +323,10 @@ jQuery(document).ready(function(e) {
                 /*-----------------------------------------------------------------------------------*/
                 /*	Live Search
                 /*-----------------------------------------------------------------------------------*/
-                if(jQuery().liveSearch){
-                        jQuery('#s').liveSearch({url: 'search.php?livesearch=used&s='});
-                }
-				
+//                if(jQuery().liveSearch){
+//                        jQuery('#s').liveSearch({url: 'search.php?livesearch=used&s='});
+//                }
+//
 });
 
 

@@ -9,27 +9,26 @@ function thumbUp(url_string) {
 
 function thumbUpSuccess(response) {
 	if (response.code == -1) {
-		console.log("不存在对应文章");
+		flash_error("您点赞的文章不存在。");
 		rollback();
 	}
 	else if (response.code == 0) {
-		console.log("不能给自己点赞");
+		flash_info("您不能给自己发布的文章点赞。");
 		rollback();
 	}
 	else if (response.code == 1) {
 		jQuery("#like-it-counter").text(response.count);
-		jQuery("#liked").val("not_like_it");
+        jQuery("#static-like-count").text(response.count);
+		jQuery("#liked").val("cancel_like_it");
 	}
-	else if (response.code == 2) {
-		console.log("未知错误");
+	else {
+		flash_error("您对此操作无权限，请确认您已经登录并激活了账号。");
 		rollback();
-	} else {
-	    rollback();
 	}
 }
 
 function thumbUpFailed(error) {
-	console.log("服务器连接失败");
+	flash_error("无法连接至服务器，请检查您的网络配置。");
 	rollback();
 }	
 
@@ -44,27 +43,26 @@ function thumbDown(url_string) {
 
 function thumbDownSuccess(response) {
 	if (response.code == -1) {
-		console.log("不存在对应文章");
+		flash_error("您取消点赞的文章不存在。");
 		rollback();
 	}
 	else if (response.code == 0) {
-		console.log("不能给自己取消赞");
+		flash_info("您不能给自己发布的文章点赞或取消点赞。");
 		rollback();
 	}
 	else if (response.code == 1) {
 		jQuery("#like-it-counter").text(response.count);
+        jQuery("#static-like-count").text(response.count);
 		jQuery("#liked").val("like_it");
 	}
 	else if (response.code == 2) {
-		console.log("未知错误");
+		flash_error("您对此操作无权限，请确认您已经登录并激活了账号。");
 		rollback();
-	} else {
-	    rollback();
 	}
 }
 
 function thumbDownFailed(error) {
-	console.log("服务器连接失败");
+	flash_error("无法连接至服务器，请检查您的网络配置");
 	rollback();
 }
 
@@ -79,7 +77,7 @@ function rollback() {
 		likeNum--;
 		likeButton.html(likeNum);
 		likeButton.removeClass("dislike-it").addClass("like-it");
-	} else if (liked.val() == "not_like_it") {
+	} else if (liked.val() == "cancel_like_it") {
 		likeNum++;
 		likeButton.html(likeNum);
 		likeButton.removeClass("like-it").addClass("dislike-it");

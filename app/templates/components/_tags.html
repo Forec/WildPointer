@@ -1,6 +1,13 @@
 <div class="tagcloud">
+	{% if used_tags %}
+	    {% for tag in used_tags %}
+	    <a href="{{ url_for('tag.all', tag_list='', _external=True) }}" class="btn-success btn-mini">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
 	{% if tags|length == 0 %}
+	    {% if not used_tags %}
 	    <a href="#" class="btn btn-mini">暂无</a>
+	    {% endif %}
 	{% else %}
 	    {% for tag in tags %}
 	    <a href="#" class="btn btn-mini">{{ tag.name }}</a>

@@ -1,0 +1,18 @@
+<div class="support-btn">
+	<form id="support-it-form-answer-{{ answer.id }}" action="#" method="post">
+		<span class="{% if has_liked %}dislike-it{% else %}like-it{% endif %}"
+		      id="answer-like-button-{{ answer.id }}"><br/></span>
+		<span class="support-count" id="support-counter-answer-{{ answer.id }}">{{ answer.score }}</span>
+		<span class="{% if has_unliked %}disunlike-it{% else %}unlike-it{% endif %}"
+		      id="answer-unlike-button-{{ answer.id }}"><br/></span>
+		<input type="hidden" name="like_url" id="answer-{{ answer.id }}_like_url"
+		       value="{{ url_for('ans.like', answer_id=answer.id, _external=True) }}">
+		<input type="hidden" name="unlike_url" id="answer-{{ answer.id }}_unlike_url"
+		       value="{{ url_for('ans.unlike', answer_id=answer.id, _external=True) }}">
+		<input type="hidden" name="like_action" id="answer-{{ answer.id }}_like_action"
+		       value="{% if has_liked %}cancel_like_it{% else %}like_it{% endif %}">
+		<input type="hidden" name="unlike_action" id="answer-{{ answer.id }}_unlike_action"
+		       value="{% if has_unliked %}cancel_unlike_it{% else %}unlike_it{% endif %}">
+		<input type="hidden" name="backup_action" id="answer-{{ answer.id }}_backup_action" value="">
+	</form>
+</div>

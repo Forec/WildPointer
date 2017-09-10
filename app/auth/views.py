@@ -33,7 +33,7 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index', _external=True))
     if current_user.confirm(token):
-        flash('您已经验证了您的邮箱！感谢您的支持！')
+        flash('您已经成功激活了您的账户！感谢您的支持！')
     else:
         flash('此验证链接无效或已过期！')
     return redirect(url_for('main.index', _external=True))
@@ -49,9 +49,9 @@ def secure():
 @login_required
 def change_email(token):
     if current_user.change_email(token):
-        flash('您的电子邮箱已经更新')
+        flash('您的账户对应的电子邮箱已经更新。')
     else:
-        flash('非法请求')
+        flash('该链接违例或已失效，请重新在 \"安全中心\" 中申请修改邮箱。')
     return redirect(url_for('profile.detail'))
 
 
@@ -59,5 +59,5 @@ def change_email(token):
 def before_request():
     if current_user.is_authenticated:
         current_user.ping()
-        if not current_user.confirmed and request.endpoint[:8] == 'comment.':
-            return redirect(url_for('auth.unconfirmed'))
+#        if not current_user.confirmed and request.endpoint[:8] == 'comment.':
+#            return redirect(url_for('auth.unconfirmed'))

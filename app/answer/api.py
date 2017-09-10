@@ -7,13 +7,12 @@
 # @Contact : forec@bupt.edu.cn
 
 
-from flask import jsonify, request
+from flask import jsonify, request, flash
 from flask_login import login_required, current_user
-from sqlalchemy import and_
 from . import ans
 from .. import db
-from ..models import Permission, Answer, Question
-from ..verifiers import verify_token
+from ..models import Permission, Answer, Question, ContributeQuestions
+from ..decorators import confirm_required
 import json
 
 
@@ -30,12 +29,13 @@ def detail(answer_id):
         'author_nickname': answer.author.nickname,
         'content': answer.body,
         'score': answer.score,
-        'create_timestamp': answer.timestamp
+        'create': answer.create
     })
 
 
 @ans.route('/create', methods=['POST'])
 @login_required
+@confirm_required
 def create():
     req = request.form.get('request')
     if req is None:
@@ -43,39 +43,44 @@ def create():
             'code': -1  # 无请求
         })
     req = json.loads(req)
-    [email, token, body, question_id] = [req.get(name) for name in ['email', 'token', 'body', 'question_id']]
-    user = verify_token(email, token)
-    if not type or not body or not user or user.id != current_user.id:
+    [body, question_id] = [req.get(name) for name in ['body', 'question_id']]
+    if not body or not body.strip():
         return jsonify({
-            'code': 0  # 参数格式不正确／用户不存在／认证失败
+            'code': 2  # 答案不包括任何有效内容
+        })
+    if len(body) > 10000:
+        return jsonify({
+            'code': 3  # 答案过长
         })
     try:
         question_id = int(question_id)
     except ValueError:
         return jsonify({
-            'code': 0
-        })
-    answer = Answer.query.filter_by(and_(author_id=user.id, question_id=question_id)).first()
-    if answer:
-        return jsonify({
-            'code': 1,  # 已有回答
-            'answer_id': answer.id
+            'code': 1  # 携带了违例信息
         })
     question = Question.query.filter_by(id=question_id).first()
+    if current_user.is_contributor(question):
+        return jsonify({
+            'code': 0  # 已有回答
+        })
     if not question:
         return jsonify({
-            'code': 2   # 问题不存在
+            'code': -2   # 问题不存在
         })
-    answer = Answer(question=question, author=user, body=body)
+    answer = Answer(question_id=question.id, author_id=current_user.id, body=body)
+    relation = ContributeQuestions(question_id=question.id, contributor_id=current_user.id)
+    db.session.add(relation)
     db.session.add(answer)
+    db.session.commit()
+    flash("您的答案已提交，您可以通过问题界面顶部的 \"查看我的回答\" 来查看您的答案。")
     return jsonify({
-        'code': 3,
-        'id': answer.id
+        'code': 4  # 创建成功
     })
 
 
 @ans.route('/delete/<int:answer_id>', methods=['GET'])
 @login_required
+@confirm_required
 def delete(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
     if not answer:
@@ -94,3 +99,55 @@ def delete(answer_id):
         return jsonify({
             'code': 2   # 未知错误
         })
+
+
+@ans.route('/like/<int:answer_id>', methods=['GET'])
+@login_required
+@confirm_required
+def like(answer_id):
+    answer = Answer.query.filter_by(id=answer_id).first()
+    if answer is None:
+        return jsonify({
+            'code': -1  # 对应 Answer 不存在
+        })
+    if current_user.id == answer.author_id:
+        return jsonify({
+            'code': 2  # 不能给自己点赞
+        })
+    if current_user.is_like_answer(answer):
+        current_user.cancel_like_answer(answer)
+        return jsonify({
+            'code': 0,
+            'score': answer.score
+        })
+    current_user.like_answer(answer)
+    return jsonify({
+        'code': 1,
+        'score': answer.score
+    })
+
+
+@ans.route('/unlike/<int:answer_id>', methods=['GET'])
+@login_required
+@confirm_required
+def unlike(answer_id):
+    answer = Answer.query.filter_by(id=answer_id).first()
+    if answer is None:
+        return jsonify({
+            'code': -1  # 对应 Question 不存在
+        })
+    if current_user.id == answer.author_id:
+        return jsonify({
+            'code': 2  # 不能反对自己的答案
+        })
+    if current_user.is_unlike_answer(answer):
+        current_user.cancel_unlike_answer(answer)
+        return jsonify({
+            'code': 0,   # 已取消反对
+            'score': answer.score
+        })
+    current_user.unlike_answer(answer)
+    return jsonify({
+        'code': 1,
+        'score': answer.score
+    })

@@ -1,10 +1,225 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}安全中心{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<!-- start of page content -->
+			<div class="span8 page-content">
+
+				<section id="password-change">
+					<h3>修改密码</h3>
+					<div id="password-change-div">
+						<form action="#" method="post" id="password-change-form">
+							<div>
+								<label for="current-password">当前密码</label>
+								<input class="span8" type="password" name="tags" id="current-password" value="" size="22"/>
+							</div>
+							<div>
+								<label for="new-password">新密码</label>
+								<input class="span8" type="password" name="tags" id="new-password" value="" size="22"/>
+							</div>
+							<div>
+								<label for="new-password-repeat">重复密码</label>
+								<input class="span8" type="password" name="tags" id="new-password-repeat" value="" size="22"/>
+							</div>
+							<div>
+								<input class="btn" name="submit" type="button"
+								       onclick="change_password('current-password', 'new-password', 'new-password-repeat')"
+								       id="submit-chang-password" value="确认修改">
+							</div>
+						</form>
+					</div>
+				</section>
+
+				<hr/>
+
+				<section id="email-change">
+					<h3>修改邮箱</h3>
+					<div id="email-change-div">
+						<form action="#" method="post" id="email-change-form">
+							<div>
+								<label for="current-password">当前密码</label>
+								<input class="span8" type="password" name="tags" id="current-password-2" value="" size="22"/>
+							</div>
+							<div>
+								<label for="new-password">新邮箱</label>
+								<input class="span8" type="text" name="tags" id="new-email" value="" size="22"/>
+							</div>
+							<div>
+								<input class="btn" name="submit" type="button"
+								       onclick="change_email('current-password-2', 'new-email')"
+								       id="submit-chang-email" value="确认修改">
+							</div>
+						</form>
+					</div>
+				</section>
+
+				<hr/>
+
+				<section id="confirm-resend">
+					<h3>激活账户</h3>
+					{% if current_user.is_authenticated and current_user.confirmed %}
+					<p>您已经激活了您的账户，无需重复激活。</p>
+					{% else %}
+					<div id="confirm-resend-div">
+						<form action="#" method="post" id="confirm-resend-form">
+							<div>
+								<input class="btn" name="submit" type="button"
+								       onclick="resend_confirm()"
+								       id="submit-resend-confirm" value="重新发送激活邮件">
+							</div>
+						</form>
+					</div>
+					{% endif %}
+				</section>
+
+
+			</div>
+			<!-- end of page content -->
+
+
+			<!-- start of sidebar -->
+			<aside class="span4 page-sidebar">
+
+				<section class="widget">
+					<div class="support-widget">
+						<h3 class="title">帮助</h3>
+						<ul>
+							<li><p class="intro">如果您要修改当前邮箱，请输入当前认证信息，并根据我们发往您新邮箱的邮件指导完成修改操作。</p></li>
+							<li><p class="intro">如果您要修改登录密码，请输入当前认证信息以及您要设置的新密码，通过认证方可完成修改操作。</p></li>
+							<li><p class="intro">如果您尚未激活账户，请登录您注册时使用的邮箱并根据我们发送的邮件指导完成激活操作。请注意检查您邮箱的垃圾箱，若您未能收到我们发送的邮件，请点击左侧 "重新发送激活邮件" 获取一封新的指导邮件。</p></li>
+						</ul>
+					</div>
+				</section>
+
+			</aside>
+			<!-- end of sidebar -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+
+{% endblock page_content %}
+
+{% block scripts %}
+<script>
+function resend_confirm() {
+    $.ajax({
+        url: "{{ url_for('auth.resend_confirmation', _external=True) }}",
+        type: 'GET',
+        success: function(response) {
+            if (response.code == 0) {
+                flash_success("我们已经向您注册时使用的邮箱 {{ current_user.email }} 重新发送了一封新的激活指导邮件，请您根据邮件的指示完成激活操作。");
+            } else if (response.code == 1) {
+                flash_warning("您的账户当前已处于激活状态，无需重复激活。");
+            } else {
+                flash_error("无法建立到服务器的连接，请您检查当前账户状态及网络设置。");
+            }
+        },
+        err: function(err) {
+            flash_error("无法建立到服务器的连接，请您检查网络设置并稍后再试。");
+        }
+    });
+}
+
+function change_email(passwordID, emailID) {
+    var email = jQuery('#' + emailID).val();
+    var password = jQuery('#' + passwordID).val();
+    if (!verifyEmail(email)) {
+        flash_warning("您填写的新邮箱格式不正确。");
+        return;
+    }
+    if (!verifyPassword(password)) {
+        flash_warning("您填写的当前密码不符合安全设定，请您检查并重新提交。");
+        return;
+    }
+    $.ajax({
+        url: "{{ url_for('auth.change_email_request', _external=True) }}",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            'request': JSON.stringify({
+				'password': password,
+				'email': email
+			})
+        },
+        success: function(response) {
+            if (response.code == 1) {
+                flash_success("我们已经向您填写的新邮箱 " + response.email + " 发送了一封激活邮件，请您根据该邮件的指示完成邮箱的修改操作。");
+                jQuery('#' + emailID).val("");
+                jQuery('#' + passwordID).val("");
+            } else if (response.code == 2) {
+                flash_error("您输入的当前密码不正确，请您核实后重新提交请求。");
+            } else {
+                flash_error("无法建立到服务器的连接，请您检查当前账户状态及网络设置。");
+            }
+        },
+        err: function(err) {
+            flash_error("无法建立到服务器的连接，请您检查网络设置并稍后再试。");
+        }
+    });
+}
+
+function change_password(cpID, np1ID, np2ID) {
+    var cpassword = jQuery('#' + cpID).val();
+    var npassword1 = jQuery('#' + np1ID).val();
+    var npassword2 = jQuery('#' + np2ID).val();
+    if (!verifyPassword(cpassword)) {
+        flash_warning("您填写的当前密码不符合安全设定，请您检查并重新提交。");
+        return;
+    }
+    if (npassword1 != npassword2) {
+        flash_warning("您两次输入的新密码不一致，请检查后重新提交。");
+        return;
+    }
+    if (!verifyPassword(npassword1)) {
+        flash_warning("您填写的新密码不符合安全设定，请您检查并重新提交。");
+        return;
+    }
+    if (cpassword == npassword1) {
+        flash_warning("您的请求没有被处理，因为您输入的新密码和当前密码相同。");
+        return;
+    }
+    $.ajax({
+        url: "{{ url_for('auth.change_password', _external=True) }}",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            'request': JSON.stringify({
+				'old_password': cpassword,
+				'new_password': npassword1
+			})
+        },
+        success: function(response) {
+            if (response.code == 2) {
+                flash_success("您的密码已经修改成功，请您在下次认证时使用新密码。");
+                jQuery('#' + cpID).val("");
+                jQuery('#' + np1ID).val("");
+                jQuery('#' + np2ID).val("");
+            } else if (response.code == 3){
+                flash_error("您输入的当前密码不正确，请您核实后重新提交请求。");
+            } else if (response.code == 1){
+                flash_warning("您的请求没有被处理，因为您填写的新密码和当前密码相同。");
+            } else {
+                flash_error("无法建立到服务器的连接，请您检查当前账户状态及网络设置。");
+            }
+        },
+        err: function(err) {
+            flash_error("无法建立到服务器的连接，请您检查网络设置并稍后再试。");
+        }
+    });
+}
+</script>
+{% endblock scripts %}

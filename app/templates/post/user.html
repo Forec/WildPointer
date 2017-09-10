@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}{{ user.nickname }}发布过的文章{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<h2>{{ user.nickname }} 发布过的全部文章</h2>
+
+			{% if posts_1|length == 0 and posts_2|length == 0 %}
+			<h3>用户 <a href="javascript:void(0)" onclick="showProfileSummary('{{ user.username }}')">{{ user.nickname }}</a>
+				尚未发布任何文章。</h3>
+			{% else %}
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for post in posts_1 %}
+				<article class="format-{% if post.has_image %}image{% else %}standard{% endif %} type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('post.detail', post_id=post.id) }}">{{ post.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">上次编辑：{{ moment(post.last_edit).format('LL') }}</span>
+							<span class="comments">
+								{% if post.comments.count() == 0 %}
+								暂无评论
+								{% else %}
+								<a href="javascript:void(0)" onclick="showCommentsOfPost({{ post.id }})" title="Comment">
+							    {{ post.comments.count() }} 条评论
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ post.score }}</span>
+						</div>
+
+					</header>
+					{{ post.body_html|safe|truncate(200) }}
+
+				</article>
+				{% endfor %}
+
+
+			</div>
+			<!-- end of page content -->
+
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for post in posts_2 %}
+				<article class="format-{% if post.has_image %}image{% else %}standard{% endif %} type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('post.detail', post_id=post.id) }}">{{ post.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">{{ moment(post.create).format('LL') }}</span>
+							<span class="comments">
+								{% if post.comments.count() == 0 %}
+								暂无评论
+								{% else %}
+								<a href="javascript:void(0)" onclick="showCommentsOfPost({{ post.id }})" title="Comment">
+							    {{ post.comments.count() }} 条评论
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ post.score }}</span>
+						</div>
+
+					</header>
+					{{ post.body_html|safe|truncate(200) }}
+
+				</article>
+				{% endfor %}
+
+				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'post.user', user_id=user.id) }}</div>
+
+			</div>
+			{% endif %}
+			<!-- end of page content -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+

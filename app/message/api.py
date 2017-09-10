@@ -14,6 +14,28 @@ from .. import db
 from ..models import Permission, Message
 
 
+@mess.route('/tick', methods=['GET'])
+@login_required
+def tick():
+    current_user.generate_messages()
+    current_user.ping()
+    messages = current_user.messages.filter_by(noticed=False).all()
+    unread_count = current_user.messages.filter_by(viewed=False).count()
+    json_messages = []
+    for message in messages:
+        json_messages.append((message.id, message.body))
+        message.noticed = True
+        db.session.add(message)
+    db.session.commit()
+    return jsonify({
+        'code': 1,
+        'count': len(messages),
+        'messages': json_messages,
+        'receiver_id': current_user.id,
+        'unread': unread_count
+    })
+
+
 @mess.route('/delete/<int:message_id>', methods=['GET'])
 @login_required
 def delete(message_id):
@@ -22,7 +44,7 @@ def delete(message_id):
         return jsonify({
             'code': -1  # 不存在指定 message
         })
-    if current_user != message.receiver:
+    if current_user != message.receiver and not current_user.can(Permission.ADMINISTER):
         return jsonify({
             'code': 0  # 认证失败
         })
@@ -40,7 +62,7 @@ def view(message_id):
         return jsonify({
             'code': -1  # 不存在指定 message
         })
-    if current_user != message.receiver:
+    if current_user != message.receiver and not current_user.can(Permission.ADMINISTER):
         return jsonify({
             'code': 0  # 认证失败
         })

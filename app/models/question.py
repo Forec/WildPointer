@@ -23,6 +23,7 @@ class Question(db.Model):
     title = db.Column(db.String(64), index=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
+    type = db.Column(db.String(12), default="QUESTION")
     create = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     last_edit = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     score = db.Column(db.Integer, default=0)

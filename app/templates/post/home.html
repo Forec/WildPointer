@@ -5,6 +5,9 @@
 
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" id='toastr-css'
+    href="{{ url_for('static', filename='css/non/m-search-tip.css', _external=True) }}" type='text/css'
+    media='all'/>
 {% endblock head %}
 
 {% block body %}
@@ -12,7 +15,7 @@
 {% endblock body %}
 
 {% block page_content %}
-{% include 'components/search/search-post-area.html' %}
+{% include 'components/search/search-area.html' %}
 
 <div class="page-container">
 	<div class="container">
@@ -29,7 +32,7 @@
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(post.create).format('LL') }}</span>
 							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
-							   title="作者">{{ post.author.username }}</a></span></span>
+							   title="作者">{{ post.author.nickname }}</a></span>
 							<span class="comments">
 								{% if post.comments.count() == 0 %}
 								暂无评论
@@ -63,6 +66,11 @@
 					</div>
 				</section>
 
+
+				<section class="widget"><h3 class="title">标签</h3>
+					{% include 'components/search/_tags.html' %}
+				</section>
+
 				<section class="widget">
 					<h3 class="title">热门文章</h3>
 					<ul class="articles">
@@ -86,10 +94,6 @@
 				</section>
 
 
-				<section class="widget"><h3 class="title">标签</h3>
-					{% include 'components/_tags.html' %}
-				</section>
-
 			</aside>
 			<!-- end of sidebar -->
 		</div>
@@ -98,6 +102,27 @@
 <!-- End of Page Container -->
 {% endblock page_content %}
 
+
+{% block footer_bottom %}
+<!-- Footer Bottom -->
+<div id="footer-bottom-wrapper">
+	<div id="footer-bottom" class="container">
+		<div class="row">
+			<div class="span6">
+				<p class="copyright">
+					Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Footer Bottom -->
+{% endblock footer_bottom %}
+
+{% block after_footer %}
+<a href="#top" id="scroll-top"></a>
+{% endblock after_footer %}
+
 {% block scripts %}
-<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
-{% endblock scripts %}
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-search-tip.js', _external=True) }}"></script>
+{% endblock %}

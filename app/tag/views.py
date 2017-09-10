@@ -16,21 +16,19 @@ from ..models import Tag
 from ..decorators import confirm_required
 
 
-@tagb.route('/posts/<tag_name>', methods=['GET'])
-def posts(tag_name):
-    #TODO
-    tag = Tag.query.get_or_404(name=tag_name)
-    page = request.args.get('page', 1, type=int)
-    pass
-
-
-@tagb.route('/questions/<tag_name>', methods=['GET'])
-def questions(tag_name):
+@tagb.route('/posts/<tag_list>', methods=['GET'])
+def posts(tag_list):
     #TODO
     pass
 
 
-@tagb.route('/all/<tag_name>', methods=['GET'])
+@tagb.route('/questions/<tag_list>', methods=['GET'])
+def questions(tag_list):
+    #TODO
+    pass
+
+
+@tagb.route('/all/<tag_list>', methods=['GET'])
 def all(tag_name):
     #TODO
     pass

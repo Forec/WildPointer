@@ -4,6 +4,9 @@
 
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" id='toastr-css'
+    href="{{ url_for('static', filename='css/non/m-search-tip.css', _external=True) }}" type='text/css'
+    media='all'/>
 {% endblock head %}
 
 {% block body %}
@@ -98,8 +101,9 @@
 				</section>
 
 				<section class="widget">
-					<h3 class="title">标签</h3>
-					{% include 'components/_tags.html' %}
+					<!--<h3 class="title">标签</h3>-->
+					<hr/>
+					{% include 'components/search/_tags.html' %}
 				</section>
 
 			</aside>
@@ -133,4 +137,5 @@
 
 
 {% block scripts %}
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-search-tip.js', _external=True) }}"></script>
 {% endblock %}

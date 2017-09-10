@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
 
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ question.title }}{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -20,20 +21,18 @@
 
 				<article class=" type-post format-standard hentry clearfix">
 
-					<h1 class="post-title"><a href="#">{{ post.title }}</a></h1>
+					<h1 class="post-title"><a href="#">{{ question.title }}</a></h1>
 
 					<div class="post-meta clearfix">
-						<span class="date">{{ post.create }}</span>
+						<span class="date">{{ moment(question.create).format('LLL') }}</span>
 						<span class="author">
-							<a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
-							   title="作者">{{ post.author.username }}</a></span>
+							<a href="javascript:void(0)" onclick="showProfileSummary('{{ question.publisher.id }}')"
+							   title="提出者">{{ question.publisher.nickname }}</a></span>
 						<span class="comments">
-						    {% if post.comments.count() == 0 %}
-						    暂无评论
+						    {% if question.answers.count() == 0 %}
+						    暂无回答
 						    {% else %}
-							<a href="javascript:void(0)" onclick="showCommentsOfPost({{ post.id }})" title="Comment">
-							    {{ post.comments.count() }} 条评论
-							</a>
+    					    {{ question.answers.count() }} 条回答
 					        {% endif %}
 						</span>
 						{% if moderate %}
@@ -41,22 +40,33 @@
 							<a href="javascript:void(0)" onclick="modalHidden('delete-dialog')">删除</a>
 						</span>
 						{% endif %}
-						<span class="like-count">{{ post.score }}</span>
+						{% if current_user.is_authenticated and current_user.is_contributor(question) %}
+						<span class="answer">
+							<a href="javascript:void(0)" onclick="gotoMyAnswer({{ current_user.get_answer_id(question) }}">
+								去往我的回答
+							</a>
+						</span>
+						{% endif %}
+						<span class="like-count" id="static-like-count">{{ question.score }}</span>
 					</div><!-- end of post meta -->
 
-					{{ post.body_html|safe }}
+					{{ question.body_html|safe }}
 
 				</article>
-				<div class="like-btn">
-					<form id="like-it-form" action="#" method="post">
-						<span class="like-it" id="like-it-counter">{{ post.score }}</span>
-						<input type="hidden" name="like_url" id="like_url" value="{{ url_for('post.like', post_id=post.id, _external=True) }}">
-						<input type="hidden" name="unlike_url" id="unlike_url" value="{{ url_for('post.cancel_like', post_id=post.id, _external=True) }}">
-						<input type="hidden" name="action" id="liked" value="{% if has_liked %}dislike_it{% else %}like_it{% endif %}">
+				<div class="support-btn">
+					<form id="support-it-form" action="#" method="post">
+						<span class="{% if has_liked %}dislike-it{% else %}like-it{% endif %}" id="like-button"><br/></span>
+						<span class="support-count" id="support-counter">{{ question.score }}</span>
+						<span class="{% if has_unliked %}disunlike-it{% else %}unlike-it{% endif %}" id="unlike-button"><br/></span>
+						<input type="hidden" name="like_url" id="like_url" value="{{ url_for('ques.like', question_id=question.id, _external=True) }}">
+						<input type="hidden" name="unlike_url" id="unlike_url" value="{{ url_for('ques.unlike', question_id=question.id, _external=True) }}">
+						<input type="hidden" name="like_action" id="like_action" value="{% if has_liked %}cancel_like_it{% else %}like_it{% endif %}">
+						<input type="hidden" name="unlike_action" id="unlike_action" value="{% if has_unliked %}cancel_unlike_it{% else %}unlike_it{% endif %}">
+						<input type="hidden" name="backup_action" id="backup_action" value="">
 					</form>
 
 					<span class="tags">
-						<strong>Tags:&nbsp;&nbsp;</strong>
+						<strong>标签：&nbsp;&nbsp;</strong>
 						{% if tags|length == 0 %}
 						暂无
 						{% endif %}
@@ -68,33 +78,72 @@
 				</div>
 
 				<hr/>
+				{% if answers|length != 0 %}
+				<section id="answer-list">
 
-				<section id="comments">
+					<ol class="commentlist">
 
+						{% for answer in answers %}
+						<li class="comment even thread-even depth-1" id="answer-{{ answer.id }}">
+							<article id="answer-article-{{ answer.id }}">
+								<a href="javascript:void(0)" onclick="showProfileSummary({{ answer.author.id }})">
+									<img alt=""
+									     src="{{ answer.author.gravatar(size=60) }}"
+									     class="avatar avatar-60 photo" height="60" width="60">
+								</a>
+
+								<div class="comment-meta">
+
+									<h5 class="author" style="margin-top: 0px; margin-bottom: 10px">
+										<cite class="fn">
+											<a href="javascript:void(0)" onclick="showProfileSummary({{ answer.author.id }})" rel="external nofollow" class="url">{{ answer.author.nickname }}</a>
+										</cite>
+										<span class="flask-moment" style="padding-left: 10px;" data-refresh="0">{{ moment(answer.create).format('LLL') }}</span>
+									</h5>
+
+									{% include 'components/answer-vote-component.html' %}
+
+								</div><!-- end .comment-meta -->
+
+								<div class="comment-body">
+									{{ answer.body_html|safe|truncate(1200) }}
+								</div><!-- end of comment-body -->
+							</article><!-- end of comment -->
+						</li>
+						{% endfor %}
+					</ol>
+				</section>
+
+				<div style="">{{ pag.pagination_widget(pagination, 'ques.detail', question_id=question.id) }}</div>
+                {% endif %}
+
+				<!-- 发布新回答 -->
+				<section id="edit-area">
 					<div id="respond">
-
-						<form action="#" method="post" id="commentform">
+						<h4>添加{% if answers|length == 0 %}此问题的首个{% endif %}回答</h4>
+						<form action="javascript:create_answer({{ question.id }}, 'answer-body')" method="post" id="create-answer-form">
+							<p class="comment-notes">你可以使用 MarkDown 语法编写回答。</p>
 							<div>
-								<label for="comment">评论</label>
+								<label for="answer-body">回答正文 *</label>
 								{% if not current_user.is_authenticated or not current_user.confirmed %}
-								<textarea class="span8" name="comment" cols="58" rows="10" disabled="disabled"></textarea>
+								<textarea class="span8" name="body" cols="58" rows="10" disabled="disabled"></textarea>
 								{% else %}
-								<textarea class="span8" name="comment" id="comment" cols="58" rows="10"></textarea>
+								<textarea class="span8" name="body" id="answer-body" cols="58" rows="10"></textarea>
 								{% endif %}
 							</div>
 							{% if not current_user.is_authenticated %}
-							<p class="allowed-tags">你需要先登录并激活账号后才可以发表评论。</p>
+							<p class="allowed-tags">你需要先登录并激活账号后才可以添加回答。</p>
 							{% endif %}
 							{% if current_user.is_authenticated %}
 							<div>
-								<input class="btn" name="submit" type="submit" id="submit" value="提交评论">
+								<input class="btn" name="submit-answer" type="submit" id="submit-answer"
+								       value="提交回答">
+								       <!--onclick="create_answer({{ question.id }}, 'answer-body')" -->
 							</div>
 							{% endif %}
 						</form>
-
 					</div>
-
-				</section><!-- end of comments -->
+				</section>
 
 			</div>
 			<!-- end of page content -->
@@ -105,29 +154,29 @@
 
 				<section class="widget">
 					<div class="support-widget">
-						<h3 class="title">更多支持</h3>
-						<p class="intro">您需要更多帮助吗？如果您找不到想要的答案，试试 <a href="mailto:help@forec.cn">联系我们</a>。</p>
+						<h3 class="title">如何回答</h3>
+						<p class="intro">您的答案应当保证原创，或表明引用来源。管理员会清理侵权或恶意回答。</p>
 					</div>
 				</section>
 
 
 				<section class="widget">
-					<h3 class="title">作者其它热搜文章</h3>
+					<h3 class="title">提问者的其他问题</h3>
 					<ul class="articles">
-						{% for _post in recent_posts %}
+						{% for _ques in recent_questions %}
 						<li class="article-entry standard">
-							<h4><a href="{{ url_for('post.detail', post_id=_post.id, _external=True) }}">{{ _post.title }}</a></h4>
+							<h4><a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}">{{ _ques.title }}</a></h4>
 							<span class="article-meta">
-								{{ moment(_post.create).fromNow() }}&nbsp;&nbsp;
-								{% if _post.comments.count() == 0 %}
-								<a href="{{ url_for('post.detail', post_id=_post.id, _external=True) }}">去做第一个评论者</a>
+								上次编辑在 {{ moment(_ques.last_edit).fromNow() }}&nbsp;&nbsp;
+								{% if _ques.answers.count() == 0 %}
+								尚无回答
 								{% else %}
-								<a href="javascript:void(0)" onclick="showCommentsOfPost({{ _post.id }})" title="Comment">
-							    {{ _post.comments.count() }} 条评论
+								<a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}" title="Answer">
+							    {{ _ques.answers.count() }} 个回答
 								</a>
 								{% endif %}
 							</span>
-							<span class="like-count">{{ _post.score }}</span>
+							<span class="like-count">{{ _ques.score }}</span>
 						</li>
 						{% endfor %}
 					</ul>
@@ -149,22 +198,27 @@
 {% endblock page_content %}
 
 {% block scripts %}
+{% include 'js/answer-vote.html' %}
+
 <script>
 function confirmBeforeAction(component_id) {
     var content = jQuery('#' + component_id).val();
-    if (content == '{{ post.id }}') {
+    if (content == '{{ question.id }}') {
         $.ajax({
-		    url: "{{ url_for('post.delete', post_id=post.id, _external=True) }}",
+		    url: "{{ url_for('ques.delete', question_id=question.id, _external=True) }}",
 		    type: "GET",
     		success: function(response) {
-	            if (response.code == 1){
-		            window.location.href = "{{ url_for('post.me', _external=True) }}";
-	            } else if (response.code == 0) {
-    		        flash_error("您对文章《{{ post.title }}》无操作权限！");
-    		        modalHidden('delete-dialog');
+	            if (response.code == 3){
+		            window.location.href = "{{ url_for('ques.me', _external=True) }}";
 	            } else if (response.code == 2) {
-    	        	flash_error("请求失败，服务器发生了未知错误！");
+    		        flash_error("您对问题《{{ question.title }}》无操作权限！");
+    		        modalHidden('delete-dialog');
+	            } else if (response.code == -1) {
+    	        	flash_error("您要删除的问题《{{ question.title }}》不存在");
     	        	modalHidden('delete-dialog');
+    	        } else {
+    		        flash_error("您对问题《{{ question.title }}》无操作权限！");
+    		        modalHidden('delete-dialog');
     	        }
             },
 	    	err: function(err) {
@@ -173,10 +227,56 @@ function confirmBeforeAction(component_id) {
 		    }
 	    });
     } else {
-        flash_warning("您输入的文章 ID 与当前文章不符，请再次核实您的删除操作！");
+        flash_warning("您输入的问题 ID 与当前问题不符，请再次核实您的删除操作！");
         modalHidden('delete-dialog');
     }
 }
+
+// 创建答案请求
+function create_answer(question_id, bodyID) {
+	var body = jQuery('#' + bodyID).val();
+
+    if (body == "") {
+        flash_warning("您的答案不能为空！");
+        return;
+    }
+    if (body.length > 10000){
+        flash_warning("您的答案过长，请限制在 10000 个中文字符内。");
+        return;
+    }
+
+	$.ajax({
+		url: "{{ url_for('ans.create', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'question_id': question_id,
+				'body': body
+			})
+		},
+		success: function(response) {
+		    if (response.code == 4) {
+		        window.location.reload();
+		    } else if (response.code == 3) {
+		        flash_warning("您的答案过长，请限制在 10000 个中文字符内。");
+		    } else if (response.code == 2) {
+		        flash_warning("您提交的答案不包含任何有效内容，请检查。");
+		    } else if (response.code == 1) {
+		        flash_warning("您提交的信息中包含违例内容，请您刷新页面尝试再次提交。");
+		    } else if (response.code == 0) {
+		        flash_warning("您已经回答过了此问题，如果您需要对您的回答进行修改，可以通过问题顶部的 \"去往我的回答\" 查看您的答案。");
+		    } else if (response.code == -2) {
+		        flash_error("您要回答的问题不存在，也许已经被删除了。");
+		    } else {
+                flash_error("发生了未知错误！请检查您是否已经登录并激活了您的账号，否则您无法添加回答。");
+		    }
+		},
+		err: function(error) {
+		    flash_error("网络不稳定，未能连接至服务器！");
+		}
+	});
+}
 </script>
-<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/question-vote.js', _external=True) }}"></script>
 {% endblock scripts %}

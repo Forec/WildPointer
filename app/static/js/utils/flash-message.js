@@ -1,4 +1,4 @@
-function flash_success(message, title='') {
+function flash_success(message) {
     var opts = {
     	"closeButton": true,
 	    "debug": false,
@@ -13,10 +13,10 @@ function flash_success(message, title='') {
     	"showMethod": "fadeIn",
     	"hideMethod": "fadeOut"
     };
-    toastr.success(message, title, opts);
+    toastr.success(message, '', opts);
 }
 
-function flash_warning(message, title='') {
+function flash_warning(message) {
     var opts = {
     	"closeButton": true,
 	    "debug": false,
@@ -31,10 +31,10 @@ function flash_warning(message, title='') {
     	"showMethod": "fadeIn",
     	"hideMethod": "fadeOut"
     };
-    toastr.warning(message, title, opts);
+    toastr.warning(message, '', opts);
 }
 
-function flash_error(message, title='') {
+function flash_error(message) {
     var opts = {
     	"closeButton": true,
 	    "debug": false,
@@ -49,10 +49,10 @@ function flash_error(message, title='') {
     	"showMethod": "fadeIn",
     	"hideMethod": "fadeOut"
     };
-    toastr.error(message, title, opts);
+    toastr.error(message, '', opts);
 }
 
-function flash_info(message, title='') {
+function flash_info(message) {
     var opts = {
     	"closeButton": true,
 	    "debug": false,
@@ -67,9 +67,9 @@ function flash_info(message, title='') {
     	"showMethod": "fadeIn",
     	"hideMethod": "fadeOut"
     };
-    toastr.info(message, title, opts);
+    toastr.info(message, '', opts);
 }
 
-function flash_normal(message, title='') {
-    flash_info(message, title);
+function flash_normal(message) {
+    flash_info(message);
 }

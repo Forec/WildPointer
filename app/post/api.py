@@ -33,7 +33,7 @@ def create():
         title = '无题' if not req.get('title') else req.get('title')
         body = req.get('body')
         tags_string = '' if not req.get('tags') else req.get('tags')
-        if not body or len(body) > 1400:
+        if not body or len(body) > 100000:
             return jsonify({
                 'code': 1  # 正文过长或没有正文
             })

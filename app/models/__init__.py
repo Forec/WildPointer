@@ -19,6 +19,7 @@ from .message import Message
 from .comment import PostComment, QuestionComment, AnswerComment
 from .relationship import Follow, ContributeQuestions, LikeAnswers, UnLikeAnswers, \
     LikeQuestions, UnLikeQuestions, LikePosts
+from .pagination import Pagination
 from .. import login_manager
 from .. import db
 
@@ -26,6 +27,8 @@ from .. import db
 login_manager.anonymous_user = AnonymousUser
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+db.event.listen(Question.body, 'set', Question.on_changed_body)
+db.event.listen(Answer.body, 'set', Answer.on_changed_body)
 
 comment_table = {
     'post': PostComment,

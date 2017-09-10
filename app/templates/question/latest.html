@@ -12,7 +12,7 @@
 {% endblock body %}
 
 {% block page_content %}
-{% include 'components/search/search-question-area.html' %}
+{% include 'components/search/search-area.html' %}
 
 <div class="page-container">
 	<div class="container">
@@ -29,13 +29,13 @@
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(ques.create).format('LL') }}</span>
 							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ ques.publisher.username }}')"
-							   title="提出者">{{ ques.publisher.username }}</a></span></span>
+							   title="提出者">{{ ques.publisher.nickname }}</a></span></span>
 							<span class="comments">
 								{% if ques.answers.count() == 0 %}
 								暂无回答
 								{% else %}
 								<a href="javascript:void(0)" onclick="{{ url_for('ques.detail', question_id=ques.id, _external=True) }}" title="Answer">
-							    {{ ques.answers.count() }} 条回答
+							    {{ ques.answers.count() }} 个回答
 								</a>
 								{% endif %}
 							</span>
@@ -63,6 +63,10 @@
 					</div>
 				</section>
 
+				<section class="widget"><h3 class="title">标签</h3>
+					{% include 'components/search/_tags.html' %}
+				</section>
+
 				<section class="widget">
 					<h3 class="title">热门问题</h3>
 					<ul class="articles">
@@ -75,7 +79,7 @@
 								<a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}">去做第一个回答者</a>
 								{% else %}
 								<a href="{{ url_for('ques.detail', question_id=_ques.id, _external=True) }}" title="Comment">
-							    {{ _ques.comments.count() }} 条回答
+							    {{ _ques.comments.count() }} 个回答
 								</a>
 								{% endif %}
 							</span>
@@ -85,11 +89,6 @@
 					</ul>
 				</section>
 
-
-				<section class="widget"><h3 class="title">标签</h3>
-					{% include 'components/_tags.html' %}
-				</section>
-
 			</aside>
 			<!-- end of sidebar -->
 		</div>
@@ -97,7 +96,3 @@
 </div>
 <!-- End of Page Container -->
 {% endblock page_content %}
-
-{% block scripts %}
-<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
-{% endblock scripts %}

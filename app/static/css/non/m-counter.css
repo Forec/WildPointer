@@ -1,0 +1,16 @@
+.m-msg-counter {
+	position: absolute;
+	top: 15px;
+	left: 45px;
+	text-align: center;
+	line-height: 4px;
+	font-size: 10px;
+	height: 5px;
+	color: white;
+	padding: 5px;
+	margin: 5px;
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	background-color: #C60F01;
+	font-weight: bold;
+}

@@ -7,7 +7,7 @@
 # @Contact : forec@bupt.edu.cn
 
 
-from flask import render_template, redirect, flash, abort, url_for, request, current_app, make_response
+from flask import render_template, redirect, flash, abort, url_for, request, current_app
 from flask_login import login_required, current_user
 from sqlalchemy import not_
 from ..decorators import confirm_required
@@ -15,7 +15,7 @@ from ..decorators import confirm_required
 from . import post as pos
 from .forms import PostEditForm
 from .. import db
-from ..models import Permission, Post
+from ..models import Permission, Post, Tag
 
 
 @pos.route('/', methods=['GET'])
@@ -27,14 +27,16 @@ def home():
     )
     posts = pagination.items
     hot_posts = Post.query.order_by(Post.score.asc()).slice(0, 6).all()
-    return render_template('post/home.html', posts=posts, pagination=pagination, hot_posts=hot_posts)
+    hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
+    return render_template('post/home.html', posts=posts, pagination=pagination, hot_posts=hot_posts,
+                           tags=hot_tags, used_tags=[], type='post')
 
 
 @pos.route('/me', methods=['GET'])
 @login_required
 @confirm_required
 def me():
-    query = Post.query.filter_by(author_id=current_user.id)
+    query = current_user.posts
     page = request.args.get('page', 1, type=int)
     pagination = query.order_by(Post.last_edit.desc()).paginate(
         page, per_page=current_app.config['WP_POSTS_PER_PAGE'],
@@ -45,6 +47,23 @@ def me():
     posts_1 = posts[:post_count]
     posts_2 = posts[post_count:]
     return render_template('post/me.html', posts_1=posts_1, posts_2=posts_2, pagination=pagination)
+
+
+@pos.route('/user/<int:user_id>', methods=['GET'])
+def user(user_id):
+    from ..models import User
+    user = User.query.get_or_404(user_id)
+    query = user.posts
+    page = request.args.get('page', 1, type=int)
+    pagination = query.order_by(Post.last_edit.desc()).paginate(
+        page, per_page=current_app.config['WP_POSTS_PER_PAGE'],
+        error_out=False
+    )
+    posts = pagination.items
+    post_count = int(len(posts) / 2) if len(posts) % 2 == 0 else int(len(posts) / 2) + 1
+    posts_1 = posts[:post_count]
+    posts_2 = posts[post_count:]
+    return render_template('post/user.html', user=user, posts_1=posts_1, posts_2=posts_2, pagination=pagination)
 
 
 @pos.route('/follow', methods=['GET'])
@@ -59,7 +78,9 @@ def follow():
     )
     posts = pagination.items
     hot_posts = Post.query.order_by(Post.score.asc()).slice(0, 6).all()
-    return render_template('post/follow.html', posts=posts, pagination=pagination, hot_posts=hot_posts)
+    hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
+    return render_template('post/follow.html', posts=posts, pagination=pagination, hot_posts=hot_posts,
+                           tags=hot_tags, used_tags=[], type='post')
 
 
 @pos.route('/detail/<int:post_id>', methods=['GET'])
@@ -80,6 +101,8 @@ def detail(post_id):
                            moderate=moderate)
 
 
+
+#TODO
 @pos.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 @confirm_required

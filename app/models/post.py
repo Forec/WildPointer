@@ -20,9 +20,9 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), index=True)
-    disabled = db.Column(db.Boolean, default=False)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
+    type = db.Column(db.String(12), default="POST")
     has_image = db.Column(db.Boolean, default=False)
     score = db.Column(db.Integer, default=0)
     last_edit = db.Column(db.DateTime, default=datetime.utcnow)
@@ -63,7 +63,6 @@ class Post(db.Model):
         for i in range(count):
             u = User.query.offset(randint(0, user_count-1)).first()
             p = Post(title=forgery_py.lorem_ipsum.words(randint(1, 2)),
-                     disabled=False,
                      body=forgery_py.lorem_ipsum.sentences(randint(1, 3)),
                      create=forgery_py.date.date(True),
                      author=u)

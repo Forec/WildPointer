@@ -12,7 +12,7 @@
 {% endblock body %}
 
 {% block page_content %}
-{% include 'components/search/search-post-area.html' %}
+{% include 'components/search/search-area.html' %}
 
 <div class="page-container">
 	<div class="container">
@@ -20,6 +20,11 @@
 
 			<!-- start of page content -->
 			<div class="span8 main-listing">
+				{% if current_user.is_authenticated and current_user.followers.count() == 1 %}
+				   <h3>您尚未关注任何用户。</h3>
+				{% elif posts|length == 0 %}
+				   <h3>您关注的用户尚未发表任何文章。</h3>
+				{% else %}
 				{% for post in posts %}
 				<article class="format-{% if post.has_image %}image{% else %}standard{% endif %} type-post hentry clearfix">
 					<header class="clearfix">
@@ -29,7 +34,7 @@
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(post.create).format('LL') }}</span>
 							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
-							   title="作者">{{ post.author.username }}</a></span></span>
+							   title="作者">{{ post.author.nickname }}</a></span></span>
 							<span class="comments">
 								{% if post.comments.count() == 0 %}
 								暂无评论
@@ -48,7 +53,8 @@
 				</article>
 				{% endfor %}
 
-                {{ pag.pagination_widget(pagination, 'post.home') }}
+                {{ pag.pagination_widget(pagination, 'post.follow') }}
+				{% endif %}
 
 			</div>
 			<!-- end of page content -->
@@ -61,6 +67,10 @@
 						<h3 class="title">反馈建议</h3>
 						<p class="intro">Wild Pointer 是否解决了您的问题？如果您有任何建议，欢迎 <a href="mailto:advice@forec.cn">反馈</a>。</p>
 					</div>
+				</section>
+
+				<section class="widget"><h3 class="title">标签</h3>
+					{% include 'components/search/_tags.html' %}
 				</section>
 
 				<section class="widget">
@@ -86,10 +96,6 @@
 				</section>
 
 
-				<section class="widget"><h3 class="title">标签</h3>
-					{% include 'components/_tags.html' %}
-				</section>
-
 			</aside>
 			<!-- end of sidebar -->
 		</div>
@@ -98,6 +104,3 @@
 <!-- End of Page Container -->
 {% endblock page_content %}
 
-{% block scripts %}
-<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-thumb-up.js', _external=True) }}"></script>
-{% endblock scripts %}

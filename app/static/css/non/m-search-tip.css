@@ -1,0 +1,26 @@
+div.search-tip {
+	display					 : none;
+	position				 : absolute; 
+	z-index					 : 1000;
+	background-color		 : white;
+	border-left			 	 : 1px solid #f2f2f2;
+	border-bottom			 : 1px solid #f2f2f2;
+	border-right			 : 1px solid #f2f2f2;
+	border-top				 : 1px solid #f2f2f2;
+}
+
+div.search-tip-elem {
+	font-size			     : 10%;
+	padding-left			 : 10px;
+	*height				     : 20%;
+	padding-top				 : 5px;
+}
+
+div.search-tip-elem:hover {
+	background-color		 : #f2f2f2;
+}
+
+a.search-tip-content {
+	font-size 				 : 15px;
+	color					 : #a2a2a2;
+}

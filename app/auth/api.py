@@ -161,7 +161,8 @@ def change_email_request():
         token = current_user.generate_email_change_token(new_email)
         send_email(new_email, '确认您的邮箱', 'auth/email/change_email', user=current_user, token=token)
         return jsonify({
-            'code': 1  # 已发送邮件修改邮箱
+            'code': 1,  # 已发送邮件修改邮箱
+            'email': new_email
         })
     return jsonify({
         'code': 2  # 认证失败

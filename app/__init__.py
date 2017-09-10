@@ -27,7 +27,7 @@ login_manager = LoginManager()
 page_down = PageDown()
 
 login_manager.session_protection = 'strong'  # None/basic/strong
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'main.index'
 
 
 def create_app(config_name):

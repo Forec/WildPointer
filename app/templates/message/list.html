@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}我的消息{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			{% if messages_1|length == 0 and messages_2|length == 0 %}
+			<h3>暂时没有任何消息。</h3>
+			{% else %}
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for message in messages_1 %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<div class="post-meta clearfix">
+							<span class="date">消息时间：{{ moment(message.timestamp).format('LLL') }}</span>
+						</div>
+					</header>
+					{{ message.body }}
+				</article>
+				{% endfor %}
+			</div>
+			<!-- end of page content -->
+
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for message in messages_2 %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<div class="post-meta clearfix">
+							<span class="date">消息时间：{{ moment(message.timestamp).format('LLL') }}</span>
+						</div>
+					</header>
+					{{ message.body }}
+				</article>
+				{% endfor %}
+				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'ques.me') }}</div>
+			</div>
+			{% endif %}
+			<!-- end of page content -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+

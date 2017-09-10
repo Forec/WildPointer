@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}搜索文章 - {{ title }}{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" id='toastr-css'
+    href="{{ url_for('static', filename='css/non/m-search-tip.css', _external=True) }}" type='text/css'
+    media='all'/>
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+{% include 'components/search/search-area.html' %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<!-- start of page content -->
+			<div class="span8 main-listing">
+				{% if results|length == 0 %}
+				    <h3>没有检索到任何符合关键词的信息。</h3>
+				{% else %}
+				{% for result in results %}
+				{% if result.type == "POST" %}
+				<article class="format-{% if result.has_image %}image{% else %}standard{% endif %} type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('post.detail', post_id=result.id) }}">{{ result.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">{{ moment(result.create).format('LL') }}</span>
+							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.author.username }}')"
+							   title="提出者">{{ result.author.nickname }}</a></span>
+							<span class="comments">
+								{% if result.comments.count() == 0 %}
+								暂无评论
+								{% else %}
+								<a href="javascript:void(0)" onclick="{{ url_for('post.detail', post_id=result.id, _external=True) }}" title="Comment">
+							    {{ result.comments.count() }} 条评论
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ result.score }}</span>
+						</div>
+
+					</header>
+					{{ result.body_html|safe|truncate(200) }}
+				</article>
+				{% elif result.type == "QUESTION" %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('ques.detail', question_id=result.id) }}">{{ result.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">{{ moment(result.create).format('LL') }}</span>
+							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.publisher.username }}')"
+							   title="提出者">{{ result.publisher.nickname }}</a></span>
+							<span class="comments">
+								{% if result.answers.count() == 0 %}
+								暂无回答
+								{% else %}
+								<a href="javascript:void(0)" onclick="{{ url_for('ques.detail', question_id=result.id, _external=True) }}" title="Answer">
+							    {{ result.answers.count() }} 个回答
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ result.score }}</span>
+						</div>
+
+					</header>
+					{{ result.body_html|safe|truncate(200) }}
+				</article>
+				{% elif result.type == "ANSWER" %}
+				<article class="format-category type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('ans.detail', answer_id=result.id) }}">{{ result.question.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">{{ moment(result.create).format('LL') }}</span>
+							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.author.username }}')"
+							   title="提出者">{{ result.author.nickname }}</a></span>
+							<span class="comments">
+								{% if result.comments.count() == 0 %}
+								暂无评论
+								{% else %}
+								<a href="javascript:void(0)" onclick="{{ url_for('ans.detail', answer_id=result.id, _external=True) }}" title="Comment">
+							    {{ result.comments.count() }} 条评论
+								</a>
+								{% endif %}
+							</span>
+							<span class="like-count">{{ result.score }}</span>
+						</div>
+
+					</header>
+					{{ result.body_html|safe|truncate(200) }}
+				</article>
+				{% endif %}
+				{% endfor %}
+
+                {{ pag.pagination_widget(pagination, 'ques.latest') }}
+				{% endif %}
+
+			</div>
+			<!-- end of page content -->
+
+			<!-- start of sidebar -->
+			<aside class="span4 page-sidebar">
+
+				<section class="widget">
+					<div class="support-widget">
+						<h3 class="title">过滤搜索结果</h3>
+						<p class="intro">您可以通过检索栏右侧的 "只看" 按钮来筛选结果，也可以通过 "文章" 和 "问题" 页面的搜索功能分别搜索文章或问题。选择下方标签可以帮助您过滤符合标签类别的结果。</p>
+					</div>
+				</section>
+
+
+				<section class="widget"><h3 class="title">只看标签</h3>
+					{% include 'components/search/_tags.html' %}
+				</section>
+
+			</aside>
+			<!-- end of sidebar -->
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+
+
+{% block footer_bottom %}
+<!-- Footer Bottom -->
+<div id="footer-bottom-wrapper">
+	<div id="footer-bottom" class="container">
+		<div class="row">
+			<div class="span6">
+				<p class="copyright">
+					Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Footer Bottom -->
+{% endblock footer_bottom %}
+
+{% block after_footer %}
+<a href="#top" id="scroll-top"></a>
+{% endblock after_footer %}
+
+{% block scripts %}
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-search-tip.js', _external=True) }}"></script>
+{% endblock %}

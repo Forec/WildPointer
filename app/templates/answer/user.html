@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}{{ user.nickname }} 的全部回答{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+
+			<h2>{{ user.nickname }} 的全部回答</h2>
+
+			{% if questions_1|length == 0 and questions_2|length == 2 %}
+			<h3>用户 <a href="javascript:void(0)"
+			          onclick="showProfileSummary('{{ user.username }}')">
+				{{ user.nickname }}
+			</a>
+				尚未回答过任何问题。</h3>
+			{% else %}
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for ans in answers_1 %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('ques.detail', question_id=ans.question.id) }}">{{ ans.question.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">答案最后编辑于：{{ moment(ans.last_edit).format('LL') }}</span>
+							<span class="like-count">{{ ans.score }}</span>
+						</div>
+
+					</header>
+					{{ ans.body_html|safe|truncate(200) }}
+
+				</article>
+				{% endfor %}
+			</div>
+			<!-- end of page content -->
+
+			<!-- start of page content -->
+			<div class="span6 main-listing">
+				{% for ans in answers_2 %}
+				<article class="format-vedio type-post hentry clearfix">
+					<header class="clearfix">
+						<h3 class="post-title">
+							<a href="{{ url_for('ques.detail', question_id=ans.question.id) }}">{{ ans.question.title }}</a>
+						</h3>
+						<div class="post-meta clearfix">
+							<span class="date">答案最后编辑于：{{ moment(ans.last_edit).format('LL') }}</span>
+							<span class="like-count">{{ ans.score }}</span>
+						</div>
+
+					</header>
+					{{ ans.body_html|safe|truncate(200) }}
+
+				</article>
+				{% endfor %}
+				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'ans.user', user_id=user.id) }}</div>
+			</div>
+			<!-- end of page content -->
+			{% endif %}
+		</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}

@@ -55,7 +55,7 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic',
                                 cascade='all, delete-orphan')
     contributes = db.relationship('ContributeQuestions',
-                                  foreign_keys=[ContributeQuestions.contributer_id],
+                                  foreign_keys=[ContributeQuestions.contributor_id],
                                   backref=db.backref('contributor', lazy='joined'),
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
@@ -371,18 +371,24 @@ class User(UserMixin, db.Model):
     # Questions contribute
     def contribute(self, question):
         if not self.is_contributor(question):
-            relation = ContributeQuestions(contributor=self, question=question)
+            relation = ContributeQuestions(contributor_id=self.id, question_id=question.id)
             db.session.add(relation)
 
     def uncontribute(self, question):
-        relation = question.contributors.filter_by(contributer_id=self.id).first()
+        relation = question.contributors.filter_by(contributor_id=self.id).first()
         if relation:
             db.session.delete(relation)
             return True
         return False
 
     def is_contributor(self, question):
-        return question.contributors.filter_by(contributer_id=self.id).first() is not None
+        return question.contributors.filter_by(contributor_id=self.id).first() is not None
+
+    def get_answer_id(self, question):
+        answer = question.answers.filter_by(author_id=self.id).first()
+        if answer:
+            return answer.id
+        return -1
 
     def add_answer(self, question, answer_body):
         if question is None or not answer_body:
@@ -403,6 +409,56 @@ class User(UserMixin, db.Model):
         db.session.delete(answer)
         return True
 
+    # messages part
+    def generate_messages(self):
+        from .post import Post
+        from .question import Question
+        from .answer import Answer
+        from flask import url_for
+
+        message_list = []
+
+        # 未读的关注文章
+        unread_followed_posts = self.followed_posts.filter(Post.create > self.last_seen).all()
+        if unread_followed_posts:
+            new_message = "您关注的用户" + unread_followed_posts[0].author.nickname
+            for post in unread_followed_posts[1:3]:
+                new_message += "、" + post.author.nickname
+            if len(unread_followed_posts) > 3:
+                new_message += "等 " + str(len(unread_followed_posts)) + " 人"
+            new_message += "发布了文章<a href=\"" + \
+                           url_for('post.detail', post_id=unread_followed_posts[0].id, _external=True) + \
+                           "\">《" + unread_followed_posts[0].title + "》</a>"
+            for post in unread_followed_posts[1:]:
+                new_message += "、<a href=\"" + url_for('post.detail', post_id=post.id, _external=True) + \
+                               "\">《" + post.title + "》</a>"
+            new_message += "。"
+            message_list.append(new_message)
+
+        # 有新动态的问题及其对应的回答数量
+        active_questions = []
+        active_answers_count = 0
+        for question in self.questions:
+            question_answer_active_count = question.answers.filter(Answer.create > self.last_seen).count()
+            if question_answer_active_count > 0:
+                active_questions.append(question)
+                active_answers_count += question_answer_active_count
+        if active_questions:
+            new_message = "您提出的<a href=\"" + \
+                          url_for('ques.detail', question_id=active_questions[0].id, _external=True) + \
+                          "\">《" + active_questions[0].title + "》</a>"
+            for question in active_questions[1:3]:
+                new_message += "、<a href=\"" + \
+                               url_for('ques.detail', question_id=question.id, _external=True) + \
+                               "\">《" + question.title + "》</a>"
+            if len(active_questions) > 3:
+                new_message += "等 " + str(len(active_questions)) + " 个问题有共 "
+            else:
+                new_message += "有共 "
+            new_message += str(active_answers_count) + " 个回答。"
+
+        pass
+
     @staticmethod
     def generate_fake(count=100):
         from sqlalchemy.exc import IntegrityError
@@ -412,6 +468,7 @@ class User(UserMixin, db.Model):
         for i in range(count):
             u = User(email=forgery_py.internet.email_address(),
                      nickname=forgery_py.internet.user_name(True),
+                     username=forgery_py.internet.user_name(True),
                      contactE=forgery_py.internet.email_address(),
                      password=forgery_py.lorem_ipsum.word(),
                      confirmed=True,
