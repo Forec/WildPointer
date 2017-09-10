@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}编辑 - {{ post.title }}{% endblock %}
+{% block title %}编辑文章{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -15,13 +15,34 @@
 <div class="page-container">
 	<div class="container">
 		<div class="row">
-
 			<!-- start of page content -->
 			<div class="span8 page-content">
-				{{ wtf.quick_form(form) }}
+				<section id="edit-area">
+					<div id="respond">
+						<h3>编辑文章 - {{ post.title }}</h3>
+						<form action="javascript:edit_post('title', 'tags', 'body')" method="post" id="edit-post-form">
+							<p class="comment-notes">你可以使用 MarkDown 语法编写文章。标注 <span class="required">*</span> 的为必填项。</p>
+							<div>
+								<label for="title">标题</label>
+								<input class="span8" type="text" name="title" id="title" value="{{ post.title }}" size="22">
+							</div>
+							<div>
+								<label for="tags">标签（请在右侧选择，或输入自定义标签，以分号隔开，不可包含特殊字符）</label>
+								<input class="span8" type="text" name="tags" id="tags" value="{{ tags_string }}" size="22"/>
+							</div>
+							<div>
+								<label for="body">正文 *</label>
+								<textarea class="span8" name="body" id="body" cols="58" rows="10" text="{{ post.body }}"></textarea>
+							</div>
+							<div>
+								<input class="btn" name="submit" type="submit" id="submit" value="提交">
+								       <!--onclick="create_post('title', 'tags', 'body')"-->
+							</div>
+						</form>
+					</div>
+				</section>
 			</div>
 			<!-- end of page content -->
-
 
 			<!-- start of sidebar -->
 			<aside class="span4 page-sidebar">
@@ -39,3 +60,54 @@
 <!-- End of Page Container -->
 
 {% endblock page_content %}
+
+{% block scripts %}
+<script>
+// 创建文章请求
+function edit_post(titleID, tagsID, bodyID) {
+	var title = jQuery('#' + titleID).val();
+	var body = jQuery('#' + bodyID).val();
+	var tags = jQuery('#' + tagsID).val();
+
+    if (body == "") {
+        flash_warning("正文部分不能为空！");
+        return;
+    }
+
+	$.ajax({
+		url: "{{ url_for('post.edit', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+			    'post_id': {{ post.id }},
+				'title': title,
+				'body': body,
+				'tags': tags
+			})
+		},
+		success: function(response) {
+		    if (response.code == 4) {
+		        var post_url = "{{ url_for('post.detail', post_id=post.id, _external=True) }}";
+		        window.location.href = post_url;
+		    } else if (response.code == 3) {
+		        flash_warning("您填写的标签长度过长，或者标签中包含非法字符！");
+		    } else if (response.code == 2) {
+		        flash_warning("您提交的标签数量过多！");
+		    } else if (response.code == 1) {
+		        flash_warning("您的正文为空或过长，请限制字数在 100000 内！");
+		    } else if (response.code == -1) {
+		        flash_error("您要编辑的文章不存在，也许已经被删除了。");
+		    } else if (response.code == -2) {
+		        flash_error("您对文章《{{ post.title }}》没有编辑权限！");
+		    } else {
+                flash_error("发生了未知错误！请检查您是否已经登录并激活了您的账号，否则您无法编辑文章。");
+		    }
+		},
+		err: function(error) {
+		    flash_error("网络不稳定，未能连接至服务器！");
+		}
+	});
+}
+</script>
+{% endblock scripts %}

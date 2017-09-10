@@ -16,6 +16,8 @@
 <div class="page-container">
 	<div class="container">
 		<div class="row">
+			<h2>我的消息</h2>
+			<hr/>
 
 			{% if messages_1|length == 0 and messages_2|length == 0 %}
 			<h3>暂时没有任何消息。</h3>
@@ -47,7 +49,7 @@
 					{{ message.body }}
 				</article>
 				{% endfor %}
-				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'ques.me') }}</div>
+				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'message.home') }}</div>
 			</div>
 			{% endif %}
 			<!-- end of page content -->

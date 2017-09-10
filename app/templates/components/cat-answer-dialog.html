@@ -1,0 +1,124 @@
+<div class="modal" aria-hidden="true" id="cat-answer-dialog" style="top: -100px; visibility: hidden;">
+	<div class="modal-dialog" style="opacity: 1.0;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;"
+				        onclick="closeAnswerDialog('cat-answer-dialog')">×
+				</a>
+				<h3 class="modal-title" style="text-align:center" id="cat-answer-dialog-title"></h3>
+			</div>
+
+			<div class="modal-body">
+				<div style="overflow-y: auto; height: 400px; width: 98%;">
+				<p id="answer-info-p"></p>
+				</div>
+				<hr/>
+				<form role="form" class="form-horizontal" method="post" id="commentform">
+					<div class="control-group">
+						<div id="answer-content-d"></div>
+						<textarea class="span8" id="answer-edit-t" cols="90" rows="10" style="width: 98%;"></textarea>
+					</div>
+				</form>
+				<div class="control-group" style="text-align: center;">
+					<button id="cat-answer-dialog-button" type="button"
+					        class="btn btn-primary" style="width: 200px;"
+					        onclick="">保存修改
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function showAnswerDetailDialog(answer_id) {
+    var common_url = "{{ url_for('ans.detail', answer_id=0, _external=True) }}";
+    var answer_url = common_url.substr(0, common_url.length - 1) + answer_id;
+	$.ajax({
+		url: answer_url,
+		type: "GET",
+		success: function(response) {
+	        if(response.code == 0){
+	            jQuery("#answer-info-p").text("该答案获得了 " + response.score + " 个赞。");
+	            if (response.right) {
+	                jQuery("#answer-edit-t").val(response.body);
+	                jQuery("#answer-edit-t").css("visibility", "visible");
+	                jQuery("#answer-content-d").css("visibility", "hidden");
+	                jQuery("#cat-answer-dialog-button").css("visibility", "visible");
+	                jQuery("#cat-answer-dialog-button").attr("onclick", "modifyAnswer(" + answer_id + ")");
+	            } else {
+	                jQuery("#answer-content-d").html(response.body_html);
+	                jQuery("#answer-content-d").css("visibility", "visible");
+	                jQuery("#answer-edit-t").css("visibility", "hidden");
+	                jQuery("#cat-answer-dialog-button").css("visibility", "hidden");
+	            }
+	            jQuery("#cat-answer-dialog-title").html(response.author_nickname +" 的回答");
+    	        jQuery("#cat-answer-dialog").css("visibility", "visible");
+	        } else
+		        flash_error("无法为您获取到该答案的具体信息，因为未能连接到服务器。请您检查网络情况是否正常。");
+        },
+		err: function(err) {
+		    flash_error("无法建立与服务器的连接，获取答案信息失败。");
+		}
+	});
+}
+
+function closeAnswerDialog() {
+	 jQuery("#answer-edit-t").css("visibility", "hidden");
+     jQuery("#answer-content-d").css("visibility", "hidden");
+     jQuery("#cat-answer-dialog-button").css("visibility", "hidden");
+     jQuery("#cat-answer-dialog").css("visibility", "hidden");
+}
+
+
+function modifyAnswer(answer_id) {
+	var body = jQuery('#answer-edit-t').val();
+
+    if (body == "") {
+        flash_warning("您的答案不能为空！");
+        return;
+    }
+    if (body.length > 10000){
+        flash_warning("您的答案过长，请限制在 10000 个中文字符内。");
+        return;
+    }
+
+	$.ajax({
+		url: "{{ url_for('ans.modify', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'answer_id': answer_id,
+				'body': body
+			})
+		},
+		success: function(response) {
+		    if (response.code == 4) {
+		        var toShow = response.body_html;
+		        if (toShow.length > 300)
+		            jQuery("#answer-appear-div-" + answer_id).html(toShow.substr(0, 300) + "...");
+		        else
+		            jQuery("#answer-appear-div-" + answer_id).html(toShow);
+		        flash_success("您的答案已经修改成功。");
+		        closeAnswerDialog();
+		    } else if (response.code == 3) {
+		        flash_warning("您的答案过长，请限制在 10000 个中文字符内。");
+		    } else if (response.code == 2) {
+		        flash_warning("您提交的答案不包含任何有效内容，请检查。");
+		    } else if (response.code == 1) {
+		        flash_warning("您提交的信息中包含违例内容，请您刷新页面尝试再次提交。");
+		    } else if (response.code == 0) {
+		        flash_error("您对此答案没有修改的权限。");
+		    } else if (response.code == -2) {
+		        flash_error("您要回答的问题不存在，也许已经被删除了。");
+		    } else {
+                flash_error("发生了未知错误！请检查您是否已经登录并激活了您的账号，否则您无法修改回答。");
+		    }
+		},
+		err: function(error) {
+		    flash_error("网络不稳定，未能连接至服务器！");
+		}
+	});
+}
+</script>

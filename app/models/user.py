@@ -382,6 +382,8 @@ class User(UserMixin, db.Model):
         return False
 
     def is_contributor(self, question):
+        if not question:
+            return False
         return question.contributors.filter_by(contributor_id=self.id).first() is not None
 
     def get_answer_id(self, question):
@@ -456,8 +458,16 @@ class User(UserMixin, db.Model):
             else:
                 new_message += "有共 "
             new_message += str(active_answers_count) + " 个回答。"
+            message_list.append(new_message)
 
-        pass
+        # 将消息存入数据库
+        from .message import Message
+        for message in message_list:
+            print(message)
+            mdb = Message(body=message, receiver_id=self.id)
+            db.session.add(mdb)
+        db.session.commit()
+
 
     @staticmethod
     def generate_fake(count=100):

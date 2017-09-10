@@ -36,12 +36,20 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">答案最后编辑于：{{ moment(ans.last_edit).format('LL') }}</span>
+
+							{% if ans.body_html|length > 300 %}
+							<span class="comments">
+								<a href="javascript:void(0)"
+								   onclick="showAnswerDetailDialog({{ ans.id }})" title="Answer">查看完整回答</a>
+							</span>
+							{% endif %}
 							<span class="like-count">{{ ans.score }}</span>
 						</div>
 
 					</header>
-					{{ ans.body_html|safe|truncate(200) }}
-
+					<div id="answer-appear-div-{{ ans.id }}">
+					{{ ans.body_html|safe|truncate(300) }}
+					</div>
 				</article>
 				{% endfor %}
 			</div>
@@ -57,12 +65,20 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">答案最后编辑于：{{ moment(ans.last_edit).format('LL') }}</span>
+
+							{% if ans.body_html|length > 300 %}
+							<span class="comments">
+								<a href="javascript:void(0)"
+								   onclick="showAnswerDetailDialog({{ ans.id }})" title="Answer">查看完整回答</a>
+							</span>
+							{% endif %}
 							<span class="like-count">{{ ans.score }}</span>
 						</div>
 
 					</header>
-					{{ ans.body_html|safe|truncate(200) }}
-
+					<div id="answer-appear-div-{{ ans.id }}">
+					{{ ans.body_html|safe|truncate(300) }}
+					</div>
 				</article>
 				{% endfor %}
 				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'ans.user', user_id=user.id) }}</div>
@@ -72,5 +88,7 @@
 		</div>
 	</div>
 </div>
+
+{% include 'components/cat-answer-dialog.html' %}
 <!-- End of Page Container -->
 {% endblock page_content %}

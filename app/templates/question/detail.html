@@ -42,7 +42,7 @@
 						{% endif %}
 						{% if current_user.is_authenticated and current_user.is_contributor(question) %}
 						<span class="answer">
-							<a href="javascript:void(0)" onclick="gotoMyAnswer({{ current_user.get_answer_id(question) }}">
+							<a href="javascript:void(0)" onclick="showAnswerDetailDialog({{ current_user.get_answer_id(question) }})">
 								去往我的回答
 							</a>
 						</span>
@@ -99,13 +99,20 @@
 											<a href="javascript:void(0)" onclick="showProfileSummary({{ answer.author.id }})" rel="external nofollow" class="url">{{ answer.author.nickname }}</a>
 										</cite>
 										<span class="flask-moment" style="padding-left: 10px;" data-refresh="0">{{ moment(answer.create).format('LLL') }}</span>
+										{% if answer.body_html|length > 1200 %}
+										<span>
+											<a href="javascript:void(0)" onclick="showAnswerDetailDialog({{ answer.id }})">
+												查看完整答案
+											</a>
+										</span>
+										{% endif %}
 									</h5>
 
 									{% include 'components/answer-vote-component.html' %}
 
 								</div><!-- end .comment-meta -->
 
-								<div class="comment-body">
+								<div class="comment-body" id="answer-appear-div-{{ answer.id }}">
 									{{ answer.body_html|safe|truncate(1200) }}
 								</div><!-- end of comment-body -->
 							</article><!-- end of comment -->
@@ -193,6 +200,8 @@
 	</div>
 </div>
 <!-- End of Page Container -->
+
+{% include 'components/cat-answer-dialog.html' %}
 
 {% include 'components/delete-confirm.html' %}
 {% endblock page_content %}

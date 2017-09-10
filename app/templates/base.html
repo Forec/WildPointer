@@ -50,9 +50,6 @@
 	<link rel="stylesheet" id='ns-style-other-css'
 	      href="{{ url_for('static', filename='css/non/ns-style-other.css', _external=True) }}" type='text/css'
 	      media='all'/>
-	<link rel="stylesheet" id='m-counter-css'
-	      href="{{ url_for('static', filename='css/non/m-counter.css', _external=True) }}" type='text/css'
-	      media='all'/>
 	<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
 	{% endblock head %}
 </head>
@@ -122,7 +119,9 @@
 
 	                        {% if current_user.is_authenticated %}
                             <li class="current-menu-item"><a href="{{ url_for('message.home', _external=True) }}">消息
-                            <div class="m-msg-counter" id="message-counter">{{ current_user.messages.filter_by(viewed=False).count() }}</div></a></li>
+                            <span class="badge" style="padding-left: 5px; padding-right: 5px; padding-bottom: 1px; padding-top: 1px"
+                                  id="#message-counter"
+                            >{{ current_user.messages.filter_by(viewed=False).count() }}</span></a></li>
                             <li class="current-menu-item"><a href="#">{{ current_user.username|truncate(12) }}</a>
                                 <ul class="sub-menu">
                                     <li><a href="{{ url_for('profile.detail', username=current_user.username, _external=True) }}">个人资料</a></li>

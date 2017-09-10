@@ -23,13 +23,18 @@ def detail(answer_id):
         return jsonify({
             'code': -1  # 不存在对应 Answer
         })
+    right = False
+    if current_user.is_authenticated and current_user.id == answer.author_id:
+        right = True
     return jsonify({
         'code': 0,
         'author_id': answer.author_id,
         'author_nickname': answer.author.nickname,
-        'content': answer.body,
+        'body': answer.body,
+        'body_html': answer.body_html,
         'score': answer.score,
-        'create': answer.create
+        'create': answer.create,
+        'right': right
     })
 
 
@@ -59,13 +64,13 @@ def create():
             'code': 1  # 携带了违例信息
         })
     question = Question.query.filter_by(id=question_id).first()
-    if current_user.is_contributor(question):
-        return jsonify({
-            'code': 0  # 已有回答
-        })
     if not question:
         return jsonify({
             'code': -2   # 问题不存在
+        })
+    if current_user.is_contributor(question):
+        return jsonify({
+            'code': 0  # 已有回答
         })
     answer = Answer(question_id=question.id, author_id=current_user.id, body=body)
     relation = ContributeQuestions(question_id=question.id, contributor_id=current_user.id)
@@ -77,6 +82,48 @@ def create():
         'code': 4  # 创建成功
     })
 
+
+@ans.route('/modify', methods=['POST'])
+@login_required
+@confirm_required
+def modify():
+    req = request.form.get('request')
+    if req is None:
+        return jsonify({
+            'code': -1  # 无请求
+        })
+    req = json.loads(req)
+    [body, answer_id] = [req.get(name) for name in ['body', 'answer_id']]
+    if not body or not body.strip():
+        return jsonify({
+            'code': 2  # 答案不包括任何有效内容
+        })
+    if len(body) > 10000:
+        return jsonify({
+            'code': 3  # 答案过长
+        })
+    try:
+        answer_id = int(answer_id)
+    except ValueError:
+        return jsonify({
+            'code': 1  # 携带了违例信息
+        })
+    answer = Answer.query.filter_by(id=answer_id).first()
+    if not answer:
+        return jsonify({
+            'code': -2   # 答案不存在
+        })
+    if answer.author_id == current_user.id or current_user.can(Permission.MODERATE_ALL):
+        answer.body = body
+        db.session.add(answer)
+        db.session.commit()
+        return jsonify({
+            'code': 4,  # 已有回答
+            'body_html': answer.body_html
+        })
+    return jsonify({
+        'code': 0  # 无权限
+    })
 
 @ans.route('/delete/<int:answer_id>', methods=['GET'])
 @login_required

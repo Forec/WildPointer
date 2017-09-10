@@ -99,32 +99,3 @@ def detail(post_id):
     return render_template('post/detail.html', post=post, tags=tags,
                            recent_posts=recent_posts, has_liked=has_liked,
                            moderate=moderate)
-
-
-
-#TODO
-@pos.route('/edit/<int:post_id>', methods=['GET', 'POST'])
-@login_required
-@confirm_required
-def edit(post_id):
-    post = Post.query.get_or_404(post_id)
-    if current_user != post.author and not current_user.can(Permission.MODERATE_ALL):
-        abort(403)
-    form = PostEditForm()
-    if form.validate_on_submit():
-        if not form.title.data:
-            form.title.data = '无题'
-        post.title = form.title.data
-        post.body = form.body.data
-        tags_string = form.tags.data
-        tag_names = [tag_string.strip() for tag_string in tags_string.split(',')]
-        post.reset_tags(tag_names)
-        db.session.add(post)
-        db.session.commit()
-        flash('文章已更新')
-        return redirect(url_for('post.detail', id=post.id))
-    form.body.data = post.body
-    form.title.data = post.title
-    from functools import reduce
-    form.tags.data = reduce(lambda x, y: x + ", " + y, [item.tag.name for item in post.tags.all()])
-    return render_template('post/edit.html', form=form)

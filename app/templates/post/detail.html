@@ -37,6 +37,9 @@
 					        {% endif %}
 						</span>
 						{% if moderate %}
+						<span class="category">
+							<a href="{{ url_for('post.edit', post_id=post.id, _external=True) }}">编辑</a>
+						</span>
 						<span class="garbage">
 							<a href="javascript:void(0)" onclick="modalHidden('delete-dialog')">删除</a>
 						</span>
