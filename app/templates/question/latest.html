@@ -5,6 +5,9 @@
 
 {% block head %}
 {{ super() }}
+<link rel="stylesheet" id='toastr-css'
+    href="{{ url_for('static', filename='css/non/m-search-tip.css', _external=True) }}" type='text/css'
+    media='all'/>
 {% endblock head %}
 
 {% block body %}
@@ -28,8 +31,8 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(ques.create).format('LL') }}</span>
-							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ ques.publisher.username }}')"
-							   title="提出者">{{ ques.publisher.nickname }}</a></span></span>
+							<span class="author"><a href="javascript:void(0)" onclick="showProfileSummary('{{ ques.publisher.username }}')"
+							   title="提出者">{{ ques.publisher.nickname }}</a></span>
 							<span class="comments">
 								{% if ques.answers.count() == 0 %}
 								暂无回答
@@ -96,3 +99,28 @@
 </div>
 <!-- End of Page Container -->
 {% endblock page_content %}
+
+
+{% block footer_bottom %}
+<!-- Footer Bottom -->
+<div id="footer-bottom-wrapper">
+	<div id="footer-bottom" class="container">
+		<div class="row">
+			<div class="span6">
+				<p class="copyright">
+					Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Footer Bottom -->
+{% endblock footer_bottom %}
+
+{% block after_footer %}
+<a href="#top" id="scroll-top"></a>
+{% endblock after_footer %}
+
+{% block scripts %}
+<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-search-tip.js', _external=True) }}"></script>
+{% endblock %}

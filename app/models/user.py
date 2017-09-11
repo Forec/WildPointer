@@ -25,10 +25,12 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     contactE = db.Column(db.String(64))
     confirmed = db.Column(db.Boolean, default=False)
+    disabled = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
     avatar_hash = db.Column(db.String(32))
     location = db.Column(db.String(64))
     about_me = db.Column(db.Text())
+    website = db.Column(db.String(512), default='')
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     username = db.Column(db.String(64), unique=True, index=True)
@@ -428,7 +430,7 @@ class User(UserMixin, db.Model):
                 new_message += "、" + post.author.nickname
             if len(unread_followed_posts) > 3:
                 new_message += "等 " + str(len(unread_followed_posts)) + " 人"
-            new_message += "发布了文章<a href=\"" + \
+            new_message += "新发布了文章<a href=\"" + \
                            url_for('post.detail', post_id=unread_followed_posts[0].id, _external=True) + \
                            "\">《" + unread_followed_posts[0].title + "》</a>"
             for post in unread_followed_posts[1:]:
@@ -441,7 +443,9 @@ class User(UserMixin, db.Model):
         active_questions = []
         active_answers_count = 0
         for question in self.questions:
+            #TODO
             question_answer_active_count = question.answers.filter(Answer.create > self.last_seen).count()
+            print(question.title, question_answer_active_count)
             if question_answer_active_count > 0:
                 active_questions.append(question)
                 active_answers_count += question_answer_active_count
@@ -454,9 +458,9 @@ class User(UserMixin, db.Model):
                                url_for('ques.detail', question_id=question.id, _external=True) + \
                                "\">《" + question.title + "》</a>"
             if len(active_questions) > 3:
-                new_message += "等 " + str(len(active_questions)) + " 个问题有共 "
+                new_message += "等 " + str(len(active_questions)) + " 个问题新产生了共 "
             else:
-                new_message += "有共 "
+                new_message += "新产生了共 "
             new_message += str(active_answers_count) + " 个回答。"
             message_list.append(new_message)
 
@@ -502,7 +506,7 @@ class User(UserMixin, db.Model):
             self.avatar_hash = hashlib.md5(
                 self.email.encode('utf-8')
             ).hexdigest()
-        self.follow(self)
+        # self.follow(self)
 
     @staticmethod
     def add_self_follows():

@@ -1,0 +1,412 @@
+<div class="modal" aria-hidden="true" id="user-profile-dialog" style="visibility: hidden; margin-top: -160px;">
+	<div class="modal-dialog" style="opacity: 1.0;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a type="button" class="close" data-dismiss="modal" aria-hidden="true" style="color: white;"
+				   id="user-profile-dialog-close"
+				        onclick="modalHidden('user-profile-dialog')">×
+				</a>
+				<h4 class="modal-title center" id="user-profile-dialog-title">个人资料</h4>
+			</div>
+
+			<div class="hp-head">
+				<div class="hp-col-left">
+					<a href="#">
+						<img alt=""
+						     src="{{ url_for('static', filename='images/favicon.png', _external=True) }}"
+						     class="avatar avatar-60 photo"
+						     id="user-profile-dialog-img"
+						     height="60" width="60">
+					</a>
+				</div>
+				<div class="hp-col-left" style="line-height: 0px; width: 80%;">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-1" style="background-color: transparent;">
+								<p id="user-profile-dialog-name" style="margin-top: 13px; margin-bottom: 13px;">
+									Forec
+								</p>
+							</td>
+
+							<td class="hp-td-1" style="background-color: transparent; text-align: right;">
+								<table >
+									<tr >
+										<td style="background-color: transparent;" id="user-profile-dialog-disable-label">
+											封禁封号
+										</td>
+										<td style="background-color: transparent;">
+											<input name="disabled" type="checkbox" id="user-profile-dialog-disable" class="regular-checkbox" style="margin-top: 0px;"/>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td class="hp-td-1" style="background-color: transparent; text-align: right;">
+								<button class="btn btn-info" id="user-profile-dialog-follow-button" style="visibility: hidden; width: 70%">关注</button>
+							</td>
+
+							<td class="hp-td-1" style="background-color: transparent; text-align: right;">
+								<button class="btn btn-info" id="hp-modify" style="visibility: hidden; width: 70%">提交</button>
+							</td>
+				<!--<div class="hp-control-group" style="border-bottom: 0px; text-align: right; padding-right: 10px;">-->
+					<!--<button class="btn btn-primary" id="hp-modify" onclick="enableModifyProfile()">修改</button>-->
+				<!--</div>-->
+						</tr>
+						<tr>
+							<td class="hp-td-1" style="background-color: transparent;">
+								<p style="margin-top: 13px; margin-bottom: 13px;">获得了 <b id="user-profile-dialog-agree" ></b> 个赞同</p>
+							</td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+
+			<div class="hp-edit" id="hp-edit">
+				<!-- <div style="height: 500px; overflow-y: auto;"> -->
+				<!-- <form role="form" class="form-horizontal" style="margin: 2px 0 15px;"> -->
+				<div class="hp-control-group" style="padding-bottom: 0px; margin-bottom: 0px;">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-4" style="background-color: white;">
+								<button id="user-profile-dialog-posts" class="hp-button">我的文章</button>
+							</td>
+							<td class="hp-td-4" style="background-color: white;">
+								<button id="user-profile-dialog-questions" class="hp-button">我的提问</button>
+							</td>
+							<td class="hp-td-3" style="background-color: white;">
+								<button id="user-profile-dialog-answers" class="hp-button">我的回答</button>
+							</td>
+							<td class="hp-td-4" style="background-color: white;">
+								<button id="user-profile-dialog-followeds" class="hp-button">我关注的</button>
+							</td>
+							<td class="hp-td-4" style="background-color: white;">
+								<button id="user-profile-dialog-followers" class="hp-button">关注我的</button>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="hp-control-group">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-1" style="background-color: white;">
+								<label for="user-profile-dialog-create">加入时间</label>
+							</td>
+							<td class="hp-td-2" style="background-color: white;" id="user-profile-dialog-create">
+									February 26, 2013 at 1:27 pm
+							</td>
+							<td class="hp-td-1" style="background-color: white;">
+								<label for="user-profile-dialog-lastseen">上次登录</label>
+							</td>
+							<td class="hp-td-2" style="background-color: white;">
+								<label id="user-profile-dialog-lastseen">
+									February 26, 2013 at 1:27 pm
+								</label>
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="hp-control-group">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-5" style="background-color: white;">
+								<label for="user-profile-dialog-email">通信邮箱（注册邮箱请在用户安全中心修改）</label></td>
+							<td>
+								<input class="hp-input-1" type="text" placeholder="" readonly="true"
+								       id="user-profile-dialog-email"
+								       value="">
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="hp-control-group">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-1" style="background-color: white;">
+								<label for="user-profile-dialog-nickname">昵称</label>
+							</td>
+							<td class="hp-td-2" style="background-color: white;">
+								<input class="hp-input-1" type="text" placeholder="" readonly="true"
+								       id="user-profile-dialog-nickname"
+								       value="shit">
+							</td>
+							<td class="hp-td-1" style="background-color: white;">
+								<label for="user-profile-dialog-address">居住地区</label>
+							</td>
+							<td class="hp-td-2" style="background-color: white;">
+								<input class="hp-input-1" type="text" placeholder="" readonly="true"
+								 id="user-profile-dialog-address">
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="hp-control-group">
+					<table class="hp-table">
+						<tr>
+							<td class="hp-td-1" style="background-color: white;">
+								<label for="user-profile-dialog-homepage">个人主页</label>
+							</td>
+							<td style="background-color: white; padding-right: 10px;">
+								<input type="text" class="hp-input-1 hp-input-full" placeholder=""
+								       id="user-profile-dialog-homepage"
+								       readonly="true">
+							</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="hp-control-group" style="padding-right: 10px;">
+					<label for="user-profile-dialog-aboutme">关于我</label>
+					<textarea type="text" class="hp-textarea" cols="90" rows="6" style=""
+					          placeholder="" readonly="true"
+					          id="user-profile-dialog-aboutme"></textarea>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<script>
+function showProfileSummary(username) {
+	$.ajax({
+		url: "{{ url_for('profile.summary', username='', _external=True) }}"  + username,
+		type: "GET",
+		success: function(response) {
+		    console.log(response);
+		    if (response.code == 1) {
+		        jQuery("#user-profile-dialog-title").html(response.nickname + "的个人资料");
+		        jQuery("#user-profile-dialog-img").attr("src", response.img);
+		        jQuery("#user-profile-dialog-name").html(response.username);
+		        jQuery("#user-profile-dialog-agree").html(response.agree);
+		        if (response.disabled) {
+		            jQuery("#user-profile-dialog-disable-label").html("该账号已被封禁");
+		            jQuery("#user-profile-dialog-disable-label").css("visibility", "visible");
+		            jQuery("#user-profile-dialog-disable-label").css("display", "block");
+		        } else {
+		            jQuery("#user-profile-dialog-disable-label").css("visibility", "hidden");
+		            jQuery("#user-profile-dialog-disable-label").css("display", "none");
+		        }
+		        if (response.self == false) {
+		            jQuery("#user-profile-dialog-posts").html("他的文章");
+		            jQuery("#user-profile-dialog-questions").html("他的提问");
+		            jQuery("#user-profile-dialog-answers").html("他的回答");
+		            if (response.is_following == false) {
+		                jQuery("#user-profile-dialog-follow-button").html("+ 关注");
+		                jQuery("#user-profile-dialog-follow-button").css("visibility", "visible");
+		                jQuery("#user-profile-dialog-follow-button").css("display", "block");
+		                jQuery("#user-profile-dialog-follow-button").removeClass("btn-danger").addClass("btn-info");
+		                jQuery("#user-profile-dialog-follow-button").attr("onclick", "follow_user_for_profile('" + username + "')");
+		            } else {
+		                jQuery("#user-profile-dialog-follow-button").html("取消关注");
+		                jQuery("#user-profile-dialog-follow-button").css("visibility", "visible");
+		                jQuery("#user-profile-dialog-follow-button").css("display", "block");
+		                jQuery("#user-profile-dialog-follow-button").removeClass("btn-info").addClass("btn-danger");
+		                jQuery("#user-profile-dialog-follow-button").attr("onclick", "unfollow_user_for_profile('" + username + "')");
+		            }
+		            if (response.is_login == false) {
+		                jQuery("#user-profile-dialog-follow-button").css("display", "none");
+		                jQuery("#user-profile-dialog-follow-button").css("visibility", "hidden");
+		            }
+		        } else {
+		            jQuery("#user-profile-dialog-posts").html("我的文章");
+		            jQuery("#user-profile-dialog-questions").html("我的提问");
+		            jQuery("#user-profile-dialog-answers").html("我的回答");
+		            jQuery("#user-profile-dialog-follow-button").css("visibility", "hidden");
+		            jQuery("#user-profile-dialog-follow-button").css("display", "none");
+		        }
+		        if (response.admin == true) {
+		            jQuery("#user-profile-dialog-disable-label").html("封禁账号");
+		            jQuery("#user-profile-dialog-disable-label").css("visibility", "visible");
+		            jQuery("#user-profile-dialog-disable-label").css("display", "block");
+		            jQuery("#user-profile-dialog-disable").css("visibility", "visible");
+		            jQuery("#user-profile-dialog-disable").css("display", "block");
+		            jQuery("#user-profile-dialog-disable").attr('checked', response.disabled);
+		        } else {
+		            jQuery("#user-profile-dialog-disable").css("display", "none");
+		        }
+		        jQuery("#user-profile-dialog-followeds").html("关注了 " + response.followed_count + "人 ");
+		        jQuery("#user-profile-dialog-followers").html(response.follower_count + " 个关注者");
+		        jQuery("#user-profile-dialog-posts").attr("onclick", "window.open('" + response.posts_url +"','_blank','');");
+		        jQuery("#user-profile-dialog-questions").attr("onclick", "window.open('" + response.questions_url +"','_blank','');");
+		        jQuery("#user-profile-dialog-answers").attr("onclick", "window.open('" + response.answers_url +"','_blank','');");
+		        jQuery("#user-profile-dialog-followeds").attr("onclick", "window.open('" + response.followeds_url +"','_blank','');");
+		        jQuery("#user-profile-dialog-followers").attr("onclick", "window.open('" + response.followers_url +"','_blank','');");
+
+		        jQuery("#user-profile-dialog-create").html(response.create);
+		        jQuery("#user-profile-dialog-lastseen").html(response.last_seen);
+
+		        /* 余下为 可编辑资料*/
+		        jQuery("#user-profile-dialog-email").val(response.email);
+		        jQuery("#user-profile-dialog-nickname").val(response.nickname);
+		        jQuery("#user-profile-dialog-address").val(response.location);
+		        jQuery("#user-profile-dialog-homepage").val('');
+		        jQuery("#user-profile-dialog-aboutme").val(response.about_me);
+
+		        if (response.self == false && response.admin == false) {
+		            jQuery("#hp-modify").css("display", "none");
+		            jQuery("#hp-modify").css("visibility", "hidden");
+		        } else {
+		            jQuery("#hp-modify").css("display", "block");
+		            jQuery("#hp-modify").css("visibility", "visible");
+		        }
+                jQuery("#user-profile-dialog-close").attr("onclick", "reset_user_profile_dialog('" + username + "')");
+
+                enableModifyProfile(username);
+	            jQuery("#user-profile-dialog").css("visibility", "visible");
+		    } else if (response.code == -1) {
+		        flash_error("您填查看的用户不存在");
+		    } else {
+		        flash_error("未能成功连接至服务器，您的请求未能正常处理，请稍后再试。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+
+function submit_profile_change(username) {
+    var disabled = 'pass';
+    if (jQuery("#user-profile-dialog-disable").css("display") == "block") {
+        disabled = jQuery("#user-profile-dialog-disable").is(":checked");
+    }
+	$.ajax({
+		url: "{{ url_for('profile.edit', _external=True) }}",
+		type: "POST",
+		dataType: 'json',
+		data: {
+			'request': JSON.stringify({
+				'username': username,
+				'nickname': jQuery("#user-profile-dialog-nickname").val(),
+				'address': jQuery("#user-profile-dialog-address").val(),
+				'homepage': jQuery("#user-profile-dialog-homepage").val(),
+				'about_me': jQuery("#user-profile-dialog-aboutme").val(),
+				'email': jQuery("#user-profile-dialog-email").val(),
+				'disabled': disabled
+			})
+		},
+		success: function(response) {
+		    if (response.code == 3) {
+		        flash_success("用户资料已保存。");
+                reset_user_profile_dialog(username);
+		    } else if (response.code == 2) {
+		        flash_error("您没有修改此用户资料的权限");
+		    } else if (response.code == 1) {
+		        flash_error("无法识别此用户的身份。");
+		    } else {
+		        flash_error("服务器发生了未知错误，您的请求未能正常处理，请稍后再试。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+
+function reset_user_profile_dialog(username) {
+	var inputNickName = jQuery("#user-profile-dialog-nickname");
+	var inputAddress = jQuery("#user-profile-dialog-address");
+	var inputHomepage = jQuery("#user-profile-dialog-homepage");
+	var inputAboutme = jQuery("#user-profile-dialog-aboutme");
+	var btn = jQuery("#hp-modify");
+
+	inputNickName.attr("readonly", true);
+	inputAddress.attr("readonly", true);
+	inputHomepage.attr("readonly", true);
+	inputAboutme.attr("readonly", true);
+	inputNickName.css("background-color", "#f2f2f2");
+	inputAddress.css("background-color", "#f2f2f2");
+	inputHomepage.css("background-color", "#f2f2f2");
+	inputAboutme.css("background-color", "#f2f2f2");
+	jQuery("#user-profile-dialog-follow-button").css("visibility", "hidden");
+	jQuery("#user-profile-dialog-follow-button").css("display", "none");
+    jQuery("#user-profile-dialog-disable").css("visibility", "hidden");
+    jQuery("#user-profile-dialog-disable").css("display", "none");
+	jQuery("#user-profile-dialog-disable-label").css("visibility", "hidden");
+    jQuery("#user-profile-dialog-disable-label").css("display", "none");
+	btn.attr("onclick", "submit_profile_change('" + username + "')");
+	btn.text("提交");
+	btn.css("visibility", "hidden");
+	btn.css("display", "none");
+    jQuery("#user-profile-dialog").css("visibility", "hidden");
+}
+
+
+function follow_user_for_profile(username) {
+	$.ajax({
+		url: "{{ url_for('focus.follow', username='', _external=True) }}" + username,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 2) {
+		        jQuery("#user-profile-dialog-follow-button").html("取消关注");
+		        jQuery("#user-profile-dialog-follow-button").attr("onclick", "unfollow_user_for_profile('" + username + "')");
+		        jQuery("#user-profile-dialog-follow-button").removeClass("btn-info").addClass("btn-danger");
+		        flash_success("您已成功关注用户" + response.nickname);
+		    } else if (response.code == 1) {
+		        flash_info("您已经关注过该用户了。");
+		    } else if (response.code == -1) {
+		        flash_error("您要关注的用户不存在。");
+		    } else if (response.code == 0) {
+		        flash_info("您不能关注自己。");
+		    } else {
+		        flash_error("您必须先登录才能关注用户，请您检查您的账号及网络设置。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+function unfollow_user_for_profile(username) {
+	$.ajax({
+		url: "{{ url_for('focus.unfollow', username='', _external=True) }}" + username,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 2) {
+		        jQuery("#user-profile-dialog-follow-button").html("+ 关注");
+		        jQuery("#user-profile-dialog-follow-button").attr("onclick", "follow_user_for_profile('" + username + "')");
+		        jQuery("#user-profile-dialog-follow-button").removeClass("btn-danger").addClass("btn-info");
+		        flash_warning("您已取消了对用户 " + response.nickname + " 的关注");
+		    } else if (response.code == 1) {
+		        flash_info("您尚未关注该用户。");
+		    } else if (response.code == -1) {
+		        flash_error("您要关注的用户不存在。");
+		    } else if (response.code == 0) {
+		        flash_info("您不能关注或取消对自己的关注。");
+		    } else {
+		        flash_error("您必须先登录才能关注／取消关注用户，请您检查您的账号及网络设置。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+
+function enableModifyProfile(username) {
+	var inputNickName = jQuery("#user-profile-dialog-nickname");
+	var inputAddress = jQuery("#user-profile-dialog-address");
+	var inputHomepage = jQuery("#user-profile-dialog-homepage");
+	var inputAboutme = jQuery("#user-profile-dialog-aboutme");
+	var inputContact = jQuery("#user-profile-dialog-email");
+	var btn = jQuery("#hp-modify");
+
+		inputNickName.attr("readonly", false);
+		inputAddress.attr("readonly", false);
+		inputHomepage.attr("readonly", false);
+		inputAboutme.attr("readonly", false);
+		inputContact.attr("readonly", false);
+		inputNickName.css("background-color", "white");
+		inputAddress.css("background-color", "white");
+		inputHomepage.css("background-color", "white");
+		inputAboutme.css("background-color", "white");
+		inputContact.css("background-color", "white");
+		btn.attr("onclick", "submit_profile_change('" + username + "')");
+		btn.text("提交");
+}
+</script>

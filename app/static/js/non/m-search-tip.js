@@ -20,53 +20,39 @@ jQuery(document).ready(
 	}
 );
 
-
-
-var arr = new Array("faqfaqfa", "faqfaqfa", "faqfaqfa", "faqfaqfa");
-
-function hasInput(text, event) {
+function hasInput(text, event, search_url) {
 	console.log(text);
 	if (text == "" && jQuery("#search-tip").css("display") != "none") {
 		jQuery("#search-tip").css("display", "none");
 		return;
 	}
-	showSimilar('dafs');
-//	$.ajax({
-//		url: "",
-//		type: "POST",
-//		data: {
-//			'request': /*JSON.stringfy({
-//				'username': username,
-//				'password': password
-//			})*/
-//			{
-//				'userInput': text,
-//			}
-//		},
-//		success: showSimilar,
-//		err: doNothing
-//	});
+	$.ajax({
+		url: search_url + "/" + text,
+		type: "GET",
+		success: showSimilar,
+		err: function(err) {
+		}
+	});
 };
 
 function showSimilar(response) {
 	resizeSearchTip();
 	
 	var html = "";
-	for (var i = 0; i < 5; ++i) {
-		html += ELEM_TEMPLATE.replace('{{url}}', 'http://baidu.com').replace('{{id}}', 'elem-' + i).replace('{{content}}', '知乎');
+	for (var i = 0; i < response.results.length; ++i) {
+	    var title = response.results[i].substr(0, 20);
+	    if (response.results[i].length > 20) {
+	        title += "...";
+	    }
+		html += ELEM_TEMPLATE.replace('{{url}}', response.urls[i]).replace('{{id}}', 'elem-' + i).replace('{{content}}', title);
 	}
 	
 	jQuery("#search-tip").html(html);
 	jQuery("#search-tip").css("display", "block");
 };
 
-function doNothing(error) {
-
-};
-
 function jump(id) {
 	var text = $("#" + id).children('a').attr('href');
-	console.log(text);
 	$(location).attr('href', text);
 };
 
@@ -77,8 +63,7 @@ function resizeSearchTip() {
 	var left = jQuery("#s").offset().left;
 	var width = jQuery("#s").outerWidth();
 	var height = jQuery("#s").outerHeight();
-	console.log("a" + top);
-	
+
 	tip.css("top", top + height + "px");
 	tip.css("width", width + "px");
 	tip.css("left", left + "px");

@@ -26,7 +26,7 @@
 					<div class="post-meta clearfix">
 						<span class="date">{{ moment(question.create).format('LLL') }}</span>
 						<span class="author">
-							<a href="javascript:void(0)" onclick="showProfileSummary('{{ question.publisher.id }}')"
+							<a href="javascript:void(0)" onclick="showProfileSummary('{{ question.publisher.username }}')"
 							   title="提出者">{{ question.publisher.nickname }}</a></span>
 						<span class="comments">
 						    {% if question.answers.count() == 0 %}
@@ -86,7 +86,7 @@
 						{% for answer in answers %}
 						<li class="comment even thread-even depth-1" id="answer-{{ answer.id }}">
 							<article id="answer-article-{{ answer.id }}">
-								<a href="javascript:void(0)" onclick="showProfileSummary({{ answer.author.id }})">
+								<a href="javascript:void(0)" onclick="showProfileSummary('{{ answer.author.username }}')">
 									<img alt=""
 									     src="{{ answer.author.gravatar(size=60) }}"
 									     class="avatar avatar-60 photo" height="60" width="60">
@@ -96,7 +96,7 @@
 
 									<h5 class="author" style="margin-top: 0px; margin-bottom: 10px">
 										<cite class="fn">
-											<a href="javascript:void(0)" onclick="showProfileSummary({{ answer.author.id }})" rel="external nofollow" class="url">{{ answer.author.nickname }}</a>
+											<a href="javascript:void(0)" onclick="showProfileSummary('{{ answer.author.username }}')" rel="external nofollow" class="url">{{ answer.author.nickname }}</a>
 										</cite>
 										<span class="flask-moment" style="padding-left: 10px;" data-refresh="0">{{ moment(answer.create).format('LLL') }}</span>
 										{% if answer.body_html|length > 1200 %}
@@ -105,6 +105,10 @@
 												查看完整答案
 											</a>
 										</span>
+										{% endif %}
+										{% if current_user.is_authenticated and current_user.id == answer.author_id %}
+										<span class="garbage" style="float:right">
+											<a href="javascript:void(0)" onclick="modifyDeleteConfig('{{ answer.id }}')">删除</a></span>
 										{% endif %}
 									</h5>
 
@@ -201,10 +205,18 @@
 </div>
 <!-- End of Page Container -->
 
+
 {% include 'components/cat-answer-dialog.html' %}
 
 {% include 'components/delete-confirm.html' %}
 {% endblock page_content %}
+
+
+<!-- 若当前页面包含自己的回答，则加上删除确认框 -->
+{% if current_user.is_authenticated and current_user.is_contributor(question) %}
+{% include 'components/delete-answer-confirm.html' %}
+{% include 'js/delete-answer-js.html' %}
+{% endif %}
 
 {% block scripts %}
 {% include 'js/answer-vote.html' %}

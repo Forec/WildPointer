@@ -37,6 +37,7 @@
 								   onclick="showAnswerDetailDialog({{ ans.id }})" title="Answer">
 									{% if ans.body_html|length > 300 %}查看／{% endif %}编辑我的回答</a>
 							</span>
+							<span style="float:right"><a href="javascript:void(0)" onclick="modifyDeleteConfig('{{ ans.id }}')">删除</a></span>
 							<span class="like-count">{{ ans.score }}</span>
 						</div>
 
@@ -64,6 +65,7 @@
 								   onclick="showAnswerDetailDialog({{ ans.id }})" title="Answer">
 									{% if ans.body_html|length > 300 %}查看／{% endif %}编辑我的回答</a>
 							</span>
+							<span style="float:right"><a href="javascript:void(0)" onclick="modifyDeleteConfig('{{ ans.id }}')">删除</a></span>
 							<span class="like-count">{{ ans.score }}</span>
 						</div>
 
@@ -82,5 +84,7 @@
 </div>
 
 {% include 'components/cat-answer-dialog.html' %}
+{% include 'components/delete-answer-confirm.html' %}
+{% include 'js/delete-answer-js.html' %}
 <!-- End of Page Container -->
 {% endblock page_content %}

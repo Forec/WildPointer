@@ -1,0 +1,38 @@
+<script>
+function modifyDeleteConfig(answer_id) {
+    jQuery('#delete-answer-dialog-button').attr("onclick", "confirmBeforeDeleteAnswer(" + answer_id + ")");
+    modalHidden("delete-answer-dialog");
+}
+
+function confirmBeforeDeleteAnswer(answer_id) {
+    var content = jQuery('#delete-answer-username').val();
+    if (content == '{{ current_user.username }}') {
+        $.ajax({
+		    url: "{{ url_for('ans.delete', _external=True) }}" + "/" + answer_id,
+		    type: "GET",
+    		success: function(response) {
+	            if (response.code == 1){
+		            window.location.reload();
+	            } else if (response.code == 0) {
+    		        flash_error("您对该答案无操作权限！");
+    		        modalHidden('delete-answer-dialog');
+	            } else if (response.code == -1) {
+    	        	flash_error("您要删除的答案不存在，可能已经被删除。");
+    	        	modalHidden('delete-answer-dialog');
+    	        } else {
+    		        flash_error("发生了未知错误，请您检查您的账户是否已激活，以及您的网络情况。");
+    		        modalHidden('delete-answer-dialog');
+    	        }
+            },
+	    	err: function(err) {
+		        flash_error("无法连接至服务器，删除失败。");
+		        modalHidden('delete-answer-dialog');
+		    }
+	    });
+    } else {
+        flash_warning("您输入的用户名与您的用户名不符，请再次核实您的删除操作！");
+        modalHidden('delete-answer-dialog');
+    }
+}
+
+</script>

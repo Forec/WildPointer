@@ -28,7 +28,7 @@ def confirm_required(p):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if not current_user.is_authenticated or not current_user.confirmed:
+            if not current_user.is_authenticated or not current_user.confirmed or current_user.disabled:
                 abort(403)
             return f(*args, **kwargs)
         return decorated_function

@@ -21,16 +21,16 @@ def tick():
     current_user.ping()
     messages = current_user.messages.filter_by(noticed=False).all()
     unread_count = current_user.messages.filter_by(viewed=False).count()
-    json_messages = []
+    message_bodys = []
     for message in messages:
-        json_messages.append((message.id, message.body))
+        message_bodys.append(message.body)
         message.noticed = True
         db.session.add(message)
     db.session.commit()
     return jsonify({
         'code': 1,
         'count': len(messages),
-        'messages': json_messages,
+        'messages': message_bodys,
         'receiver_id': current_user.id,
         'unread': unread_count
     })

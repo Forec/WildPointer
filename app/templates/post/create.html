@@ -20,15 +20,15 @@
 				<section id="edit-area">
 					<div id="respond">
 						<h3>发布新文章</h3>
-						<form action="javascript:create_post('title', 'tags', 'body')" method="post" id="create-post-form">
+						<form action="javascript:create_post('title', 'tags-line', 'body')" method="post" id="create-post-form">
 							<p class="comment-notes">你可以使用 MarkDown 语法编写文章。标注 <span class="required">*</span> 的为必填项。</p>
 							<div>
 								<label for="title">标题</label>
 								<input class="span8" type="text" name="title" id="title" value="" size="22">
 							</div>
 							<div>
-								<label for="tags">标签（请在右侧选择，或输入自定义标签，以分号隔开，不可包含特殊字符）</label>
-								<input class="span8" type="text" name="tags" id="tags" value="" size="22"/>
+								<label for="tags-line">标签（请在右侧选择，或输入自定义标签，以分号隔开，不可包含特殊字符）</label>
+								<input class="span8" type="text" name="tags" id="tags-line" value="" size="22"/>
 							</div>
 							<div>
 								<label for="body">正文 *</label>
@@ -49,7 +49,7 @@
 
 				<section class="widget">
 					<h3 class="title">选择标签</h3>
-					{% include 'components/_tags.html' %}
+					{% include 'components/_tags_for_posts.html' %}
 				</section>
 
 			</aside>

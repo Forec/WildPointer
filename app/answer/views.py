@@ -29,6 +29,7 @@ def me():
     return render_template('answer/me.html', answers_1=answers_1,
                            answers_2=answers_2, pagination=pagination)
 
+
 @ans.route('/user/<int:user_id>', methods=['GET'])
 def user(user_id):
     from ..models import User

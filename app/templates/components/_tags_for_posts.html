@@ -1,0 +1,40 @@
+<div class="tagcloud">
+	{% if used_tags %}
+	    {% for tag in used_tags %}
+	    <a href="javascript:void(0)"
+	       onclick="selectFilterTag(this.id)"
+	       class="btn-success btn-mini"
+	       id="select-post-Tag-{{ tag.id }}" value="pushed">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
+	{% if tags|length == 0 %}
+	    {% if not used_tags %}
+	    <p>暂无推荐标签</p>
+	    {% endif %}
+	{% else %}
+	    {% for tag in tags %}
+	    <a href="javascript:void(0)"
+	       onclick="selectFilterTag(this.id)"
+	       class="btn btn-mini"
+	       id="select-post-Tag-{{ tag.id }}" value="on">{{ tag.name }}</a>
+	    {% endfor %}
+	{% endif %}
+</div>
+
+<script>
+function selectFilterTag(tagID) {
+	var tag = jQuery('#' + tagID);
+	var tagLine = jQuery("#tags-line");
+
+	if (tag.attr("value") == "on") {
+		tag.attr("value", "pushed");
+		tagLine.val(tagLine.val() + tag.text() + ";");
+		tag.removeClass("btn").addClass("btn-success");
+	} else if (tag.attr("value") == "pushed") {
+		tag.attr("value", "on");
+		var index = tagLine.val().indexOf(tag.text() + ";");
+		tagLine.val(tagLine.val().substr(0, index) + tagLine.val().substr(index + tag.text().length + 1));
+		tag.removeClass("btn-success").addClass("btn");
+	}
+}
+</script>

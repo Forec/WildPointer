@@ -125,10 +125,12 @@ def modify():
         'code': 0  # 无权限
     })
 
+
+@ans.route('/delete', methods=['GET'])
 @ans.route('/delete/<int:answer_id>', methods=['GET'])
 @login_required
 @confirm_required
-def delete(answer_id):
+def delete(answer_id=-1):
     answer = Answer.query.filter_by(id=answer_id).first()
     if not answer:
         return jsonify({
@@ -138,7 +140,9 @@ def delete(answer_id):
         return jsonify({
             'code': 0   # 无操作权限
         })
+    title = answer.question.title
     if current_user.delete_answer(answer_id):
+        flash("您在问题《" + title + "》的回答已删除成功。")
         return jsonify({
             'code': 1   # 删除成功
         })

@@ -1,0 +1,52 @@
+<script>
+function follow_user(username) {
+	$.ajax({
+		url: "{{ url_for('focus.follow', username='', _external=True) }}" + username,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 2) {
+		        jQuery("#follow-button-" + username).html("取消关注");
+		        jQuery("#follow-button-" + username).attr("onclick", "unfollow_user('" + username + "')");
+		        jQuery("#follow-button-" + username).removeClass("btn-success").addClass("btn-warning");
+		        flash_success("您已成功关注用户" + response.nickname);
+		    } else if (response.code == 1) {
+		        flash_info("您已经关注过该用户了。");
+		    } else if (response.code == -1) {
+		        flash_error("您要关注的用户不存在。");
+		    } else if (response.code == 0) {
+		        flash_info("您不能关注自己。");
+		    } else {
+		        flash_error("您必须先登录才能关注用户，请您检查您的账号及网络设置。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+function unfollow_user(username) {
+	$.ajax({
+		url: "{{ url_for('focus.unfollow', username='', _external=True) }}" + username,
+		type: "GET",
+		success: function(response) {
+		    if (response.code == 2) {
+		        jQuery("#follow-button-" + username).html("+ 关注");
+		        jQuery("#follow-button-" + username).removeClass("btn-warning").addClass("btn-success");
+		        jQuery("#follow-button-" + username).attr("onclick", "follow_user('" + username + "')");
+		        flash_warning("您已取消了对用户 " + response.nickname + " 的关注");
+		    } else if (response.code == 1) {
+		        flash_info("您尚未关注该用户。");
+		    } else if (response.code == -1) {
+		        flash_error("您要关注的用户不存在。");
+		    } else if (response.code == 0) {
+		        flash_info("您不能关注或取消对自己的关注。");
+		    } else {
+		        flash_error("您必须先登录才能关注／取消关注用户，请您检查您的账号及网络设置。");
+		    }
+		},
+		err: function(err) {
+		    flash_error("无法连接至服务器，请求失败。");
+		}
+	});
+}
+</script>

@@ -13,7 +13,7 @@
 		{% endif %}
 		<form id="search-form" class="search-form clearfix" method="GET" action="javascript:submit_search_request('{{ type }}')" autocomplete="off">
 			<input class="search-term required" type="text" id="s" name="search-keywords"
-			       oninput="hasInput(this.value,event)"
+			       oninput="hasInput(this.value, event, '{% if type == "all" %}{{ url_for('sea.api_all', _external=True) }}{% elif type=="post" %}{{ url_for('sea.api_post', _external=True) }}{% elif type=="question" %}{{ url_for('sea.api_question', _external=True) }}{% endif %}')"
 			       placeholder="在此输入搜索关键词" title="请输入您要检索的关键词！"
 			       value="{{ title }}"/>
 			<input class="search-btn" type="button" value="检索" onclick="submit_search_request('{{ type }}')"/>

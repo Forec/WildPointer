@@ -9,13 +9,12 @@
 			</div>
 
 			<div class="modal-body">
-				<div style="overflow-y: auto; height: 400px; width: 98%;">
 				<p id="answer-info-p"></p>
-				</div>
 				<hr/>
 				<form role="form" class="form-horizontal" method="post" id="commentform">
 					<div class="control-group">
-						<div id="answer-content-d"></div>
+						<div id="answer-content-d" style="overflow-y: auto; height: 300px; width: 98%;">
+						</div>
 						<textarea class="span8" id="answer-edit-t" cols="90" rows="10" style="width: 98%;"></textarea>
 					</div>
 				</form>
@@ -42,15 +41,15 @@ function showAnswerDetailDialog(answer_id) {
 	            jQuery("#answer-info-p").text("该答案获得了 " + response.score + " 个赞。");
 	            if (response.right) {
 	                jQuery("#answer-edit-t").val(response.body);
-	                jQuery("#answer-edit-t").css("visibility", "visible");
-	                jQuery("#answer-content-d").css("visibility", "hidden");
-	                jQuery("#cat-answer-dialog-button").css("visibility", "visible");
+	                jQuery("#answer-edit-t").css("display", "block");
+	                jQuery("#answer-content-d").css("display", "none");
+	                jQuery("#cat-answer-dialog-button").css("display", "block");
 	                jQuery("#cat-answer-dialog-button").attr("onclick", "modifyAnswer(" + answer_id + ")");
 	            } else {
 	                jQuery("#answer-content-d").html(response.body_html);
-	                jQuery("#answer-content-d").css("visibility", "visible");
-	                jQuery("#answer-edit-t").css("visibility", "hidden");
-	                jQuery("#cat-answer-dialog-button").css("visibility", "hidden");
+	                jQuery("#answer-content-d").css("display", "block");
+	                jQuery("#answer-edit-t").css("display", "none");
+	                jQuery("#cat-answer-dialog-button").css("display", "none");
 	            }
 	            jQuery("#cat-answer-dialog-title").html(response.author_nickname +" 的回答");
     	        jQuery("#cat-answer-dialog").css("visibility", "visible");
@@ -64,9 +63,9 @@ function showAnswerDetailDialog(answer_id) {
 }
 
 function closeAnswerDialog() {
-	 jQuery("#answer-edit-t").css("visibility", "hidden");
-     jQuery("#answer-content-d").css("visibility", "hidden");
-     jQuery("#cat-answer-dialog-button").css("visibility", "hidden");
+	 jQuery("#answer-edit-t").css("display", "none");
+     jQuery("#answer-content-d").css("display", "none");
+     jQuery("#cat-answer-dialog-button").css("display", "none");
      jQuery("#cat-answer-dialog").css("visibility", "hidden");
 }
 

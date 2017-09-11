@@ -31,8 +31,10 @@
 							<span class="date">消息时间：{{ moment(message.timestamp).format('LLL') }}</span>
 						</div>
 					</header>
-					{{ message.body }}
+					{{ message.body|safe }}
 				</article>
+			    <br/>
+			    <br/>
 				{% endfor %}
 			</div>
 			<!-- end of page content -->
@@ -46,8 +48,10 @@
 							<span class="date">消息时间：{{ moment(message.timestamp).format('LLL') }}</span>
 						</div>
 					</header>
-					{{ message.body }}
+					{{ message.body|safe }}
 				</article>
+				<br/>
+				<br/>
 				{% endfor %}
 				<div style="text-align: right">{{ pag.pagination_widget(pagination, 'message.home') }}</div>
 			</div>

@@ -35,7 +35,7 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(result.create).format('LL') }}</span>
-							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.author.username }}')"
+							<span class="author"><a href="javascript:void(0)" onclick="showProfileSummary('{{ result.author.username }}')"
 							   title="提出者">{{ result.author.nickname }}</a></span>
 							<span class="comments">
 								{% if result.comments.count() == 0 %}
@@ -60,7 +60,7 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(result.create).format('LL') }}</span>
-							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.publisher.username }}')"
+							<span class="author"><a href="javascript:void(0)" onclick="showProfileSummary('{{ result.publisher.username }}')"
 							   title="提出者">{{ result.publisher.nickname }}</a></span>
 							<span class="comments">
 								{% if result.answers.count() == 0 %}
@@ -85,7 +85,7 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(result.create).format('LL') }}</span>
-							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ result.author.username }}')"
+							<span class="author"><a href="javascript:void(0)" onclick="showProfileSummary('{{ result.author.username }}')"
 							   title="提出者">{{ result.author.nickname }}</a></span>
 							<span class="comments">
 								{% if result.comments.count() == 0 %}

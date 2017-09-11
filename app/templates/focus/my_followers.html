@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
+
+{% block title %}关注我的人{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block body %}
+{{ super() }}
+{% endblock body %}
+
+{% block page_content %}
+
+<div class="page-container">
+	<div class="container">
+		<div class="row">
+			<h2>关注我的人</h2>
+			<br/>
+			<hr/>
+
+			{% if followers|length == 0 %}
+			<h3>还没有任何用户关注您</h3>
+			{% else %}
+				{% for follower in followers %}
+			<div class="span6 main-listing" style="border-bottom: 1px solid #f2f2f2; padding-bottom: 10px; margin-bottom: 10px; width: 97%;">
+				<div style="float: left; width: 50px;">
+					<img src="{{ follower.gravatar(size=48) }}"/>
+				</div>
+				<div style="float: left; width: 300px; padding-left: 20px;">
+					<table style="width: 80%; background-color: transparent;">
+						<tbody>
+							<tr>
+								<td style="background-color: transparent;">
+									<a href="javascript:void(0)" onclick="showProfileSummary('{{ follower.username }}'))">{{ follower.nickname }}</a>
+									{% if current_user.is_authenticated and current_user.is_following(follower) %}
+									<button class="btn-mini btn-warning" id="follow-button-{{ follower.username }}" onclick="unfollow_user('{{ follower.username }}')">取消关注</button>
+									{% else %}
+									<button class="btn-mini btn-success" id="follow-button-{{ follower.username }}" onclick="follow_user('{{ follower.username }}')">+ 关注</button>
+									{% endif %}
+								</td>
+							</tr>
+							<tr>
+								<td style="background-color: transparent;">
+									{{ follower.about_me|truncate(100) }}
+								<td>
+							</tr>
+						</tbody>
+					</table>
+
+				</div>
+			</div>
+			{% endfor %}
+			{% endif %}
+		</div>
+		<div>{{ pag.pagination_widget(pagination, 'focus.my_followers') }}</div>
+	</div>
+</div>
+<!-- End of Page Container -->
+{% endblock page_content %}
+
+
+{% block footer_bottom %}
+<!-- Footer Bottom -->
+<div id="footer-bottom-wrapper">
+	<div id="footer-bottom" class="container">
+		<div class="row">
+			<div class="span6">
+				<p class="copyright">
+					Copyright © 2017. All Rights Reserved by <a href="http://forec.cn">Forec</a>.
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of Footer Bottom -->
+{% endblock footer_bottom %}
+
+{% block after_footer %}
+<a href="#top" id="scroll-top"></a>
+{% endblock after_footer %}

@@ -34,7 +34,7 @@
 								<h4><a href="{{ url_for('post.detail', post_id=post.id, _external=True) }}">{{ post.title }}</a></h4>
 								<span class="article-meta">
 									{{ moment(post.create).format('LL') }}&nbsp;&nbsp;
-									<a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
+									<a href="javascript:void(0)" onclick="showProfileSummary('{{ post.author.username }}')"
 									   title="Author">{{ post.author.nickname }}</a>
 								</span>
 								<span class="like-count">{{ post.score }}</span>

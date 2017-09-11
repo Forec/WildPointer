@@ -12,7 +12,7 @@ from flask_login import login_required, current_user
 
 from . import post as pos
 from .. import db
-from ..models import Permission, Post
+from ..models import Permission, Post, Tag
 from ..decorators import confirm_required
 import json
 
@@ -22,7 +22,8 @@ import json
 @confirm_required
 def create():
     if request.method == 'GET':
-        return render_template('post/create.html')
+        hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
+        return render_template('post/create.html', tags=hot_tags, used_tags=[])
     else:
         req = request.form.get('request')
         if req is None:
@@ -89,9 +90,9 @@ def edit(post_id=-1):
         tags_string = ""
         for tag in tags:
             tags_string = tags_string + tag.name + ";"
-        if len(tags) > 0:
-            tags_string = tags_string[:-1]
-        return render_template('post/edit.html', post=post, tags_string=tags_string)
+        hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
+        return render_template('post/edit.html', post=post, tags_string=tags_string, tags=hot_tags,
+                               used_tags=tags)
     else:
         req = request.form.get('request')
         if req is None:

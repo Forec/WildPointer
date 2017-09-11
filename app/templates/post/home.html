@@ -31,7 +31,7 @@
 						</h3>
 						<div class="post-meta clearfix">
 							<span class="date">{{ moment(post.create).format('LL') }}</span>
-							<span class="author"><a href="javascript:void(0)" onclick="callProfileSummary('{{ post.author.username }}')"
+							<span class="author"><a href="javascript:void(0)" onclick="showProfileSummary('{{ post.author.username }}')"
 							   title="作者">{{ post.author.nickname }}</a></span>
 							<span class="comments">
 								{% if post.comments.count() == 0 %}

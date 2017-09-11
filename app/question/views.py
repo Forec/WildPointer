@@ -25,7 +25,7 @@ def latest():
     hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
     return render_template('question/latest.html', questions=questions, pagination=pagination,
                            hot_questions=hot_questions,
-                           tags=hot_tags, used_tags=[], type='post')
+                           tags=hot_tags, used_tags=[], type='question')
 
 
 @ques.route('/<int:question_id>', methods=['GET'])

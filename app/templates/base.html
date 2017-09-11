@@ -50,6 +50,9 @@
 	<link rel="stylesheet" id='ns-style-other-css'
 	      href="{{ url_for('static', filename='css/non/ns-style-other.css', _external=True) }}" type='text/css'
 	      media='all'/>
+	<link rel="stylesheet" id='m-homepage-dialog-css'
+	      href="{{ url_for('static', filename='css/non/m-homepage-dialog.css', _external=True) }}" type='text/css'
+	      media='all'/>
 	<script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js', _external=True) }}"></script>
 	{% endblock head %}
 </head>
@@ -124,7 +127,7 @@
                             >{{ current_user.messages.filter_by(viewed=False).count() }}</span></a></li>
                             <li class="current-menu-item"><a href="#">{{ current_user.username|truncate(12) }}</a>
                                 <ul class="sub-menu">
-                                    <li><a href="{{ url_for('profile.detail', username=current_user.username, _external=True) }}">个人资料</a></li>
+                                    <li><a href="javascript:void(0)" onclick="showProfileSummary('{{ current_user.username }}')">个人资料</a></li>
                                     <li><a href="{{ url_for('auth.secure', _external=True) }}">安全中心</a></li>
                                     <li><a href="{{ url_for('auth.logout', _external=True) }}">登出</a></li>
                                 </ul>
@@ -227,6 +230,7 @@
 <script type='text/javascript' src="{{ url_for('static', filename='js/utils/flash-message.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/utils/ispc.js', _external=True) }}"></script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/non/modal.js', _external=True) }}"></script>
+<!--<script type='text/javascript' src="{{ url_for('static', filename='js/non/m-homepage-dialog.js', _external=True) }}"></script>-->
 <script type='text/javascript' src="{{ url_for('static', filename='js/non/modernizr.custom.js', _external=True) }}"></script>
 
 <!-- 显示所有等待的 flash 消息 -->
@@ -237,8 +241,14 @@
 <!-- 对于未登录／认证用户，在 ajax 前结束其请求 -->
 {% include 'js/auth_before_action.html' %}
 
+<!-- 对于未登录／认证用户，提供关注脚本 -->
+{% include 'js/focus-users.html' %}
+
 <!-- 提问的脚本 -->
 {% include 'js/new-question.html' %}
+
+<!-- 用户资料脚本／框 -->
+{% include 'components/user-profile-dialog.html' %}
 
 <!-- 未登录用户提供认证脚本 -->
 {% if not current_user.is_authenticated %}
