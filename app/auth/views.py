@@ -55,9 +55,9 @@ def change_email(token):
     return redirect(url_for('profile.detail'))
 
 
-@auth.before_app_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.ping()
+# @auth.before_app_request
+# def before_request():
+#     if current_user.is_authenticated:
+#         current_user.ping()
 #        if not current_user.confirmed and request.endpoint[:8] == 'comment.':
 #            return redirect(url_for('auth.unconfirmed'))

@@ -77,6 +77,7 @@ def create():
     db.session.add(relation)
     db.session.add(answer)
     db.session.commit()
+    print("answer:", answer.create, " user:", current_user.last_seen)
     flash("您的答案已提交，您可以通过问题界面顶部的 \"查看我的回答\" 来查看您的答案。")
     return jsonify({
         'code': 4  # 创建成功

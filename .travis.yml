@@ -1,0 +1,10 @@
+language:
+ - python
+python:
+ - 3.5.0
+install:
+ - pip install -r requirements.txt
+script:
+ - mkdir tmp/
+ - touch tmp/debug.sqlite
+ - python manage.py test

@@ -443,7 +443,10 @@ class User(UserMixin, db.Model):
         active_questions = []
         active_answers_count = 0
         for question in self.questions:
+            print(question.title)
             #TODO
+            for answer in question.answers:
+                print(answer.create, self.last_seen, answer.create > self.last_seen)
             question_answer_active_count = question.answers.filter(Answer.create > self.last_seen).count()
             # print(question.title, question_answer_active_count)
             if question_answer_active_count > 0:
