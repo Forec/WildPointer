@@ -16,6 +16,7 @@ from ..decorators import confirm_required
 import json
 
 
+#DEPRECATED
 @ans.route('/detail/<int:answer_id>', methods=['GET'])
 def detail(answer_id):
     answer = Answer.query.filter_by(id=answer_id).first()
@@ -84,6 +85,7 @@ def create():
     })
 
 
+#DEPRECATED
 @ans.route('/modify', methods=['POST'])
 @login_required
 @confirm_required
@@ -127,6 +129,7 @@ def modify():
     })
 
 
+#DEPRECATED
 @ans.route('/delete', methods=['GET'])
 @ans.route('/delete/<int:answer_id>', methods=['GET'])
 @login_required

@@ -17,6 +17,7 @@ from ..decorators import confirm_required
 import json
 
 
+#DEPRECATED
 @tagb.route('/recommend/<int:tag_count>', methods=['GET'])
 def recommend(tag_count=15):
     hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, tag_count).all()

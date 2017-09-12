@@ -47,6 +47,7 @@ def create():
     })
 
 
+#DEPRECATED
 @comm.route('/post/<int:comment_id>', methods=['GET'])
 @login_required
 def modify_post_comment(comment_id):
@@ -64,6 +65,7 @@ def modify_post_comment(comment_id):
     })
 
 
+#DEPRECATED
 @comm.route('/question/<int:comment_id>', methods=['GET'])
 @login_required
 def modify_question_comment(comment_id):
@@ -81,6 +83,7 @@ def modify_question_comment(comment_id):
     })
 
 
+#DEPRECATED
 @comm.route('/answer/<int:comment_id>', methods=['GET'])
 @login_required
 def modify_answer_comment(comment_id):
