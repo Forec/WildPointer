@@ -21,7 +21,7 @@ jQuery(document).ready(
 );
 
 function hasInput(text, event, search_url) {
-	console.log(text);
+//	console.log(text);
 	if (text == "" && jQuery("#search-tip").css("display") != "none") {
 		jQuery("#search-tip").css("display", "none");
 		return;

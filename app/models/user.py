@@ -445,7 +445,7 @@ class User(UserMixin, db.Model):
         for question in self.questions:
             #TODO
             question_answer_active_count = question.answers.filter(Answer.create > self.last_seen).count()
-            print(question.title, question_answer_active_count)
+            # print(question.title, question_answer_active_count)
             if question_answer_active_count > 0:
                 active_questions.append(question)
                 active_answers_count += question_answer_active_count
@@ -467,7 +467,7 @@ class User(UserMixin, db.Model):
         # 将消息存入数据库
         from .message import Message
         for message in message_list:
-            print(message)
+            # print(message)
             mdb = Message(body=message, receiver_id=self.id)
             db.session.add(mdb)
         db.session.commit()

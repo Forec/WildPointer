@@ -96,6 +96,12 @@ def detail(post_id):
             recent_posts = recent_posts[:i] + recent_posts[i+1:]
             break
     tags = [item.tag for item in post.tags.all()]
+    page = request.args.get('page', 1, type=int)
+    pagination = post.comments.paginate(
+        page, per_page=current_app.config['WP_COMMENTS_PER_PAGE'],
+        error_out=False
+    )
+    comments = pagination.items
     return render_template('post/detail.html', post=post, tags=tags,
                            recent_posts=recent_posts, has_liked=has_liked,
-                           moderate=moderate)
+                           moderate=moderate, pagination=pagination, comments=comments)

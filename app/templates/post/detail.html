@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "components/_pagination.html" as pag %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
@@ -70,19 +71,52 @@
 
 				</div>
 
+				{% if comments|length > 0 %}
+
+				<hr/>
+				<h3>共 {{ post.comments.count() }} 条评论</h3>
+				<ol>
+				{% for comment in comments %}
+				<li class="comment even thread-odd thread-alt depth-1" id="comment-li-{{id}}">
+					<article id="comment-article-{{ comment.id }}" style="padding-bottom: 0px;">
+						<img alt="" src="{{ comment.author.gravatar(48) }}" class="avatar avatar-60 photo" height="60" width="60">
+
+						<div class="comment-meta">
+							<h5 class="author">
+								<cite class="fn"><a href="javascript:void(0)" rel="external nofollow"
+								                    class="url"
+								onclick="showProfileSummary('{{ comment.author.username }}')">{{ comment.author.nickname }}</a></cite>
+							</h5>
+
+							<p class="date">
+								{{ moment(comment.timestamp).format('LL') }}
+							</p>
+
+						</div>
+
+						<div class="comment-body">
+							{{ comment.body }}
+						</div><!-- end of comment-body -->
+					</article>
+				</li>
+				{% endfor %}
+				</ol>
+
+                {{ pag.pagination_widget(pagination, 'post.detail', post_id=post.id) }}
+				{% endif %}
+
 				<hr/>
 
 				<section id="comments">
-
 					<div id="respond">
-
-						<form action="#" method="post" id="commentform">
+						<form method="post" action="javascript:create_comment('comment-text')" id="commentform">
 							<div>
-								<label for="comment">评论</label>
+								<label for="comment-text">评论</label>
 								{% if not current_user.is_authenticated or not current_user.confirmed %}
-								<textarea class="span8" name="comment" cols="58" rows="10" disabled="disabled"></textarea>
+								<textarea class="span8" name="comment" cols="58" rows="10"
+								          disabled="disabled"></textarea>
 								{% else %}
-								<textarea class="span8" name="comment" id="comment" cols="58" rows="10"></textarea>
+								<textarea class="span8" name="comment" id="comment-text" cols="58" rows="10"></textarea>
 								{% endif %}
 							</div>
 							{% if not current_user.is_authenticated %}
@@ -94,11 +128,8 @@
 							</div>
 							{% endif %}
 						</form>
-
 					</div>
-
 				</section><!-- end of comments -->
-
 			</div>
 			<!-- end of page content -->
 
@@ -179,6 +210,37 @@ function confirmBeforeAction(component_id) {
         flash_warning("您输入的文章 ID 与当前文章不符，请再次核实您的删除操作！");
         modalHidden('delete-dialog');
     }
+}
+
+function create_comment(component_id) {
+    var content = jQuery("#" + component_id).val();
+    $.ajax({
+		    url: "{{ url_for('comment.create', _external=True) }}",
+		    type: "POST",
+		    dataType: "json",
+		    data: {
+			    'request': JSON.stringify({
+				    'body': content,
+				    'parent_id': {{ post.id }},
+				    'type': 'post'
+			    })
+		    },
+    		success: function(response) {
+	            if (response.code == 1){
+		            flash_success("您的评论已发表成功。");
+		            jQuery("#" +component_id).val("");
+	            } else if (response.code == 2) {
+    		        flash_error("您评论的文章《{{ post.title }}》不存在，可能已经被删除。");
+	            } else if (response.code == 0) {
+    	        	flash_error("您提交的请求携带违例信息。");
+    	        } else {
+    	        	flash_error("请求失败，因为我们未能连接至服务器。");
+    	        }
+            },
+	    	err: function(err) {
+		        flash_error("请求失败，因为我们未能连接至服务器。");
+		    }
+	    });
 }
 </script>
 <script type='text/javascript' src="{{ url_for('static', filename='js/non/post-thumb-up.js', _external=True) }}"></script>

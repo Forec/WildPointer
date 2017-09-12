@@ -140,12 +140,16 @@ var MAX_COMMENT_PAGE	= 10;		//每次加载的评论数
 //	类定义
 //
 //=======================================================================
-var mComments = new Array();												//存储评论信息
-var currentShow = 0;														//存储当前显示的评论数
+
 function CommentPage() {													//评论容器类
 //member: 
 	var mHTMLContainerID = "#comments-container";	
-		
+	this.mComments = new Array();											//存储评论信息
+	this.currentShow = 0;													//存储当前显示的评论数
+
+	var commentsInference = this.mComments;									//引用
+	var currShowInf		  = this.currentShow;								//
+	
 //public function:	
 	//打开页面时调用，载入初始评论
 	this.init = function() {	
@@ -183,7 +187,7 @@ function CommentPage() {													//评论容器类
 		this.currentShow = 10;
 		var html = "";
 		for (var index = 0; index < MAX_COMMENT_PAGE; index++) {
-			html += mComments[index].template();
+			html += this.mComments[index].template();
 		}
 		setHTML(html);
 	};
@@ -205,7 +209,7 @@ function CommentPage() {													//评论容器类
 		var html = "";
 		var comment;
 		var reply;
-		var start = mComments.length;
+		var start = commentsInference.length;
 
 		
 		for (var commentIndex = start; commentIndex < start + MAX_COMMENT_PAGE; ++commentIndex) {
@@ -215,8 +219,8 @@ function CommentPage() {													//评论容器类
 				reply = new Reply(commentIndex, replyIndex, t_r_head_url, t_r_author_id + replyIndex, t_r_author_url, t_datetime_text, t_reply_content);
 				comment.mReplyPage.addReply(reply);
 			}
-			currentShow++;
-			mComments.push(comment);
+			currShowInf++;
+			commentsInference.push(comment);
 			html += comment.template();
 		}
 		appendHTML(html);
@@ -238,7 +242,8 @@ function Comment(index, headUrl, userName, homepageUrl, date, content) {	//评�
 	this.mContent		= content;											//评论内容	
 	
 	this.mReplyPage 	= new ReplyPage();									//评论中的回复
-		
+	var replyPageInference = this.mReplyPage;								//私有函数用这个
+	
 //public function:
 	//显示回复
 	this.showReplyPage = function() {
@@ -276,7 +281,7 @@ function Comment(index, headUrl, userName, homepageUrl, date, content) {	//评�
 	}
 //private function	
 	function replySuccess(response) {
-		console.log(this.mReplyPage);
+		replyPageInference
 	}
 	//eplySuccess.call(this);
 	
@@ -418,16 +423,16 @@ function showreply(btnId) {
 	var replyPage = jQuery("#" + REPLY_DIV_ID + id);
 	
 	if (replyPage.css("display") == "none") {
-		mComments[id].showReplyPage();
+		commentPage.mComments[id].showReplyPage();
 		replyPage.css("display", "block");
 	} else {
-		mComments[id].hideReplyPage();
+		commentPage.mComments[id].hideReplyPage();
 		replyPage.css("display", "none");
 	}
 }
 
 function switchPage(id, btn) {
-	mComments[parseInt(id)].mReplyPage.switchPage(id, btn);
+	commentPage.mComments[parseInt(id)].mReplyPage.switchPage(id, btn);
 }
 
 function fromText(wrap) {
@@ -437,5 +442,5 @@ function fromText(wrap) {
 function reply(btnId) {
 	console.log(btnId);
 	var id = parseInt(btnId.substr(btnId.lastIndexOf("-") + 1));
-	mComments[id].reply();
+	commentPage.mComments[id].reply();
 }
