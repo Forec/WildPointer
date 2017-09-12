@@ -91,7 +91,8 @@ def edit(post_id=-1):
         for tag in tags:
             tags_string = tags_string + tag.name + ";"
         hot_tags = Tag.query.order_by(Tag.count.asc()).slice(0, 16).all()
-        return render_template('post/edit.html', post=post, tags_string=tags_string, tags=hot_tags,
+        return render_template('post/edit.html', post=post, tags_string=tags_string,
+                               tags=list(set(hot_tags)-set(tags)),
                                used_tags=tags)
     else:
         req = request.form.get('request')
@@ -137,7 +138,7 @@ def edit(post_id=-1):
                 })
             if len(tag_name) > 6:
                 for char in tag_name:
-                    if alphaB.find(char) == -1:
+                    if alphaB.lower().find(char) == -1:
                         return jsonify({
                             'code': 3  # 标签长度过长
                         })
