@@ -1,7 +1,7 @@
 # Wild Pointer
 
 [![License](http://7xktmz.com1.z0.glb.clouddn.com/license-UDL.svg)](https://github.com/Forec/WildPointer/blob/master/LICENSE) 
-[![Build Status](https://travis-ci.org/Forec/wildpoionter.png)](https://travis-ci.org/Forec/zenith-monitor) 
+[![Build Status](https://travis-ci.org/Forec/WildPointer.svg?branch=deploy)](https://travis-ci.org/Forec/WildPointer)
 
 [![Wild Pointer](http://7xktmz.com1.z0.glb.clouddn.com/wildpointer-index.png)](http://wildpointer.forec.cn)
 
