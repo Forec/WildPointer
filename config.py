@@ -53,8 +53,9 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'tmp/test.db')
 
 
-class ProductionConfig(Config):
-    pass
+class ProductionConfig(DevConfig):
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'work.db')
 
 
 config = {
