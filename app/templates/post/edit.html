@@ -32,7 +32,7 @@
 							</div>
 							<div>
 								<label for="body">正文 *</label>
-								<textarea class="span8" name="body" id="body" cols="58" rows="10" text="{{ post.body }}"></textarea>
+								<textarea class="span8" name="body" id="body" cols="58" rows="10" val="{{ post.body }}"></textarea>
 							</div>
 							<div>
 								<input class="btn" name="submit" type="submit" id="submit" value="提交">
@@ -63,6 +63,10 @@
 
 {% block scripts %}
 <script>
+
+//jQuery(document).ready(function($){
+ //   jQuery("#body").text('{{ post.body }}');
+//});
 // 创建文章请求
 function edit_post(titleID, tagsID, bodyID) {
 	var title = jQuery('#' + titleID).val();

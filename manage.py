@@ -46,7 +46,7 @@ def init():
              role=Role.query.filter_by(name='Administrator').first(),
              location='Beijing, China',
              about_me='Wait for updating')
-    u2 = User(email='test@test.com',
+    u2 = User(email='flyingx@qq.com',
               nickname='FlyingX',
               username='FlyingX',
               password='password',

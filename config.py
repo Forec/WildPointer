@@ -55,6 +55,7 @@ class TestConfig(Config):
 
 class ProductionConfig(DevConfig):
     DEBUG = False
+    # SERVER_NAME = "wildpointer.forec.cn"
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'work.db')
 
 
